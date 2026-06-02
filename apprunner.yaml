@@ -1,0 +1,22 @@
+version: 1.0
+runtime: nodejs18
+build:
+  commands:
+    build:
+      - npm ci --production
+run:
+  command: node src/index.js
+  network:
+    port: 3000
+    env: PORT
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: AWS_REGION
+      value: us-east-1
+    - name: MESHES_TABLE
+      value: agent-mesh-meshes
+    - name: AGENTS_TABLE
+      value: agent-mesh-agents
+    - name: MESSAGES_TABLE
+      value: agent-mesh-messages
