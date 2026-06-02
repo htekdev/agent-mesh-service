@@ -107,10 +107,8 @@ export async function queryMessages(meshId, { recipientId, offset = 0, limit = 5
   };
 
   if (recipientId) {
-    // Use GSI for recipient-filtered queries
-    params.IndexName = "recipient-index";
-    params.KeyConditionExpression = "mesh_id = :mid";
-    params.FilterExpression = "message_id > :offset AND (recipient_id = :rid OR recipient_id = :broadcast)";
+    // Filter by recipient on the main table (recipient_id is sort key on GSI, can't FilterExpression it there)
+    params.FilterExpression = "recipient_id = :rid OR recipient_id = :broadcast";
     params.ExpressionAttributeValues[":rid"] = recipientId;
     params.ExpressionAttributeValues[":broadcast"] = "*";
   }
