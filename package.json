@@ -1,0 +1,34 @@
+{
+  "name": "agent-mesh-service",
+  "version": "1.0.0",
+  "description": "Cloud agent mesh service for cross-platform agent communication via long-polling REST API",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test src/**/*.test.js",
+    "lint": "eslint src/",
+    "deploy": "cdk deploy --require-approval never"
+  },
+  "keywords": ["agent-mesh", "long-polling", "multi-agent", "communication"],
+  "author": "htekdev",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.700.0",
+    "@aws-sdk/lib-dynamodb": "^3.700.0",
+    "express": "^4.21.0",
+    "nanoid": "^5.0.9",
+    "cors": "^2.8.5",
+    "helmet": "^8.0.0"
+  },
+  "devDependencies": {
+    "aws-cdk": "^2.170.0",
+    "aws-cdk-lib": "^2.170.0",
+    "constructs": "^10.4.2",
+    "eslint": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
