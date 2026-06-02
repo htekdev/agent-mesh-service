@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { meshRouter } from "./routes/mesh.js";
 import { agentsRouter } from "./routes/agents.js";
 import { messagesRouter } from "./routes/messages.js";
+import { integrateRouter } from "./routes/integrate.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,8 @@ app.get("/health", (req, res) => {
 
 // Routes
 app.use("/mesh", meshRouter);
+app.use("/mesh", integrateRouter);  // GET /mesh/:meshId/integrate
+app.use("/", integrateRouter);       // GET /integrate (generic)
 
 // Error handler
 app.use((err, req, res, _next) => {
