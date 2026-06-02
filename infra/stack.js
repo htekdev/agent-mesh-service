@@ -1,16 +1,34 @@
 // CDK Infrastructure — Agent Mesh Service
-// ECS Fargate + ALB + DynamoDB
+// DynamoDB tables only (App Runner is manual or via separate config)
+//
+// Deployment strategy:
+// 1. CDK deploys DynamoDB tables + IAM roles
+// 2. GitHub Actions builds Docker image → pushes to ECR
+// 3. App Runner auto-deploys from ECR image updates
+//
+// Why not Lambda: API Gateway has 29s hard timeout — too short for 60s long-polling
+// Why not ECS Fargate: Overkill for this service, App Runner is simpler
+
 import * as cdk from "aws-cdk-lib";
-import * as ec2 from "aws-cdk-lib/aws-ec2";
-import * as ecs from "aws-cdk-lib/aws-ecs";
-import * as ecs_patterns from "aws-cdk-lib/aws-ecs-patterns";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
-import * as logs from "aws-cdk-lib/aws-logs";
+import * as ecr from "aws-cdk-lib/aws-ecr";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 
 class AgentMeshStack extends cdk.Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
+
+    // ─── ECR Repository ────────────────────────────────────────────
+
+    const ecrRepo = new ecr.Repository(this, "MeshEcrRepo", {
+      repositoryName: "agent-mesh-service",
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      emptyOnDelete: true,
+      lifecycleRules: [
+        { maxImageCount: 5, description: "Keep last 5 images" },
+      ],
+    });
 
     // ─── DynamoDB Tables ───────────────────────────────────────────
 
@@ -45,77 +63,41 @@ class AgentMeshStack extends cdk.Stack {
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // ─── VPC ───────────────────────────────────────────────────────
+    // ─── IAM Role for App Runner instance ──────────────────────────
 
-    const vpc = new ec2.Vpc(this, "MeshVpc", {
-      maxAzs: 2,
-      natGateways: 1, // Keep costs low
+    const instanceRole = new iam.Role(this, "AppRunnerInstanceRole", {
+      assumedBy: new iam.ServicePrincipal("tasks.apprunner.amazonaws.com"),
+      roleName: "agent-mesh-apprunner-instance",
     });
 
-    // ─── ECS Cluster ───────────────────────────────────────────────
+    meshesTable.grantReadWriteData(instanceRole);
+    agentsTable.grantReadWriteData(instanceRole);
+    messagesTable.grantReadWriteData(instanceRole);
 
-    const cluster = new ecs.Cluster(this, "MeshCluster", {
-      vpc,
-      clusterName: "agent-mesh-cluster",
+    // App Runner ECR access role
+    const accessRole = new iam.Role(this, "AppRunnerAccessRole", {
+      assumedBy: new iam.ServicePrincipal("build.apprunner.amazonaws.com"),
+      roleName: "agent-mesh-apprunner-access",
     });
-
-    // ─── Fargate Service with ALB ──────────────────────────────────
-
-    const service = new ecs_patterns.ApplicationLoadBalancedFargateService(
-      this,
-      "MeshService",
-      {
-        cluster,
-        serviceName: "agent-mesh-service",
-        desiredCount: 1,
-        cpu: 256,
-        memoryLimitMiB: 512,
-        taskImageOptions: {
-          image: ecs.ContainerImage.fromAsset("."),
-          containerPort: 3000,
-          environment: {
-            NODE_ENV: "production",
-            PORT: "3000",
-            AWS_REGION: this.region,
-            MESHES_TABLE: meshesTable.tableName,
-            AGENTS_TABLE: agentsTable.tableName,
-            MESSAGES_TABLE: messagesTable.tableName,
-          },
-          logDriver: ecs.LogDrivers.awsLogs({
-            streamPrefix: "agent-mesh",
-            logRetention: logs.RetentionDays.ONE_WEEK,
-          }),
-        },
-        publicLoadBalancer: true,
-        // Long-polling needs longer idle timeout
-        idleTimeout: cdk.Duration.seconds(65),
-      }
-    );
-
-    // ALB health check
-    service.targetGroup.configureHealthCheck({
-      path: "/health",
-      interval: cdk.Duration.seconds(30),
-      timeout: cdk.Duration.seconds(5),
-      healthyThresholdCount: 2,
-      unhealthyThresholdCount: 3,
-    });
-
-    // Grant DynamoDB access to Fargate task
-    meshesTable.grantReadWriteData(service.taskDefinition.taskRole);
-    agentsTable.grantReadWriteData(service.taskDefinition.taskRole);
-    messagesTable.grantReadWriteData(service.taskDefinition.taskRole);
+    ecrRepo.grantPull(accessRole);
 
     // ─── Outputs ───────────────────────────────────────────────────
 
-    new cdk.CfnOutput(this, "ServiceURL", {
-      value: `http://${service.loadBalancer.loadBalancerDnsName}`,
-      description: "Agent Mesh Service URL",
+    new cdk.CfnOutput(this, "EcrRepoUri", {
+      value: ecrRepo.repositoryUri,
+      description: "ECR Repository URI for Docker pushes",
     });
-
-    new cdk.CfnOutput(this, "MeshesTableName", {
-      value: meshesTable.tableName,
+    new cdk.CfnOutput(this, "InstanceRoleArn", {
+      value: instanceRole.roleArn,
+      description: "Instance role ARN for App Runner service",
     });
+    new cdk.CfnOutput(this, "AccessRoleArn", {
+      value: accessRole.roleArn,
+      description: "ECR access role ARN for App Runner service",
+    });
+    new cdk.CfnOutput(this, "MeshesTableName", { value: meshesTable.tableName });
+    new cdk.CfnOutput(this, "AgentsTableName", { value: agentsTable.tableName });
+    new cdk.CfnOutput(this, "MessagesTableName", { value: messagesTable.tableName });
   }
 }
 
