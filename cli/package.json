@@ -1,0 +1,47 @@
+{
+  "name": "meshwire",
+  "version": "0.1.0",
+  "description": "CLI and MCP tools for the MeshWire multi-agent messaging service",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "meshwire": "./bin/meshwire.js"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./api": "./src/api.js",
+    "./config": "./src/config.js"
+  },
+  "scripts": {
+    "test": "node --test src/**/*.test.js",
+    "dev": "node bin/meshwire.js"
+  },
+  "keywords": [
+    "meshwire", "multi-agent", "agent-mesh", "mcp", "cli",
+    "agent-communication", "long-polling", "ai-agents"
+  ],
+  "author": "htekdev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/htekdev/agent-mesh-service.git",
+    "directory": "cli"
+  },
+  "homepage": "https://meshwire.io",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "README.md"
+  ]
+}
