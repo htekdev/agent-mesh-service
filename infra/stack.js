@@ -13,8 +13,6 @@ class AgentMeshStack extends cdk.Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
 
-    // ─── DynamoDB Tables ───────────────────────────────────────────
-
     const meshesTable = new dynamodb.Table(this, "MeshesTable", {
       tableName: "agent-mesh-meshes",
       partitionKey: { name: "mesh_id", type: dynamodb.AttributeType.STRING },
@@ -38,7 +36,13 @@ class AgentMeshStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    // GSI for recipient-based queries
+    const usersTable = new dynamodb.Table(this, "UsersTable", {
+      tableName: "agent-mesh-users",
+      partitionKey: { name: "user_id", type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+
     messagesTable.addGlobalSecondaryIndex({
       indexName: "recipient-index",
       partitionKey: { name: "mesh_id", type: dynamodb.AttributeType.STRING },
@@ -46,19 +50,23 @@ class AgentMeshStack extends cdk.Stack {
       projectionType: dynamodb.ProjectionType.ALL,
     });
 
-    // ─── ECR Repository (pre-existing) ─────────────────────────────
+    usersTable.addGlobalSecondaryIndex({
+      indexName: "github-id-index",
+      partitionKey: { name: "github_id", type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
 
-    const repository = ecr.Repository.fromRepositoryName(
-      this,
-      "MeshRepo",
-      "agent-mesh-service"
-    );
+    usersTable.addGlobalSecondaryIndex({
+      indexName: "token-hash-index",
+      partitionKey: { name: "token_hash", type: dynamodb.AttributeType.STRING },
+      projectionType: dynamodb.ProjectionType.ALL,
+    });
 
-    // ─── VPC ───────────────────────────────────────────────────────
+    const repository = ecr.Repository.fromRepositoryName(this, "MeshRepo", "agent-mesh-service");
 
     const vpc = new ec2.Vpc(this, "MeshVpc", {
       maxAzs: 2,
-      natGateways: 0, // Use public subnets + assignPublicIp to save $30/mo
+      natGateways: 0,
       subnetConfiguration: [
         {
           name: "Public",
@@ -68,50 +76,47 @@ class AgentMeshStack extends cdk.Stack {
       ],
     });
 
-    // ─── ECS Cluster ───────────────────────────────────────────────
-
     const cluster = new ecs.Cluster(this, "MeshCluster", {
       vpc,
       clusterName: "agent-mesh-cluster",
     });
 
-    // ─── Fargate Service with ALB ──────────────────────────────────
-
-    const service = new ecs_patterns.ApplicationLoadBalancedFargateService(
-      this,
-      "MeshService",
-      {
-        cluster,
-        serviceName: "agent-mesh-service",
-        desiredCount: 1,
-        cpu: 256,
-        memoryLimitMiB: 512,
-        circuitBreaker: { enable: true, rollback: true },
-        assignPublicIp: true,
-        taskSubnets: { subnetType: ec2.SubnetType.PUBLIC },
-        taskImageOptions: {
-          image: ecs.ContainerImage.fromEcrRepository(repository, "latest"),
-          containerPort: 3000,
-          environment: {
-            NODE_ENV: "production",
-            PORT: "3000",
-            AWS_REGION: this.region,
-            MESHES_TABLE: meshesTable.tableName,
-            AGENTS_TABLE: agentsTable.tableName,
-            MESSAGES_TABLE: messagesTable.tableName,
-          },
-          logDriver: ecs.LogDrivers.awsLogs({
-            streamPrefix: "agent-mesh",
-            logRetention: logs.RetentionDays.ONE_WEEK,
-          }),
+    const service = new ecs_patterns.ApplicationLoadBalancedFargateService(this, "MeshService", {
+      cluster,
+      serviceName: "agent-mesh-service",
+      desiredCount: 1,
+      cpu: 256,
+      memoryLimitMiB: 512,
+      circuitBreaker: { enable: true, rollback: true },
+      assignPublicIp: true,
+      taskSubnets: { subnetType: ec2.SubnetType.PUBLIC },
+      taskImageOptions: {
+        image: ecs.ContainerImage.fromEcrRepository(repository, "latest"),
+        containerPort: 3000,
+        environment: {
+          NODE_ENV: "production",
+          PORT: "3000",
+          AWS_REGION: this.region,
+          MESHES_TABLE: meshesTable.tableName,
+          AGENTS_TABLE: agentsTable.tableName,
+          MESSAGES_TABLE: messagesTable.tableName,
+          USERS_TABLE: usersTable.tableName,
+          SESSION_SECRET: process.env.SESSION_SECRET || "set-this-in-production",
+          GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
+          GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",
+          BASE_URL:
+            process.env.BASE_URL ||
+            "http://AgentM-MeshS-C9BTpnBG6o3j-892354001.us-east-1.elb.amazonaws.com",
         },
-        publicLoadBalancer: true,
-        // Long-polling needs longer idle timeout (connections held 25-30s)
-        idleTimeout: cdk.Duration.seconds(65),
-      }
-    );
+        logDriver: ecs.LogDrivers.awsLogs({
+          streamPrefix: "agent-mesh",
+          logRetention: logs.RetentionDays.ONE_WEEK,
+        }),
+      },
+      publicLoadBalancer: true,
+      idleTimeout: cdk.Duration.seconds(65),
+    });
 
-    // ALB health check
     service.targetGroup.configureHealthCheck({
       path: "/health",
       interval: cdk.Duration.seconds(30),
@@ -120,12 +125,10 @@ class AgentMeshStack extends cdk.Stack {
       unhealthyThresholdCount: 3,
     });
 
-    // Grant DynamoDB access to Fargate task
     meshesTable.grantReadWriteData(service.taskDefinition.taskRole);
     agentsTable.grantReadWriteData(service.taskDefinition.taskRole);
     messagesTable.grantReadWriteData(service.taskDefinition.taskRole);
-
-    // ─── Outputs ───────────────────────────────────────────────────
+    usersTable.grantReadWriteData(service.taskDefinition.taskRole);
 
     new cdk.CfnOutput(this, "ServiceURL", {
       value: `http://${service.loadBalancer.loadBalancerDnsName}`,
@@ -141,8 +144,6 @@ class AgentMeshStack extends cdk.Stack {
     });
   }
 }
-
-// ─── App ─────────────────────────────────────────────────────────
 
 const app = new cdk.App();
 new AgentMeshStack(app, "AgentMeshStack", {
