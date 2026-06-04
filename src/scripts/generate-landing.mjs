@@ -1,0 +1,312 @@
+// Generates the new MeshWire premium landing page
+import { writeFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// The full premium landing page HTML
+const html = String.raw`<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="MeshWire — The messaging layer for multi-agent systems. Sign in, get a token, wire your agents together in minutes." />
+    <meta property="og:title" content="MeshWire — Wire your agents together" />
+    <meta property="og:description" content="Connect agents across any framework, any runtime, any machine. No new protocol. Just a hosted messaging layer." />
+    <meta property="og:image" content="/images/meshwire-logo.png" />
+    <title>MeshWire — Wire your agents together</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--bg2:#0d0d0d;--panel:rgba(255,255,255,.038);--panelh:rgba(255,255,255,.065);
+  --border:rgba(255,255,255,.075);--bordera:rgba(124,58,237,.48);
+  --text:#f0f0f0;--muted:rgba(240,240,240,.6);--muted2:rgba(240,240,240,.36);
+  --accent:#7c3aed;--accentl:#a78bfa;--accentg:rgba(124,58,237,.22);
+  --cyan:#22d3ee;--green:#4ade80;
+  --font:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",monospace;
+  --r:18px;--rs:11px
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(124,58,237,.5);border-radius:99px}
+#mc{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.42}
+.site{position:relative;z-index:1}
+.shell{max-width:1140px;margin:0 auto;padding:0 24px}
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px);background:rgba(8,8,8,.76);border-bottom:1px solid var(--border)}
+.nb{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.1rem;letter-spacing:-.01em}
+.ni{width:28px;height:28px;flex-shrink:0}
+.nl{display:flex;align-items:center;gap:24px;font-size:.88rem;color:var(--muted)}
+.nl a:hover{color:var(--text);transition:color .18s}
+.btn-n{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:999px;background:var(--accent);color:#fff;font-size:.84rem;font-weight:700;transition:all .2s}
+.btn-n:hover{background:#6d28d9;box-shadow:0 0 26px rgba(124,58,237,.45);transform:translateY(-1px)}
+/* Hero */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:118px 24px 72px;position:relative}
+.hero::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:55%;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent)}
+.badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:999px;border:1px solid var(--bordera);background:rgba(124,58,237,.1);font-size:.78rem;font-weight:600;color:var(--accentl);letter-spacing:.04em;text-transform:uppercase;margin-bottom:28px;animation:fu .7s ease both}
+.bd{width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.72)}}
+.h1{font-size:clamp(3rem,8.5vw,7rem);font-weight:900;line-height:.88;letter-spacing:-.035em;margin-bottom:20px;animation:fu .7s .1s ease both}
+.grad{background:linear-gradient(130deg,#fff 25%,var(--accentl) 62%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hs{font-size:clamp(.98rem,2.2vw,1.26rem);color:var(--muted);max-width:540px;margin:0 auto 36px;line-height:1.65;animation:fu .7s .2s ease both}
+.ctas{display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-bottom:60px;animation:fu .7s .3s ease both}
+.bp{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;background:var(--accent);color:#fff;font-weight:700;font-size:.95rem;transition:all .24s;box-shadow:0 8px 38px var(--accentg)}
+.bp:hover{background:#6d28d9;box-shadow:0 8px 55px rgba(124,58,237,.52);transform:translateY(-2px)}
+.bg{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font-weight:600;font-size:.95rem;transition:all .24s;backdrop-filter:blur(8px)}
+.bg:hover{border-color:rgba(255,255,255,.18);color:var(--text);background:var(--panelh);transform:translateY(-2px)}
+/* Terminal */
+.term{width:100%;max-width:640px;background:rgba(0,0,0,.68);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;backdrop-filter:blur(18px);animation:fu .7s .42s ease both;text-align:left;box-shadow:0 36px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04)}
+.tbar{display:flex;align-items:center;gap:7px;padding:10px 13px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.td{width:11px;height:11px;border-radius:50%}.td.r{background:#ff5f57}.td.y{background:#ffbd2e}.td.g{background:#28c840}
+.tt{font-family:var(--mono);font-size:.74rem;color:var(--muted2);margin-left:4px}
+.tbody{padding:16px 20px;font-family:var(--mono);font-size:.79rem;line-height:1.78}
+.tc2{color:rgba(255,255,255,.26)}.tk::before{content:"$ ";color:var(--cyan)}.to{color:var(--green)}.tv{color:var(--cyan)}
+/* Sections */
+section{padding:88px 0}
+.sl{display:inline-block;font-size:.76rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accentl);margin-bottom:13px}
+.st{font-size:clamp(1.85rem,4vw,2.8rem);font-weight:800;letter-spacing:-.025em;line-height:1.1;margin-bottom:15px}
+.ss{font-size:1.02rem;color:var(--muted);max-width:520px;line-height:1.65}
+/* Feature grid */
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:13px;margin-top:48px}
+.fc{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:24px;transition:all .28s;position:relative;overflow:hidden}
+.fc::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top left,rgba(124,58,237,.18),transparent 65%);opacity:0;transition:opacity .28s}
+.fc:hover{border-color:var(--bordera);transform:translateY(-3px);box-shadow:0 18px 55px rgba(0,0,0,.4)}.fc:hover::before{opacity:1}
+.fi{width:40px;height:40px;border-radius:10px;background:rgba(124,58,237,.13);border:1px solid rgba(124,58,237,.2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:15px}
+.ftit{font-size:.98rem;font-weight:700;margin-bottom:7px}
+.fd{font-size:.89rem;color:var(--muted);line-height:1.58}
+/* How it works */
+.hw{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0;margin-top:48px;position:relative}
+.hw::before{content:'';position:absolute;top:25px;left:10%;right:10%;height:1px;background:linear-gradient(to right,transparent,var(--bordera),transparent)}
+.sc{padding:28px 22px}
+.sn{width:50px;height:50px;border-radius:50%;background:var(--bg2);border:1px solid var(--bordera);display:flex;align-items:center;justify-content:center;font-size:1.02rem;font-weight:800;color:var(--accentl);margin-bottom:16px;position:relative;z-index:1}
+.stit{font-size:1.02rem;font-weight:700;margin-bottom:8px}
+.sdesc{font-size:.88rem;color:var(--muted);line-height:1.58;margin-bottom:13px}
+.cb{background:rgba(0,0,0,.58);border:1px solid var(--border);border-radius:var(--rs);padding:11px 13px;font-family:var(--mono);font-size:.76rem;line-height:1.72;overflow-x:auto}
+.cc{color:rgba(255,255,255,.26)}.ck{color:var(--accentl)}.cs{color:var(--cyan)}.cp{color:rgba(255,255,255,.72)}
+/* Testimonials */
+.tg{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:13px;margin-top:48px}
+.tcard{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:24px;transition:all .28s}
+.tcard:hover{border-color:rgba(255,255,255,.12);transform:translateY(-2px)}
+.tstars{color:#fbbf24;font-size:.8rem;margin-bottom:13px;letter-spacing:2px}
+.tquote{font-size:.91rem;line-height:1.68;color:var(--muted);margin-bottom:17px;font-style:italic}
+.tquote::before{content:"\201C"}.tquote::after{content:"\201D"}
+.tauth{display:flex;align-items:center;gap:10px}
+.tav{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--cyan));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.tname{font-weight:700;font-size:.86rem}.trole{font-size:.76rem;color:var(--muted2)}
+/* Pricing */
+.pg{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:48px;max-width:680px}
+.pc{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:32px;transition:all .28s;position:relative}
+.pc.pf{border-color:var(--bordera);background:rgba(124,58,237,.06);box-shadow:0 0 0 1px rgba(124,58,237,.16),0 36px 72px rgba(124,58,237,.1)}
+.pbadge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 12px;border-radius:999px;white-space:nowrap}
+.ptier{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:11px}
+.pc.pf .ptier{color:var(--accentl)}
+.pamt{font-size:2.8rem;font-weight:900;letter-spacing:-.03em;line-height:1;margin-bottom:5px}
+.pper{font-size:.85rem;color:var(--muted2);margin-bottom:20px}
+.pdiv{height:1px;background:var(--border);margin-bottom:20px}
+.pfl{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+.pfl li{display:flex;align-items:center;gap:9px;font-size:.89rem;color:var(--muted)}
+.pck{width:16px;height:16px;border-radius:50%;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.26);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.6rem;color:var(--green)}
+.pbtn{display:block;text-align:center;padding:11px 16px;border-radius:999px;font-weight:700;font-size:.9rem;transition:all .24s;border:1px solid var(--border);color:var(--muted);background:var(--panel)}
+.pbtn:hover{border-color:rgba(255,255,255,.16);color:var(--text)}
+.pbtn.pbt{background:var(--accent);color:#fff;border-color:transparent}
+.pbtn.pbt:hover{background:#6d28d9;box-shadow:0 8px 28px var(--accentg);transform:translateY(-1px)}
+/* CTA */
+.cta-s{padding:112px 24px;text-align:center;position:relative;overflow:hidden}
+.cta-s::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:580px;height:360px;background:radial-gradient(ellipse,rgba(124,58,237,.16),transparent 68%);pointer-events:none}
+.ctat{font-size:clamp(1.9rem,5vw,3.6rem);font-weight:900;letter-spacing:-.025em;margin-bottom:17px}
+.ctasub{font-size:1.02rem;color:var(--muted);margin-bottom:34px}
+/* Footer */
+footer{border-top:1px solid var(--border);padding:34px 24px}
+.fi2{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.fbr{display:flex;align-items:center;gap:8px;font-weight:700}
+.fli{display:flex;gap:20px;font-size:.84rem;color:var(--muted2)}
+.fli a:hover{color:var(--muted)}
+.fco{font-size:.8rem;color:var(--muted2)}
+/* Reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .68s ease,transform .68s ease}
+.reveal.visible{opacity:1;transform:none}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+/* Responsive */
+@media(max-width:740px){.nl .hm{display:none}.shell{padding:0 15px}section{padding:64px 0}.hw::before{display:none}.sc{padding:20px 13px}}
+@media(max-width:460px){.bp,.bg{padding:12px 17px;font-size:.87rem}.ctas{flex-direction:column;align-items:center}}
+    </style>
+  </head>
+  <body>
+    <canvas id="mc"></canvas>
+    <div class="site">
+
+      <nav class="nav">
+        <a href="/" class="nb">
+          <svg class="ni" viewBox="0 0 32 32" fill="none">
+            <circle cx="16" cy="4" r="2.5" fill="#a78bfa"/>
+            <circle cx="28" cy="12" r="2.5" fill="#a78bfa"/>
+            <circle cx="28" cy="22" r="2.5" fill="#22d3ee"/>
+            <circle cx="16" cy="28" r="2.5" fill="#a78bfa"/>
+            <circle cx="4" cy="22" r="2.5" fill="#a78bfa"/>
+            <circle cx="4" cy="12" r="2.5" fill="#a78bfa"/>
+            <circle cx="16" cy="16" r="3" fill="#22d3ee"/>
+            <line x1="16" y1="4" x2="28" y2="12" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+            <line x1="28" y1="12" x2="28" y2="22" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+            <line x1="28" y1="22" x2="16" y2="28" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+            <line x1="16" y1="28" x2="4" y2="22" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+            <line x1="4" y1="22" x2="4" y2="12" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+            <line x1="4" y1="12" x2="16" y2="4" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+            <line x1="16" y1="16" x2="28" y2="22" stroke="#22d3ee" stroke-width=".9" opacity=".65"/>
+            <line x1="16" y1="16" x2="4" y2="12" stroke="#7c3aed" stroke-width=".9" opacity=".5"/>
+          </svg>
+          MeshWire
+        </a>
+        <div class="nl">
+          <a href="#features" class="hm">Features</a>
+          <a href="#how-it-works" class="hm">Docs</a>
+          <a href="#pricing" class="hm">Pricing</a>
+          <a href="/auth/github" class="btn-n">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            Sign in
+          </a>
+        </div>
+      </nav>
+
+      <section class="hero">
+        <div class="badge"><span class="bd"></span>Multi-agent infrastructure · Beta</div>
+        <h1 class="h1">Wire your<br/><span class="grad">agents together.</span></h1>
+        <p class="hs">The messaging layer for real multi-agent systems. Connect agents running in any framework, any runtime, any machine — without changing your stack.</p>
+        <div class="ctas">
+          <a href="/auth/github" class="bp">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+            Sign in with GitHub — it's free
+          </a>
+          <a href="#how-it-works" class="bg">See how it works →</a>
+        </div>
+        <div class="term">
+          <div class="tbar"><span class="td r"></span><span class="td y"></span><span class="td g"></span><span class="tt">meshwire · quickstart</span></div>
+          <div class="tbody">
+            <div class="tc2"># 1. Set your token from the dashboard</div>
+            <div class="tk">export MESHWIRE_TOKEN=mw_a3f7b9c4d2e1...</div>
+            <div style="height:5px"></div>
+            <div class="tc2"># 2. Create a mesh</div>
+            <div class="tk">curl -X POST $MESHWIRE_URL/mesh \</div>
+            <div style="padding-left:12px" class="tk">&nbsp;-H "Authorization: Bearer $MESHWIRE_TOKEN" \</div>
+            <div style="padding-left:12px" class="tk">&nbsp;-d '{"name":"my-fleet"}'</div>
+            <div class="to">{ "mesh_id": <span class="tv">"kR9xQpLmW3aZ"</span> }</div>
+            <div style="height:5px"></div>
+            <div class="tc2"># 3. Get the full agent integration guide</div>
+            <div class="tk">curl $MESHWIRE_URL/mesh/kR9xQpLmW3aZ/integrate</div>
+            <div class="to">&#8594; steps + tool defs + skill document returned &#10003;</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features">
+        <div class="shell">
+          <div class="reveal"><div class="sl">Why MeshWire</div><h2 class="st">Everything your agents need<br/>to talk to each other.</h2><p class="ss">No new protocol. No new framework. A hosted messaging layer that fits into what you already have.</p></div>
+          <div class="fg">
+            <article class="fc reveal"><div class="fi">&#128273;</div><div class="ftit">Instant API Token</div><div class="fd">Sign in once with GitHub and get a <code style="font-family:var(--mono);font-size:.83em;color:var(--cyan)">mw_</code> token immediately. No wizard, no email wait.</div></article>
+            <article class="fc reveal"><div class="fi">&#128376;</div><div class="ftit">Multi-Agent Mesh</div><div class="fd">Register agents from Copilot CLI, LangChain, AutoGen, Python scripts, or raw HTTP. All in one mesh.</div></article>
+            <article class="fc reveal"><div class="fi">&#128225;</div><div class="ftit">Long-Poll Delivery</div><div class="fd">Telegram-style getUpdates. Connections hold open until a message arrives. No polling loops, no missed messages.</div></article>
+            <article class="fc reveal"><div class="fi">&#128275;</div><div class="ftit">Framework-Free</div><div class="fd">MeshWire is a REST API. If your agent makes HTTP requests, it can join a mesh. No SDK. No lock-in.</div></article>
+            <article class="fc reveal"><div class="fi">&#128203;</div><div class="ftit">Integration Bootstrap</div><div class="fd">Call <code style="font-family:var(--mono);font-size:.83em;color:var(--cyan)">/integrate</code> and get tool defs, curl examples, and a SKILL.md guide in one response.</div></article>
+            <article class="fc reveal"><div class="fi">&#9889;</div><div class="ftit">Production Infrastructure</div><div class="fd">ECS Fargate, DynamoDB, Application Load Balancer. Built on AWS with circuit breakers and persistence.</div></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" style="background:rgba(255,255,255,.015);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div class="shell">
+          <div class="reveal"><div class="sl">How it works</div><h2 class="st">From sign-in to wired agents<br/>in under 5 minutes.</h2></div>
+          <div class="hw">
+            <div class="sc reveal"><div class="sn">1</div><div class="stit">Sign in &amp; get your token</div><div class="sdesc">GitHub OAuth in one click. Your <code style="font-family:var(--mono);font-size:.83em;color:var(--cyan)">mw_</code> token is on your dashboard immediately — shown once, yours to save.</div><div class="cb"><span class="cc"># Dashboard shows on first login:</span><br/><span class="ck">MESHWIRE_TOKEN</span>=<span class="cs">mw_a3f7b9...</span><br/><span class="ck">MESHWIRE_URL</span>=<span class="cs">https://meshwire.io</span></div></div>
+            <div class="sc reveal"><div class="sn">2</div><div class="stit">Create a mesh &amp; register</div><div class="sdesc">One POST creates a mesh. Each agent registers with a name and gets an agent_id. That's the entire setup.</div><div class="cb"><span class="cp">POST</span> <span class="ck">/mesh/:meshId/agents</span><br/><span class="cs">{</span> <span class="ck">"name"</span>: <span class="cs">"researcher"</span> <span class="cs">}</span><br/><span class="cc">&#8594; </span><span class="cs">{ agent_id: "xK2m..." }</span></div></div>
+            <div class="sc reveal"><div class="sn">3</div><div class="stit">Send messages &amp; coordinate</div><div class="sdesc">Agents send and receive JSON messages with priorities, broadcast support, and threaded replies.</div><div class="cb"><span class="cp">POST</span> <span class="ck">/mesh/:meshId/messages</span><br/><span class="cs">{</span> <span class="ck">"recipient_id"</span>: <span class="cs">"*"</span>,<br/>&nbsp;&nbsp;<span class="ck">"content"</span>: <span class="cs">"task ready"</span> <span class="cs">}</span></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="shell">
+          <div class="reveal"><div class="sl">From developers</div><h2 class="st">Built by someone who hit<br/>every wall first.</h2><p class="ss">MeshWire was built to solve a real problem: agents that work locally but can't coordinate across machines or runtimes.</p></div>
+          <div class="tg">
+            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">The /integrate endpoint sold me. My Copilot CLI agent got a full integration guide from a single GET request. That kind of DX doesn't exist anywhere else.</div><div class="tauth"><div class="tav">AK</div><div><div class="tname">Alex K.</div><div class="trole">AI Engineer &#183; LangChain</div></div></div></div>
+            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">Three agents — researcher, coder, reviewer — running on different machines and talking within 15 minutes. The long-poll just works. No missed messages.</div><div class="tauth"><div class="tav">MR</div><div><div class="tname">Marcus R.</div><div class="trole">Senior SWE &#183; multi-agent systems</div></div></div></div>
+            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">After shipping three agentic systems, MeshWire is the piece I wish had existed on day one. Just an HTTP API that connects agents — no framework baggage.</div><div class="tauth"><div class="tav">SP</div><div><div class="tname">Sophia P.</div><div class="trole">Tech Lead &#183; autonomous pipelines</div></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" style="background:rgba(255,255,255,.015);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div class="shell">
+          <div class="reveal"><div class="sl">Pricing</div><h2 class="st">Start free.<br/>Upgrade when you ship.</h2><p class="ss">Generous free tier for real projects. Upgrade when your fleet grows past a single mesh.</p></div>
+          <div class="pg reveal">
+            <div class="pc"><div class="ptier">Free</div><div class="pamt">$0</div><div class="pper">forever &#183; no credit card</div><div class="pdiv"></div><ul class="pfl"><li><span class="pck">&#10003;</span>1 mesh</li><li><span class="pck">&#10003;</span>10 agents per mesh</li><li><span class="pck">&#10003;</span>Unlimited messages</li><li><span class="pck">&#10003;</span>API token included</li><li><span class="pck">&#10003;</span>/integrate endpoint</li><li><span class="pck">&#10003;</span>Long-poll delivery</li></ul><a href="/auth/github" class="pbtn">Get started free</a></div>
+            <div class="pc pf"><div class="pbadge">Most popular</div><div class="ptier">Pro</div><div class="pamt">$10</div><div class="pper">per month &#183; cancel anytime</div><div class="pdiv"></div><ul class="pfl"><li><span class="pck">&#10003;</span>Unlimited meshes</li><li><span class="pck">&#10003;</span>Unlimited agents</li><li><span class="pck">&#10003;</span>Unlimited messages</li><li><span class="pck">&#10003;</span>Priority support</li><li><span class="pck">&#10003;</span>Team features (soon)</li><li><span class="pck">&#10003;</span>Usage analytics (soon)</li></ul><a href="/upgrade" class="pbtn pbt">Upgrade to Pro &#8594;</a></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="cta-s">
+        <div class="shell" style="position:relative;z-index:1">
+          <div class="reveal">
+            <h2 class="ctat">Ready to wire<br/><span class="grad">your agents?</span></h2>
+            <p class="ctasub">Sign in with GitHub. Get your token. Start building in minutes.</p>
+            <a href="/auth/github" class="bp" style="font-size:.98rem;padding:15px 30px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+              Sign in with GitHub — free forever
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="shell">
+          <div class="fi2">
+            <div class="fbr">
+              <svg width="21" height="21" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="4" r="2.5" fill="#a78bfa"/><circle cx="28" cy="12" r="2.5" fill="#a78bfa"/><circle cx="28" cy="22" r="2.5" fill="#22d3ee"/><circle cx="16" cy="28" r="2.5" fill="#a78bfa"/><circle cx="4" cy="22" r="2.5" fill="#a78bfa"/><circle cx="4" cy="12" r="2.5" fill="#a78bfa"/><circle cx="16" cy="16" r="3" fill="#22d3ee"/><line x1="16" y1="4" x2="28" y2="12" stroke="#7c3aed" stroke-width="1.2" opacity=".8"/><line x1="28" y1="12" x2="28" y2="22" stroke="#7c3aed" stroke-width="1.2" opacity=".8"/><line x1="28" y1="22" x2="16" y2="28" stroke="#7c3aed" stroke-width="1.2" opacity=".8"/><line x1="16" y1="28" x2="4" y2="22" stroke="#7c3aed" stroke-width="1.2" opacity=".8"/><line x1="4" y1="22" x2="4" y2="12" stroke="#7c3aed" stroke-width="1.2" opacity=".8"/><line x1="4" y1="12" x2="16" y2="4" stroke="#7c3aed" stroke-width="1.2" opacity=".8"/><line x1="16" y1="16" x2="28" y2="22" stroke="#22d3ee" stroke-width=".9" opacity=".65"/><line x1="16" y1="16" x2="4" y2="12" stroke="#7c3aed" stroke-width=".9" opacity=".5"/></svg>
+              MeshWire
+            </div>
+            <div class="fli"><a href="#features">Features</a><a href="#how-it-works">Docs</a><a href="#pricing">Pricing</a><a href="/auth/github">Sign in</a></div>
+            <div class="fco">&#169; 2026 MeshWire &#183; meshwire.io</div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+(function(){
+  const c=document.getElementById('mc'),ctx=c.getContext('2d');
+  let W,H,ns;
+  const N=window.innerWidth<600?30:58,D=window.innerWidth<600?120:165,S=.25;
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight}
+  function init(){ns=Array.from({length:N},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*S,vy:(Math.random()-.5)*S,r:Math.random()*1.5+.7,cy:Math.random()<.09}))}
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(let i=0;i<ns.length;i++){for(let j=i+1;j<ns.length;j++){
+      const a=ns[i],b=ns[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy);
+      if(d<D){const al=(1-d/D)*.34;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=a.cy||b.cy?'rgba(34,211,238,'+(al*.72)+')':'rgba(124,58,237,'+al+')';ctx.lineWidth=.72;ctx.stroke()}
+    }}
+    for(const n of ns){
+      ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+      if(n.cy){ctx.fillStyle='rgba(34,211,238,.86)';ctx.shadowColor='rgba(34,211,238,.6)';ctx.shadowBlur=7}
+      else{ctx.fillStyle='rgba(167,139,250,.68)';ctx.shadowBlur=0}
+      ctx.fill();ctx.shadowBlur=0;
+      n.x+=n.vx;n.y+=n.vy;
+      if(n.x<-14)n.x=W+14;if(n.x>W+14)n.x=-14;if(n.y<-14)n.y=H+14;if(n.y>H+14)n.y=-14;
+    }
+    requestAnimationFrame(draw);
+  }
+  resize();init();draw();
+  window.addEventListener('resize',()=>{resize();init()});
+  const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:.1,rootMargin:'0px 0px -32px 0px'});
+  document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4)*.065+'s';obs.observe(el)});
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.getAttribute('href').slice(1))?.scrollIntoView({behavior:'smooth',block:'start'})})});
+})();
+    </script>
+  </body>
+</html>`;
+
+writeFileSync(join(__dirname, '..', 'views', 'landing.html'), html, 'utf8');
+console.log('Written landing.html:', html.length, 'chars');

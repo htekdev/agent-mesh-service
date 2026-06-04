@@ -5,10 +5,14 @@ import helmet from "helmet";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import { meshRouter } from "./routes/mesh.js";
 import { integrateRouter } from "./routes/integrate.js";
 import { authRouter, configurePassport } from "./routes/auth.js";
 import { dashboardRouter } from "./routes/dashboard.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,6 +35,8 @@ app.use(
 );
 app.use(cors());
 app.use(cookieParser());
+// Serve static assets (logo, etc.)
+app.use(express.static(join(__dirname, "public")));
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "dev-secret-change-in-prod",
