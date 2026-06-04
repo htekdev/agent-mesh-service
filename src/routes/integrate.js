@@ -25,7 +25,10 @@ function buildIntegrationGuide(meshId, format) {
       request: {
         method: "POST",
         path: `/mesh/${meshId}/agents`,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer mw_your_token_here",
+        },
         body: {
           name: "your-agent-name",
           description: "What this agent does",
@@ -57,7 +60,10 @@ function buildIntegrationGuide(meshId, format) {
       request: {
         method: "POST",
         path: `/mesh/${meshId}/messages`,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer mw_your_token_here",
+        },
         body: {
           sender_id: "your-agent-id",
           recipient_id: "target-agent-id-or-*-for-broadcast",
@@ -80,6 +86,9 @@ function buildIntegrationGuide(meshId, format) {
       request: {
         method: "GET",
         path: `/mesh/${meshId}/messages`,
+        headers: {
+          Authorization: "Bearer mw_your_token_here",
+        },
         query_params: {
           offset: "Return messages with ID > offset (default: 0)",
           timeout: "Long-poll timeout in seconds (default: 30, max: 60)",
@@ -100,7 +109,10 @@ function buildIntegrationGuide(meshId, format) {
       request: {
         method: "POST",
         path: `/mesh/${meshId}/messages/{messageId}/reply`,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer mw_your_token_here",
+        },
         body: {
           sender_id: "your-agent-id",
           content: "Your reply content",
@@ -118,6 +130,9 @@ function buildIntegrationGuide(meshId, format) {
       request: {
         method: "GET",
         path: `/mesh/${meshId}/agents`,
+        headers: {
+          Authorization: "Bearer mw_your_token_here",
+        },
       },
       response_example: {
         agents: [
@@ -166,6 +181,7 @@ function buildIntegrationGuide(meshId, format) {
       implementation: {
         method: "POST",
         url: `${meshUrl}/messages`,
+        headers: { Authorization: "Bearer {{MESHWIRE_TOKEN}}" },
         body_template: {
           sender_id: "{{YOUR_AGENT_ID}}",
           recipient_id: "{{recipient_id}}",
@@ -204,6 +220,7 @@ function buildIntegrationGuide(meshId, format) {
       implementation: {
         method: "GET",
         url: `${meshUrl}/messages?offset={{offset}}&timeout={{timeout}}&recipient={{YOUR_AGENT_ID}}&limit={{limit}}`,
+        headers: { Authorization: "Bearer {{MESHWIRE_TOKEN}}" },
       },
     },
     {
@@ -227,6 +244,7 @@ function buildIntegrationGuide(meshId, format) {
       implementation: {
         method: "POST",
         url: `${meshUrl}/messages/{{message_id}}/reply`,
+        headers: { Authorization: "Bearer {{MESHWIRE_TOKEN}}" },
         body_template: {
           sender_id: "{{YOUR_AGENT_ID}}",
           content: "{{content}}",
@@ -243,6 +261,7 @@ function buildIntegrationGuide(meshId, format) {
       implementation: {
         method: "GET",
         url: `${meshUrl}/agents`,
+        headers: { Authorization: "Bearer {{MESHWIRE_TOKEN}}" },
       },
     },
   ];
@@ -259,7 +278,10 @@ This mesh enables asynchronous cross-agent communication via long-polling REST A
 
 ### 1. Register Your Agent
 \`\`\`bash
+export MESHWIRE_TOKEN=mw_your_token_here
+
 curl -X POST ${meshUrl}/agents \\
+  -H "Authorization: Bearer $MESHWIRE_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{"name": "my-agent", "description": "My agent description", "workspace": "my-workspace"}'
 \`\`\`
@@ -269,25 +291,28 @@ Save the returned \`agent_id\` — you need it for all message operations.
 ### 2. Send a Message
 \`\`\`bash
 curl -X POST ${meshUrl}/messages \\
+  -H "Authorization: Bearer $MESHWIRE_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{"sender_id": "YOUR_AGENT_ID", "content": "Hello mesh!", "recipient_id": "*"}'
 \`\`\`
 
 ### 3. Poll for Messages
 \`\`\`bash
-curl "${meshUrl}/messages?recipient=YOUR_AGENT_ID&timeout=30&offset=0"
+curl -H "Authorization: Bearer $MESHWIRE_TOKEN" \\
+  "${meshUrl}/messages?recipient=YOUR_AGENT_ID&timeout=30&offset=0"
 \`\`\`
 
 ### 4. Reply to a Message
 \`\`\`bash
 curl -X POST ${meshUrl}/messages/MESSAGE_ID/reply \\
+  -H "Authorization: Bearer $MESHWIRE_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{"sender_id": "YOUR_AGENT_ID", "content": "Got it!"}'
 \`\`\`
 
 ### 5. List Agents
 \`\`\`bash
-curl "${meshUrl}/agents"
+curl -H "Authorization: Bearer $MESHWIRE_TOKEN" "${meshUrl}/agents"
 \`\`\`
 
 ## Python Example
@@ -295,9 +320,10 @@ curl "${meshUrl}/agents"
 import requests
 
 BASE = "${meshUrl}"
+HEADERS = {"Authorization": "Bearer mw_your_token_here"}
 
 # Register
-agent = requests.post(f"{BASE}/agents", json={
+agent = requests.post(f"{BASE}/agents", headers=HEADERS, json={
     "name": "python-agent",
     "description": "My Python agent",
     "workspace": "my-workspace"
@@ -306,14 +332,14 @@ agent = requests.post(f"{BASE}/agents", json={
 agent_id = agent["agent_id"]
 
 # Send message
-requests.post(f"{BASE}/messages", json={
+requests.post(f"{BASE}/messages", headers=HEADERS, json={
     "sender_id": agent_id,
     "content": "Hello from Python!",
     "recipient_id": "*"
 })
 
 # Poll for messages
-messages = requests.get(f"{BASE}/messages", params={
+messages = requests.get(f"{BASE}/messages", headers=HEADERS, params={
     "recipient": agent_id,
     "timeout": 30,
     "offset": 0
@@ -323,24 +349,29 @@ messages = requests.get(f"{BASE}/messages", params={
 ## JavaScript/Node.js Example
 \`\`\`javascript
 const BASE = "${meshUrl}";
+const headers = {
+  Authorization: "Bearer mw_your_token_here",
+  "Content-Type": "application/json",
+};
 
 // Register
 const agent = await fetch(\`\${BASE}/agents\`, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers,
   body: JSON.stringify({ name: "js-agent", description: "My JS agent", workspace: "my-workspace" })
 }).then(r => r.json());
 
 // Send message
 await fetch(\`\${BASE}/messages\`, {
   method: "POST",
-  headers: { "Content-Type": "application/json" },
+  headers,
   body: JSON.stringify({ sender_id: agent.agent_id, content: "Hello!", recipient_id: "*" })
 });
 
 // Poll (long-poll)
 const { messages } = await fetch(
-  \`\${BASE}/messages?recipient=\${agent.agent_id}&timeout=30&offset=0\`
+  \`\${BASE}/messages?recipient=\${agent.agent_id}&timeout=30&offset=0\`,
+  { headers: { Authorization: "Bearer mw_your_token_here" } }
 ).then(r => r.json());
 \`\`\`
 
@@ -408,11 +439,14 @@ integrateRouter.get("/integrate", (_req, res) => {
       base_url: baseUrl,
       mesh_id: null,
       message:
-        "No mesh specified. Create a mesh first, then use /mesh/{meshId}/integrate for full integration instructions.",
+        "No mesh specified. Create a mesh first, then use /mesh/{meshId}/integrate for full integration instructions. Sign in at meshwire.io to get an API token first.",
       create_mesh: {
         method: "POST",
         url: `${baseUrl}/mesh`,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer mw_your_token_here",
+        },
         body: {
           name: "my-mesh-name",
           description: "Description of this mesh network",
@@ -424,7 +458,7 @@ integrateRouter.get("/integrate", (_req, res) => {
         },
       },
       next_step:
-        "After creating a mesh, visit GET /mesh/{meshId}/integrate?format=all for full integration instructions including tool definitions and skill documents.",
+        "After signing in, getting your API token, and creating a mesh, visit GET /mesh/{meshId}/integrate?format=all for full integration instructions including tool definitions and skill documents.",
       available_formats: {
         all: "Complete guide with steps, tool definitions, and skill document (default)",
         tools: "Steps + OpenAPI-style tool definitions only",

@@ -18,14 +18,12 @@ export const ddb = DynamoDBDocumentClient.from(client, {
   marshallOptions: { removeUndefinedValues: true },
 });
 
-// Table names from environment
 export const TABLES = {
   meshes: process.env.MESHES_TABLE || "agent-mesh-meshes",
   agents: process.env.AGENTS_TABLE || "agent-mesh-agents",
   messages: process.env.MESSAGES_TABLE || "agent-mesh-messages",
+  users: process.env.USERS_TABLE || "agent-mesh-users",
 };
-
-// ─── Mesh Operations ─────────────────────────────────────────────
 
 export async function createMesh(mesh) {
   await ddb.send(new PutCommand({ TableName: TABLES.meshes, Item: mesh }));
@@ -39,7 +37,28 @@ export async function getMesh(meshId) {
   return result.Item || null;
 }
 
-// ─── Agent Operations ────────────────────────────────────────────
+export async function listMeshesByOwner(userId) {
+  const result = await ddb.send(
+    new ScanCommand({
+      TableName: TABLES.meshes,
+      FilterExpression: "owner_id = :uid",
+      ExpressionAttributeValues: { ":uid": userId },
+    })
+  );
+  return result.Items || [];
+}
+
+export async function countMeshesByOwner(userId) {
+  const result = await ddb.send(
+    new ScanCommand({
+      TableName: TABLES.meshes,
+      FilterExpression: "owner_id = :uid",
+      ExpressionAttributeValues: { ":uid": userId },
+      Select: "COUNT",
+    })
+  );
+  return result.Count || 0;
+}
 
 export async function registerAgent(agent) {
   await ddb.send(new PutCommand({ TableName: TABLES.agents, Item: agent }));
@@ -76,8 +95,6 @@ export async function updateAgentHeartbeat(meshId, agentId) {
   );
 }
 
-// ─── Message Operations ──────────────────────────────────────────
-
 export async function createMessage(message) {
   await ddb.send(new PutCommand({ TableName: TABLES.messages, Item: message }));
   return message;
@@ -90,10 +107,6 @@ export async function getMessage(meshId, messageId) {
   return result.Item || null;
 }
 
-/**
- * Query messages for a mesh, optionally filtered by recipient and offset.
- * Used for long-polling — returns messages with message_id > offset.
- */
 export async function queryMessages(meshId, { recipientId, offset = 0, limit = 50 } = {}) {
   const params = {
     TableName: TABLES.messages,
@@ -107,7 +120,6 @@ export async function queryMessages(meshId, { recipientId, offset = 0, limit = 5
   };
 
   if (recipientId) {
-    // Filter by recipient on the main table (recipient_id is sort key on GSI, can't FilterExpression it there)
     params.FilterExpression = "recipient_id = :rid OR recipient_id = :broadcast";
     params.ExpressionAttributeValues[":rid"] = recipientId;
     params.ExpressionAttributeValues[":broadcast"] = "*";
