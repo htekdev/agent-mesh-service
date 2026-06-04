@@ -91,11 +91,30 @@ export const authRouter = Router();
 
 authRouter.get("/github", passport.authenticate("github", { scope: ["user:email"] }));
 
+// GitHub OAuth callback — handle both success and all failure modes gracefully.
+// passport.authenticate can fail in two ways:
+//   1. Auth failure (bad state, denied) → failureRedirect kicks in
+//   2. Thrown exception (network error, DynamoDB down) → caught by our error handler below
 authRouter.get(
   "/github/callback",
-  passport.authenticate("github", { failureRedirect: "/" }),
-  (_req, res) => {
-    res.redirect("/dashboard");
+  (req, res, next) => {
+    passport.authenticate("github", (err, user) => {
+      if (err) {
+        console.error("[OAuth] Callback error:", err.message || err);
+        return res.redirect("/?error=auth_error");
+      }
+      if (!user) {
+        console.warn("[OAuth] No user returned — auth denied or state mismatch");
+        return res.redirect("/?error=auth_failed");
+      }
+      req.logIn(user, (loginErr) => {
+        if (loginErr) {
+          console.error("[OAuth] Login error:", loginErr.message);
+          return res.redirect("/?error=login_error");
+        }
+        return res.redirect("/dashboard");
+      });
+    })(req, res, next);
   }
 );
 

@@ -21,6 +21,9 @@ configurePassport();
 
 app.use(
   helmet({
+    // Disable HSTS — service runs on HTTP only until Phase 3 (ACM + HTTPS).
+    // HSTS on an HTTP-only site causes browsers to block the OAuth callback redirect.
+    hsts: false,
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
@@ -29,6 +32,8 @@ app.use(
         imgSrc: ["'self'", "data:", "https://avatars.githubusercontent.com", "https://github.githubassets.com"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        // No upgradeInsecureRequests — site is HTTP-only until HTTPS lands in Phase 3
+        upgradeInsecureRequests: null,
       },
     },
   })
