@@ -11,6 +11,7 @@ import { meshRouter } from "./routes/mesh.js";
 import { integrateRouter } from "./routes/integrate.js";
 import { authRouter, configurePassport } from "./routes/auth.js";
 import { dashboardRouter } from "./routes/dashboard.js";
+import { billingRouter } from "./routes/billing.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -64,6 +65,10 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/auth", authRouter);
+// Billing — webhook MUST come before express.json() (needs raw body for sig verification)
+app.use("/billing", billingRouter);
+// Also expose /upgrade at root level (matches dashboard CTA links)
+app.use("/upgrade", (req, res) => res.redirect(303, "/billing/upgrade"));
 app.use("/", dashboardRouter);
 app.use("/mesh", integrateRouter);
 app.use("/", integrateRouter);

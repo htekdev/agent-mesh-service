@@ -114,6 +114,28 @@ export async function regenerateToken(userId) {
   return plainToken;
 }
 
+export async function updateUserPlan(userId, plan) {
+  await ddb.send(
+    new UpdateCommand({
+      TableName: TABLES.users,
+      Key: { user_id: userId },
+      UpdateExpression: "SET plan = :plan",
+      ExpressionAttributeValues: { ":plan": plan },
+    })
+  );
+}
+
+export async function setStripeCustomerId(userId, stripeCustomerId) {
+  await ddb.send(
+    new UpdateCommand({
+      TableName: TABLES.users,
+      Key: { user_id: userId },
+      UpdateExpression: "SET stripe_customer_id = :cid",
+      ExpressionAttributeValues: { ":cid": stripeCustomerId },
+    })
+  );
+}
+
 export async function listUserMeshes(userId) {
   return listMeshesByOwner(userId);
 }

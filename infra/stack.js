@@ -107,6 +107,10 @@ class AgentMeshStack extends cdk.Stack {
           BASE_URL:
             process.env.BASE_URL ||
             "http://AgentM-MeshS-C9BTpnBG6o3j-892354001.us-east-1.elb.amazonaws.com",
+          // ─── Phase 2: Stripe billing ─────────────────────────────────────
+          STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
+          STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || "",
+          STRIPE_PRICE_ID: process.env.STRIPE_PRICE_ID || "",
         },
         logDriver: ecs.LogDrivers.awsLogs({
           streamPrefix: "agent-mesh",
