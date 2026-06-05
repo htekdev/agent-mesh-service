@@ -91,27 +91,65 @@ export const authRouter = Router();
 
 authRouter.get("/github", passport.authenticate("github", { scope: ["user:email"] }));
 
-// GitHub OAuth callback — handle both success and all failure modes gracefully.
-// passport.authenticate can fail in two ways:
-//   1. Auth failure (bad state, denied) → failureRedirect kicks in
-//   2. Thrown exception (network error, DynamoDB down) → caught by our error handler below
+// ─── CLI Auth — browser-based login that returns token to local HTTP server ──
+// GET /auth/cli?port=PORT — starts GitHub OAuth, stores CLI port in session
+authRouter.get("/cli", (req, res) => {
+  const port = parseInt(req.query.port, 10);
+  if (!port || port < 1024 || port > 65535) {
+    return res.status(400).send("Invalid port. Usage: /auth/cli?port=57777");
+  }
+  // Store CLI port in session so the callback knows to redirect to localhost
+  req.session.cliPort = port;
+  return passport.authenticate("github", { scope: ["user:email"] })(req, res);
+});
+
+// GitHub OAuth callback — handle web and CLI flows.
 authRouter.get(
   "/github/callback",
   (req, res, next) => {
     passport.authenticate("github", (err, user) => {
       if (err) {
         console.error("[OAuth] Callback error:", err.message || err);
+        const cliPort = req.session?.cliPort;
+        if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=auth_error`);
         return res.redirect("/?error=auth_error");
       }
       if (!user) {
         console.warn("[OAuth] No user returned — auth denied or state mismatch");
+        const cliPort = req.session?.cliPort;
+        if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=auth_failed`);
         return res.redirect("/?error=auth_failed");
       }
       req.logIn(user, (loginErr) => {
         if (loginErr) {
           console.error("[OAuth] Login error:", loginErr.message);
+          const cliPort = req.session?.cliPort;
+          if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=login_error`);
           return res.redirect("/?error=login_error");
         }
+
+        // CLI flow — send token back to local server
+        const cliPort = req.session?.cliPort;
+        if (cliPort) {
+          delete req.session.cliPort;
+          // Get the plain token — for new users it's in session.newToken, for existing we need to re-issue
+          const token = req.session.newToken || null;
+          if (token) {
+            delete req.session.newToken;
+            return req.session.save(() => {
+              res.redirect(`http://localhost:${cliPort}?token=${encodeURIComponent(token)}&login=${encodeURIComponent(user.login)}`);
+            });
+          }
+          // Existing user — regenerate token so CLI gets a fresh one
+          regenerateToken(user.user_id).then((freshToken) => {
+            res.redirect(`http://localhost:${cliPort}?token=${encodeURIComponent(freshToken)}&login=${encodeURIComponent(user.login)}`);
+          }).catch(() => {
+            res.redirect(`http://localhost:${cliPort}?error=token_error`);
+          });
+          return;
+        }
+
+        // Web flow — redirect to dashboard
         return res.redirect("/dashboard");
       });
     })(req, res, next);

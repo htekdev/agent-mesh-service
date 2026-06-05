@@ -1,8 +1,9 @@
-// meshwire init — configure token, URL, and mesh
+// meshwire init — configure token, URL, and mesh. Supports --harness for harness-specific setup.
 import chalk from 'chalk';
 import { createInterface } from 'readline/promises';
 import { writeConfig, readConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';
+import { resolveToken, resolveMeshId, readCredentials, writeCredentials } from '../auth.js';
 
 const MESHWIRE_URL = 'https://meshwire.io';
 
@@ -12,7 +13,53 @@ function prompt(rl, question, defaultVal) {
 }
 
 export async function cmdInit(opts) {
+  // ── Harness-specific setup ────────────────────────────────────────────────
+  if (opts.harness) {
+    const harness = opts.harness.toLowerCase();
+    const config = readConfig();
+    const meshId = opts.mesh || resolveMeshId();
+    const token = opts.token || resolveToken();
+    const url = opts.url || config.url || MESHWIRE_URL;
+
+    switch (harness) {
+      case 'copilot': {
+        const { setupCopilot } = await import('../harness/copilot.js');
+        await setupCopilot({ meshId, agentName: opts.agent, meshwireUrl: url, workspaceName: opts.workspace });
+        return;
+      }
+      case 'claude':
+      case 'cursor': {
+        const { setupClaude } = await import('../harness/claude.js');
+        await setupClaude({ meshId, agentName: opts.agent, meshwireUrl: url, workspaceName: opts.workspace });
+        return;
+      }
+      case 'hermes': {
+        const { setupHermes } = await import('../harness/hermes.js');
+        await setupHermes({ meshId, agentName: opts.agent, meshwireUrl: url, workspaceName: opts.workspace });
+        return;
+      }
+      default:
+        console.error(chalk.red(`  Unknown harness: ${harness}`));
+        console.error(chalk.dim('  Supported: copilot, claude, cursor, hermes\n'));
+        process.exit(1);
+    }
+  }
+
   console.log('\n' + chalk.bold('🕸  MeshWire Setup') + '\n');
+
+  // Auto-detect existing token from credentials or env
+  const detectedToken = resolveToken();
+  const detectedMesh = resolveMeshId();
+
+  if (detectedToken && !opts.token) {
+    const creds = readCredentials();
+    console.log(chalk.dim(`  Found credentials for ${creds?.login || 'your account'}`));
+    console.log(chalk.dim(`  Token: mw_••••••••${detectedToken.slice(-6)}`));
+    if (detectedMesh) {
+      console.log(chalk.dim(`  Mesh:  ${detectedMesh}`));
+    }
+    console.log('');
+  }
 
   // If token + mesh passed via flags, use them directly
   if (opts.token && opts.mesh) {
@@ -21,6 +68,7 @@ export async function cmdInit(opts) {
       url: opts.url || MESHWIRE_URL,
       meshId: opts.mesh,
     });
+    writeCredentials({ token: opts.token, defaultMeshId: opts.mesh, savedAt: new Date().toISOString() });
     printSuccess(config);
     return;
   }
@@ -29,12 +77,16 @@ export async function cmdInit(opts) {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
 
   try {
-    console.log(chalk.dim(`  Get your token at: ${MESHWIRE_URL}/dashboard\n`));
+    // Suggest login if no credentials found
+    if (!detectedToken) {
+      console.log(chalk.dim(`  No credentials found. Run ${chalk.cyan('meshwire login')} for browser auth,`));
+      console.log(chalk.dim(`  or get your token at: ${MESHWIRE_URL}/dashboard\n`));
+    }
 
-    const token = opts.token || await prompt(rl, 'API token (mw_...)', existing.token);
+    const token = opts.token || detectedToken || await prompt(rl, 'API token (mw_...)', existing.token);
     if (!token || !token.startsWith('mw_')) {
       console.error(chalk.red('\n  Token must start with mw_'));
-      console.error(chalk.dim(`  Sign in at ${MESHWIRE_URL} to get yours.\n`));
+      console.error(chalk.dim(`  Run 'meshwire login' or sign in at ${MESHWIRE_URL}.\n`));
       process.exit(1);
     }
 
@@ -88,8 +140,11 @@ function printSuccess(config) {
   console.log(`  ${chalk.bold('Agent:')}  ${config.agentId || '(not registered)'}`);
   console.log(`  ${chalk.bold('URL:')}    ${config.url}`);
   console.log('\n' + chalk.dim('  Next steps:'));
-  console.log(chalk.cyan('    meshwire status') + chalk.dim('     — check connection'));
-  console.log(chalk.cyan('    meshwire listen') + chalk.dim('     — watch for messages'));
-  console.log(chalk.cyan('    meshwire send "hello"') + chalk.dim(' — send your first message'));
-  console.log(chalk.cyan('    meshwire integrate') + chalk.dim('  — get full integration guide\n'));
+  console.log(chalk.cyan('    meshwire status') + chalk.dim('                    — check connection'));
+  console.log(chalk.cyan('    meshwire listen') + chalk.dim('                    — watch for messages'));
+  console.log(chalk.cyan('    meshwire send "hello"') + chalk.dim('              — send your first message'));
+  console.log(chalk.cyan('    meshwire init --harness copilot') + chalk.dim('   — set up Copilot CLI extension'));
+  console.log(chalk.cyan('    meshwire init --harness claude') + chalk.dim('    — set up Claude Desktop MCP'));
+  console.log(chalk.cyan('    meshwire init --harness hermes') + chalk.dim('    — set up Hermes integration'));
+  console.log(chalk.cyan('    meshwire integrate') + chalk.dim('                — get full API guide\n'));
 }

@@ -9,6 +9,7 @@ import { cmdListen } from './commands/listen.js';
 import { cmdAgents } from './commands/agents.js';
 import { cmdMesh } from './commands/mesh.js';
 import { cmdIntegrate } from './commands/integrate.js';
+import { cmdLogin } from './commands/login.js';
 import { cmdMcp } from './mcp/server.js';
 
 export async function run(version) {
@@ -23,6 +24,15 @@ export async function run(version) {
     )
     .version(version, '-v, --version');
 
+  // ─── meshwire login ──────────────────────────────────────────────
+  program
+    .command('login')
+    .description('Sign in with GitHub — saves credentials to ~/.meshwire/credentials.json')
+    .option('--url <url>', 'MeshWire URL', 'https://meshwire.io')
+    .option('--force', 'Re-authenticate even if already signed in')
+    .option('--skip-mesh', 'Skip mesh setup prompt after login')
+    .action(cmdLogin);
+
   // ─── meshwire init ───────────────────────────────────────────────
   program
     .command('init')
@@ -30,6 +40,12 @@ export async function run(version) {
     .option('--token <token>', 'API token (mw_...)')
     .option('--url <url>', 'MeshWire API URL', 'https://meshwire.io')
     .option('--mesh <meshId>', 'Mesh ID to connect to')
+    .option(
+      '--harness <name>',
+      'Set up for a specific harness: copilot | claude | hermes | cursor',
+    )
+    .option('--agent <name>', 'Agent name for harness setup')
+    .option('--workspace <name>', 'Workspace name for .mesh.json')
     .action(cmdInit);
 
   // ─── meshwire status ─────────────────────────────────────────────
