@@ -5,7 +5,7 @@ import { createUser, getUserByGithubId, getUserById, regenerateToken } from "../
 
 const DEFAULT_BASE_URL =
   process.env.BASE_URL ||
-  "http://AgentM-MeshS-C9BTpnBG6o3j-892354001.us-east-1.elb.amazonaws.com";
+  "https://meshwire.io";
 
 let passportConfigured = false;
 

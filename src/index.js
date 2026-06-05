@@ -19,6 +19,9 @@ const _pkgVersion = JSON.parse(readFileSync(join(__dirname, "../package.json"), 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust the ALB proxy so sessions, cookies, and OAuth redirects work correctly
+app.set("trust proxy", 1);
+
 configurePassport();
 
 app.use(

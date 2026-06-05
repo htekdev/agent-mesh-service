@@ -7,7 +7,7 @@ import { nanoid } from "nanoid";
 
 const DEFAULT_BASE_URL =
   process.env.BASE_URL ||
-  "http://AgentM-MeshS-C9BTpnBG6o3j-892354001.us-east-1.elb.amazonaws.com";
+  "https://meshwire.io";
 
 const landingTemplateUrl = new URL("../views/landing.html", import.meta.url);
 const dashboardTemplateUrl = new URL("../views/dashboard.html", import.meta.url);

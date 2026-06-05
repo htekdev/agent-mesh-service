@@ -165,24 +165,47 @@ input,select{font:inherit}
         </div>
       </header>
 
-      <!-- Step 1 -->
+      <!-- Step 1 — Authentication -->
       <div class="sec">
-        <div class="sec-hd"><div class="sec-n">1</div><div class="sec-t">Your API token</div></div>
-        <div class="sec-st">Used by the CLI and any direct API calls. Shown once — copy it now.</div>
+        <div class="sec-hd"><div class="sec-n">1</div><div class="sec-t">Authenticate</div></div>
+        <div class="sec-st">Use the CLI to log in, or copy your API token directly.</div>
         <div class="card">
-          <div class="tc">
-            <div id="tnb" class="tnb" style="display:none">&#9888;&nbsp;<strong>Save this — it won't be shown again.</strong></div>
-            <div class="tlbl">Token</div>
-            <div class="tr">
-              <div id="tv" class="tv" onclick="selTok(this)" title="Click to select all">mw_&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</div>
-              <button class="cp" onclick="copyTok(this)">&#128203; Copy</button>
-            </div>
-            <div class="tact">
-              <button class="bs" onclick="toggleTok()">&#128065; Show / Hide</button>
-              <button class="bg" onclick="regenTok()">Regenerate &rarr;</button>
-            </div>
+          <div class="tabs" id="auth-tabs">
+            <div class="tab on" onclick="switchAuthTab('cli',this)">&#9654; CLI Login</div>
+            <div class="tab" onclick="switchAuthTab('token',this)">&#128273; API Token</div>
           </div>
-          <div id="tok-fb" class="fb"></div>
+
+          <!-- CLI Login pane (default) -->
+          <div class="pane on" id="pane-cli">
+            <p style="font-size:.84rem;color:var(--sub);margin-bottom:14px">Run this in your terminal — it opens a browser, authenticates with GitHub, and saves your credentials locally.</p>
+            <div class="cb">
+              <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="copy('meshwire login',this)">Copy</button></div>
+              <div class="cbb"><div class="cmd">meshwire login</div></div>
+            </div>
+            <ul class="gets">
+              <li>Opens browser for GitHub OAuth — no token copy-paste needed</li>
+              <li>Saves credentials to <code>~/.meshwire/config.json</code></li>
+              <li>All subsequent CLI commands authenticate automatically</li>
+              <li>Works on any machine — login once per device</li>
+            </ul>
+          </div>
+
+          <!-- API Token pane -->
+          <div class="pane" id="pane-token">
+            <div class="tc">
+              <div id="tnb" class="tnb" style="display:none">&#9888;&nbsp;<strong>Save this — it won't be shown again.</strong></div>
+              <div class="tlbl">Token</div>
+              <div class="tr">
+                <div id="tv" class="tv" onclick="selTok(this)" title="Click to select all">mw_&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</div>
+                <button class="cp" onclick="copyTok(this)">&#128203; Copy</button>
+              </div>
+              <div class="tact">
+                <button class="bs" onclick="toggleTok()">&#128065; Show / Hide</button>
+                <button class="bg" onclick="regenTok()">Regenerate &rarr;</button>
+              </div>
+            </div>
+            <div id="tok-fb" class="fb"></div>
+          </div>
         </div>
       </div>
 
@@ -191,11 +214,11 @@ input,select{font:inherit}
         <div class="sec-hd"><div class="sec-n">2</div><div class="sec-t">Connect your agent</div></div>
         <div class="sec-st">Pick your platform and run one command.</div>
         <div class="card">
-          <div class="tabs" id="ht">
-            <div class="tab on"  onclick="ht('copilot',this)">&#9881;&#xFE0F; Copilot</div>
-            <div class="tab"     onclick="ht('hermes',this)">&#128218; Hermes</div>
-            <div class="tab"     onclick="ht('pi',this)">&#960; Pi</div>
-            <div class="tab"     onclick="ht('any',this)">&#127775; Any agent</div>
+          <div class="tabs" id="harness-tabs">
+            <div class="tab on"  onclick="switchHarnessTab('copilot',this)">&#9881;&#xFE0F; Copilot</div>
+            <div class="tab"     onclick="switchHarnessTab('hermes',this)">&#128218; Hermes</div>
+            <div class="tab"     onclick="switchHarnessTab('pi',this)">&#960; Pi</div>
+            <div class="tab"     onclick="switchHarnessTab('any',this)">&#127775; Any agent</div>
           </div>
 
           <!-- Copilot -->
@@ -371,9 +394,17 @@ async function regenTok() {
 }
 
 /* ── Harness tabs ────────────────────────────────────────────── */
-function ht(id, el) {
-  document.querySelectorAll('#ht .tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+function switchHarnessTab(id, el) {
+  document.querySelectorAll('#harness-tabs .tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#harness-tabs ~ .pane').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('pane-'+id)?.classList.add('on');
+}
+
+/* ── Auth tabs (CLI / Token) ─────────────────────────────────── */
+function switchAuthTab(id, el) {
+  document.querySelectorAll('#auth-tabs .tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('#auth-tabs ~ .pane').forEach(p=>p.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('pane-'+id)?.classList.add('on');
 }
