@@ -726,10 +726,11 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
         });
       });
 
-      // Restore tab from URL hash
+      // Restore tab from URL hash — cursor is an alias for the claude tab
       const hash = location.hash.replace('#', '');
       if (hash) {
-        const matchTab = document.querySelector(`.tab[data-tab="${hash}"]`);
+        const effectiveHash = hash === 'cursor' ? 'claude' : hash;
+        const matchTab = document.querySelector(`.tab[data-tab="${effectiveHash}"]`);
         if (matchTab) matchTab.click();
       }
 
