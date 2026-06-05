@@ -1,9 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { Router } from "express";
 import { listAgents, createMesh } from "../db/dynamo.js";
-import { countUserMeshes, getMaskedToken, listUserMeshes } from "../db/users.js";
+import { getMaskedToken, listUserMeshes } from "../db/users.js";
 import { requireSessionAuth } from "./auth.js";
-import { canCreateMesh, FREE_PLAN_MESH_LIMIT_MESSAGE } from "../lib/planLimits.js";
 import { nanoid } from "nanoid";
 
 const DEFAULT_BASE_URL =
@@ -100,11 +99,6 @@ dashboardRouter.get("/api/me", requireSessionAuth, async (req, res, next) => {
 
 dashboardRouter.post("/api/meshes", requireSessionAuth, async (req, res, next) => {
   try {
-    const currentMeshCount = await countUserMeshes(req.user.user_id);
-    if (!canCreateMesh(req.user, currentMeshCount)) {
-      return res.status(403).json({ error: FREE_PLAN_MESH_LIMIT_MESSAGE });
-    }
-
     const { name, description } = req.body || {};
     const mesh = {
       mesh_id: nanoid(12),
