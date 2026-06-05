@@ -1,4 +1,4 @@
-name: Publish CLI
+name: Publish
 
 # ─── Triggers ────────────────────────────────────────────────────────────────
 # Fire on any push to main that touches the CLI package.
