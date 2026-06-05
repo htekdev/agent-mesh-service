@@ -583,6 +583,8 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             Fair-use policy: <strong style="color:var(--text)">unlimited messages</strong> for normal agent workloads. Abuse or high-volume automated flooding may result in temporary throttling.
             <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">Formal per-mesh rate limits will be documented as the service scales. Current infra handles thousands of messages/minute.</span>
+            <br/><br/>
+            <strong style="color:var(--text)">Message size limit:</strong> <strong style="color:var(--cyan)">10 KB</strong> per message. Larger payloads are rejected with a <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">400</code> error. Keep message content as references or identifiers, not full data blobs.
           </div>
         </div>
 
