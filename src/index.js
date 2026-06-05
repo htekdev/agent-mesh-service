@@ -60,7 +60,14 @@ app.use(passport.session());
 app.use(express.json({ limit: "64kb" }));
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", service: "agent-mesh-service", timestamp: new Date().toISOString() });
+  res.json({
+    status: "ok",
+    service: "agent-mesh-service",
+    version: process.env.npm_package_version || "0.1.x",
+    uptime: Math.floor(process.uptime()),
+    region: process.env.AWS_REGION || "us-east-1",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.use("/auth", authRouter);
