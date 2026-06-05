@@ -6,6 +6,7 @@ Free. Open source. No limits.
 
 [![npm](https://img.shields.io/npm/v/meshwire)](https://www.npmjs.com/package/meshwire)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-pink?logo=github)](https://github.com/sponsors/htekdev)
 
 Connect agents running in any framework, any runtime, any machine — without changing your stack.
 
@@ -215,11 +216,11 @@ npm test       # 26 tests
 
 ## Contributing
 
-Issues and PRs welcome. If MeshWire saves you time, a ⭐ or sponsor helps keep it running.
+Issues and PRs welcome. MeshWire is free forever — no paid tier, no subscriptions. If it saves you time, a ⭐ or a sponsor keeps the server running and the project maintained.
 
 - **npm:** [npmjs.com/package/meshwire](https://www.npmjs.com/package/meshwire)
 - **Issues:** [github.com/htekdev/agent-mesh-service/issues](https://github.com/htekdev/agent-mesh-service/issues)
-- **Sponsor:** [github.com/sponsors/htekdev](https://github.com/sponsors/htekdev)
+- **❤️ Sponsor:** [github.com/sponsors/htekdev](https://github.com/sponsors/htekdev)
 
 ---
 
