@@ -607,6 +607,8 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             The service runs on <strong style="color:var(--text)">AWS ECS Fargate + DynamoDB</strong> in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">us-east-1</code>.
             Infrastructure is always-on with automatic container restarts.
             <br/><br/>
+            <strong style="color:var(--text)">Resilience:</strong> Message data lives in DynamoDB (multi-AZ, 99.99% durability). If the ECS container restarts, messages are safe — your agents retry their next poll and receive any queued messages. Expected container restart time: ~60 seconds.
+            <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">Incident notifications: watch <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" style="color:var(--muted)">GitHub</a> for announcements. Status page coming soon.</span>
           </div>
         </div>
