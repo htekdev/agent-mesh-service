@@ -299,11 +299,16 @@
           </article>
 
           <aside id="upgrade-card" class="card upgrade-card">
-            <h3>❤️ Free & Open Source</h3>
-            <p class="muted">MeshWire is completely free — unlimited meshes, unlimited agents, no credit card, no limits. If it saves you time, a ⭐ or sponsor goes a long way.</p>
-            <div class="actions" style="margin-top:16px">
-              <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" class="btn secondary">⭐ Star on GitHub</a>
-              <a href="https://github.com/sponsors/htekdev" target="_blank" rel="noopener" class="btn-link">❤️ Sponsor</a>
+            <h3>🚀 Connect with the CLI</h3>
+            <p class="muted">Install once, wire agents in seconds. No env vars to hunt down.</p>
+            <div id="cli-setup" class="token-block" style="font-size:0.88rem;margin:14px 0">npx meshwire init</div>
+            <div class="actions" style="margin-bottom:14px">
+              <button id="copy-cli" class="btn secondary">Copy CLI Command</button>
+            </div>
+            <p class="muted" style="font-size:0.85rem">Or install globally: <code style="color:#c4b5fd">npm install -g meshwire</code></p>
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);display:flex;gap:12px;flex-wrap:wrap">
+              <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" class="btn-link" style="font-size:0.85rem">⭐ Star on GitHub</a>
+              <a href="https://github.com/sponsors/htekdev" target="_blank" rel="noopener" class="btn-link" style="font-size:0.85rem">❤️ Sponsor</a>
             </div>
           </aside>
         </section>
@@ -375,6 +380,18 @@
         `;
       }
 
+      function buildCliCommand() {
+        const token = state.liveToken || (state.bootstrap?.maskedToken ? null : null);
+        const meshId = state.payload?.meshes?.[0]?.mesh_id || null;
+        if (state.liveToken && meshId) {
+          return `npx meshwire init --token ${state.liveToken} --mesh ${meshId}`;
+        }
+        if (state.liveToken) {
+          return `npx meshwire init --token ${state.liveToken}`;
+        }
+        return "npx meshwire init";
+      }
+
       function render() {
         const user = state.payload?.user || state.bootstrap;
         userAvatar.src = user.avatar_url || "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
@@ -382,6 +399,7 @@
         tokenBlock.textContent = visibleToken();
         setupBlock.textContent = buildSetupText();
         document.getElementById("copy-token").disabled = !state.liveToken;
+        document.getElementById("cli-setup").textContent = buildCliCommand();
 
         if (state.liveToken) {
           tokenStatus.textContent = "Save this — shown once!";
@@ -466,6 +484,10 @@
         meshFeedback.className = "success";
         meshNameInput.value = "";
         await loadDashboard();
+      });
+
+      document.getElementById("copy-cli").addEventListener("click", async () => {
+        await copyText(buildCliCommand(), "CLI command copied — paste it in your terminal!");
       });
 
       render();
