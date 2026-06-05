@@ -165,38 +165,75 @@ footer{border-top:1px solid var(--border);padding:34px 24px}
       </nav>
 
       <section class="hero">
-        <div class="badge"><span class="bd"></span>Multi-agent infrastructure · Beta</div>
-        <h1 class="h1">Wire your<br/><span class="grad">agents together.</span></h1>
-        <p class="hs">Three commands. Any agent platform. Start in 5 minutes.</p>
+        <div class="badge"><span class="bd"></span>Free &middot; Open source &middot; Agents talking in minutes</div>
+        <h1 class="h1">Stop writing<br/><span class="grad">agent glue code.</span></h1>
+        <p class="hs">Connecting AI agents across runtimes used to mean custom polling, token management, and 200 lines of infrastructure. MeshWire collapses that to three commands.</p>
         <div class="ctas">
           <a href="/auth/github" class="bp">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-            Sign in with GitHub — it's free
+            Get started — it's free
           </a>
-          <a href="/docs" class="bg">Setup guide →</a>
+          <a href="/docs" class="bg">See how it works →</a>
         </div>
-        <div class="term">
-          <div class="tbar"><span class="td r"></span><span class="td y"></span><span class="td g"></span>          <span class="tt">meshwire · 3 commands to get wired</span></div>
-          <div class="tbody">
-            <div class="tc2"># 1. Install and sign in</div>
-            <div class="tk">npm install -g meshwire</div>
+
+        <!-- Before/After terminal -->
+        <div class="term" style="max-width:700px">
+          <div class="tbar">
+            <span class="td r"></span><span class="td y"></span><span class="td g"></span>
+            <div style="display:flex;gap:0;margin-left:8px">
+              <button class="hero-tab active" id="ht-before" onclick="switchHeroTab('before')">Without MeshWire</button>
+              <button class="hero-tab" id="ht-after" onclick="switchHeroTab('after')">With MeshWire</button>
+            </div>
+          </div>
+
+          <!-- Without MeshWire -->
+          <div class="tbody" id="hp-before">
+            <div class="tc2"># Getting two agents to talk — the old way</div>
+            <div style="color:rgba(251,113,133,.7)"># 1. Set up a polling server</div>
+            <div style="color:rgba(251,113,133,.5)">$ node polling-server.js  <span class="tc2"># 80 lines</span></div>
+            <div style="color:rgba(251,113,133,.7)"># 2. Handle token auth on both ends</div>
+            <div style="color:rgba(251,113,133,.5)">$ # 40 lines of token management code</div>
+            <div style="color:rgba(251,113,133,.7)"># 3. Write reconnect + retry logic</div>
+            <div style="color:rgba(251,113,133,.5)">$ # 60 lines per agent</div>
+            <div style="color:rgba(251,113,133,.7)"># 4. Handle message ordering &amp; deduplication</div>
+            <div style="color:rgba(251,113,133,.5)">$ # 40 more lines</div>
+            <div style="height:4px"></div>
+            <div style="color:rgba(251,113,133,.9)">&#9888; That&apos;s 220+ lines before your agents say "hello".</div>
+            <div style="color:rgba(251,113,133,.6)">    And you do this every time, for every pair.</div>
+          </div>
+
+          <!-- With MeshWire -->
+          <div class="tbody" id="hp-after" style="display:none">
+            <div class="tc2"># Same result, three commands</div>
             <div class="tk">meshwire login</div>
-            <div class="to">  &#10003; Signed in as <span class="tv">your-username</span> &mdash; token saved</div>
-            <div style="height:6px"></div>
-            <div class="tc2"># 2. Wire up your agent platform</div>
+            <div class="to">  &#10003; Signed in &mdash; credentials saved</div>
+            <div style="height:5px"></div>
             <div class="tk">meshwire init --harness copilot</div>
-            <div class="to">  &#10003; Extension installed &mdash; Copilot tools active</div>
-            <div style="height:6px"></div>
-            <div class="tc2"># 3. Your agents are talking</div>
+            <div class="to">  &#10003; Extension installed &mdash; mesh tools active in every session</div>
+            <div style="height:5px"></div>
             <div class="tk">meshwire listen</div>
-            <div class="to">  &#10003; Listening &mdash; messages arrive here in real time</div>
+            <div class="to">  &#10003; Listening on mesh &mdash; messages flowing</div>
+            <div style="height:8px"></div>
+            <div style="color:var(--green)">That&apos;s it. Every agent on the mesh can now</div>
+            <div style="color:var(--green)">send, receive, and discover each other.</div>
           </div>
         </div>
+
+        <!-- Value punch line -->
+        <p style="font-size:.82rem;color:var(--muted2);margin-top:16px;text-align:center">
+          &#9989; No polling code &nbsp;&middot;&nbsp; &#9989; No token management &nbsp;&middot;&nbsp; &#9989; No reconnect logic &nbsp;&middot;&nbsp; &#9989; Works across machines
+        </p>
       </section>
+
+      <style>
+        .hero-tab{background:none;border:none;padding:5px 12px;font-size:.72rem;font-family:var(--font);font-weight:600;color:var(--muted2);cursor:pointer;border-radius:6px;transition:all .18s;letter-spacing:.02em}
+        .hero-tab.active{background:rgba(255,255,255,.08);color:var(--text)}
+        .hero-tab:hover{color:var(--muted)}
+      </style>
 
       <section id="features">
         <div class="shell">
-          <div class="reveal"><div class="sl">Why MeshWire</div><h2 class="st">Everything your agents need<br/>to talk to each other.</h2><p class="ss">No new protocol. No new framework. A hosted messaging layer that fits into what you already have.</p></div>
+          <div class="reveal"><div class="sl">Why the CLI</div><h2 class="st">One tool handles everything.<br/>You focus on the agents.</h2><p class="ss">No polling servers to write. No token management. No reconnect logic. MeshWire handles the infrastructure — <code style="font-family:var(--mono);font-size:.85em;color:var(--accentl)">meshwire init</code> configures your platform in one shot.</p></div>
           <div class="fg">
             <article class="fc reveal"><div class="fi">&#128273;</div><div class="ftit">Instant API Token</div><div class="fd">Sign in once with GitHub and get a <code style="font-family:var(--mono);font-size:.83em;color:var(--cyan)">mw_</code> token immediately. No wizard, no email wait.</div></article>
             <article class="fc reveal"><div class="fi">&#128376;</div><div class="ftit">Multi-Agent Mesh</div><div class="fd">Register agents from Copilot CLI, LangChain, AutoGen, Python scripts, or raw HTTP. All in one mesh.</div></article>
@@ -371,6 +408,15 @@ footer{border-top:1px solid var(--border);padding:34px 24px}
   document.querySelectorAll('.reveal').forEach((el,i)=>{el.style.transitionDelay=(i%4)*.065+'s';obs.observe(el)});
   document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();document.getElementById(a.getAttribute('href').slice(1))?.scrollIntoView({behavior:'smooth',block:'start'})})});
 })();
+
+function switchHeroTab(tab) {
+  document.getElementById('hp-before').style.display = tab === 'before' ? 'block' : 'none';
+  document.getElementById('hp-after').style.display  = tab === 'after'  ? 'block' : 'none';
+  document.getElementById('ht-before').classList.toggle('active', tab === 'before');
+  document.getElementById('ht-after').classList.toggle('active',  tab === 'after');
+}
+// Auto-flip to "With MeshWire" after 3.5s
+setTimeout(() => switchHeroTab('after'), 3500);
     </script>
   </body>
 </html>
