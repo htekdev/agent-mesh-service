@@ -6,6 +6,7 @@ import session from "express-session";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import { fileURLToPath } from "url";
+import { readFileSync } from "fs";
 import { dirname, join } from "path";
 import { meshRouter } from "./routes/mesh.js";
 import { integrateRouter } from "./routes/integrate.js";
@@ -13,6 +14,7 @@ import { authRouter, configurePassport } from "./routes/auth.js";
 import { dashboardRouter } from "./routes/dashboard.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const _pkgVersion = JSON.parse(readFileSync(join(__dirname, "../package.json"), "utf8")).version;
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -63,7 +65,7 @@ app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
     service: "agent-mesh-service",
-    version: process.env.npm_package_version || "0.1.x",
+    version: _pkgVersion,
     uptime: Math.floor(process.uptime()),
     region: process.env.AWS_REGION || "us-east-1",
     timestamp: new Date().toISOString(),
