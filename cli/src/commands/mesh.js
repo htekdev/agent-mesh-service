@@ -1,6 +1,7 @@
 // meshwire mesh — create, list, switch meshes
 import chalk from 'chalk';
 import { requireConfig, writeConfig, readConfig } from '../config.js';
+import { writeMeshJson } from '../mesh-schema.js';
 import { MeshWireClient } from '../api.js';
 
 export async function cmdMesh(subcommand, opts) {
@@ -22,8 +23,23 @@ export async function cmdMesh(subcommand, opts) {
     }
 
     case 'use': {
-      writeConfig({ meshId: opts.meshId });
-      console.log(chalk.green(`✓ Active mesh set to: ${opts.meshId}`));
+      const { meshId } = opts;
+      // Write to global config
+      writeConfig({ meshId });
+
+      // Also write .mesh.json in the current workspace directory
+      // so this folder is associated with the mesh
+      const config = readConfig();
+      writeMeshJson({
+        mesh_id: meshId,
+        workspace_name: process.cwd().split(/[/\\]/).pop() || 'workspace',
+        agent_name: config.agentName || 'agent',
+        harness: config.harness || 'copilot',
+      });
+
+      console.log(chalk.green(`✓ Active mesh: ${meshId}`));
+      console.log(chalk.dim(`  ~/.meshwire/config.json updated`));
+      console.log(chalk.dim(`  .mesh.json written to current directory`));
       break;
     }
 

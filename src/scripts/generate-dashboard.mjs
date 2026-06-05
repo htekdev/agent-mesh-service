@@ -291,17 +291,19 @@ input,select{font:inherit}
           <button class="mdlx" onclick="closeM()">&times;</button>
         </div>
         <div class="mdlb">
-          <p style="font-size:.83rem;color:var(--sub);margin-bottom:16px">Use this mesh in your init command, or copy the integrate URL to let any agent self-bootstrap.</p>
+          <p style="font-size:.83rem;color:var(--sub);margin-bottom:18px">Run this command in your project folder. It writes <code style="font-family:var(--fm);font-size:.82em;color:var(--acl)">.mesh.json</code> and sets this as your active mesh.</p>
 
-          <div class="slbl">Integrate URL</div>
-          <div class="int-url" id="murl"></div>
-          <div style="margin-bottom:18px"><button class="cp" onclick="cpUrl(this)">Copy URL</button></div>
+          <div class="slbl">Use this mesh</div>
+          <div class="cb">
+            <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="cpUse(this)">Copy</button></div>
+            <div class="cbb"><div class="cmd" id="muse"></div></div>
+          </div>
 
-          <div class="slbl" style="margin-bottom:8px">Agent prompt</div>
-          <div class="pb"><div class="pbh"><span class="pbl">Copy &amp; paste into any AI agent</span><button class="cp" onclick="cpPrm(this)">Copy</button></div><div class="pbb" id="mprm"></div></div>
-
-          <div class="slbl" style="margin-top:18px;margin-bottom:8px">CLI init command</div>
-          <div class="cb"><div class="cbh"><span class="cbl">pick your platform</span><button class="cp" onclick="cpInit(this)">Copy</button></div><div class="cbb" id="minit"></div></div>
+          <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--b)">
+            <div class="slbl" style="margin-bottom:8px">Or let any AI agent self-integrate</div>
+            <p style="font-size:.79rem;color:var(--dim);margin-bottom:10px">Paste this into any agent's context:</p>
+            <div class="pb"><div class="pbh"><span class="pbl">Agent prompt</span><button class="cp" onclick="cpPrm(this)">Copy</button></div><div class="pbb" id="mprm"></div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -410,20 +412,15 @@ function openM(id) {
   const url = BASE+'/mesh/'+id+'/integrate';
   document.getElementById('mn2').textContent = m.name||id;
   document.getElementById('mi2').textContent = id;
-  document.getElementById('murl').textContent = url;
+  document.getElementById('muse').textContent = 'meshwire mesh use '+id;
   document.getElementById('mprm').textContent = prompt4(id, m.name);
-  document.getElementById('minit').innerHTML =
-    '<div style="color:var(--dim);font-size:.72rem;margin-bottom:5px"># Copilot</div><div class="cmd">meshwire init --harness copilot --mesh '+id+'</div>'+
-    '<div style="color:var(--dim);font-size:.72rem;margin-top:8px;margin-bottom:5px"># Hermes</div><div class="cmd">meshwire init --harness hermes --mesh '+id+'</div>'+
-    '<div style="color:var(--dim);font-size:.72rem;margin-top:8px;margin-bottom:5px"># Pi</div><div class="cmd">meshwire init --harness pi --mesh '+id+'</div>';
   document.getElementById('ov').classList.remove('off');
   document.body.style.overflow='hidden';
 }
 function closeM() { document.getElementById('ov').classList.add('off'); document.body.style.overflow=''; }
 function maybeClose(e) { if (e.target.id==='ov') closeM(); }
-function cpUrl(btn) { copy(S.mm ? BASE+'/mesh/'+S.mm.mesh_id+'/integrate' : '', btn); }
+function cpUse(btn) { copy(S.mm ? 'meshwire mesh use '+S.mm.mesh_id : '', btn); }
 function cpPrm(btn) { copy(document.getElementById('mprm')?.textContent||'', btn); }
-function cpInit(btn) { copy(S.mm ? 'meshwire init --harness copilot --mesh '+S.mm.mesh_id : '', btn); }
 
 /* ── Feedback ────────────────────────────────────────────────── */
 function sfb(id, msg, cls, ms=3200) {
