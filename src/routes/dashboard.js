@@ -11,6 +11,7 @@ const DEFAULT_BASE_URL =
 
 const landingTemplateUrl = new URL("../views/landing.html", import.meta.url);
 const dashboardTemplateUrl = new URL("../views/dashboard.html", import.meta.url);
+const docsTemplateUrl = new URL("../views/docs.html", import.meta.url);
 
 async function readTemplate(templateUrl) {
   return readFile(templateUrl, "utf8");
@@ -111,6 +112,15 @@ dashboardRouter.post("/api/meshes", requireSessionAuth, async (req, res, next) =
 
     await createMesh(mesh);
     return res.status(201).json(mesh);
+  } catch (error) {
+    return next(error);
+  }
+});
+
+dashboardRouter.get("/docs", async (req, res, next) => {
+  try {
+    const html = await readTemplate(docsTemplateUrl);
+    return res.type("html").send(html);
   } catch (error) {
     return next(error);
   }
