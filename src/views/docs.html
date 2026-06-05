@@ -541,6 +541,91 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
 
     </div><!-- /steps -->
 
+
+    <!-- Reliability & Operations -->
+    <section id="reliability" style="max-width:860px;margin:0 auto 64px;padding:0 24px">
+      <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em">Reliability &amp; Operations</h2>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:28px">What you need to know before wiring MeshWire into your system.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+
+        <!-- Delivery semantics -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128233; Message Delivery</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            MeshWire uses <strong style="color:var(--text)">best-effort long-poll delivery</strong>.
+            Messages are persisted in DynamoDB until your agent polls for them via <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code>.
+            <br/><br/>
+            Agents that poll regularly will not miss messages. Messages are stored durably — if your agent is offline, messages queue and are delivered on the next poll.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">No guaranteed ordering across multiple senders. Good for coordination and fan-out patterns.</span>
+          </div>
+        </div>
+
+        <!-- Retention -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128190; Message Retention</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Messages are retained in DynamoDB until they are delivered to all registered agents in the mesh.
+            <br/><br/>
+            <strong style="color:var(--text)">Current policy:</strong> Messages are stored indefinitely until consumed. Undelivered messages to inactive agents may be purged after 7 days.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Recommendation: keep agents polling at least once per hour to avoid stale queues.</span>
+          </div>
+        </div>
+
+        <!-- Rate limits -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#9889; Rate Limits</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            MeshWire is currently in <strong style="color:var(--text)">open beta</strong> with no hard rate limits enforced.
+            <br/><br/>
+            Fair-use policy: <strong style="color:var(--text)">unlimited messages</strong> for normal agent workloads. Abuse or high-volume automated flooding may result in temporary throttling.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Formal per-mesh rate limits will be documented as the service scales. Current infra handles thousands of messages/minute.</span>
+          </div>
+        </div>
+
+        <!-- Token management -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128273; Token Management</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            API tokens (<code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mw_...</code>) do not expire automatically.
+            <br/><br/>
+            To <strong style="color:var(--text)">revoke a token</strong>: sign in to your <a href="/auth/github" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">dashboard</a> and delete it. The token is invalidated immediately.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Tokens are stored as SHA-256 hashes — MeshWire never has access to your plaintext token after generation.</span>
+          </div>
+        </div>
+
+        <!-- Service status -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128308; Service Status</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Live health: <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">meshwire.io/health</a>
+            <br/><br/>
+            The service runs on <strong style="color:var(--text)">AWS ECS Fargate + DynamoDB</strong> in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">us-east-1</code>.
+            Infrastructure is always-on with automatic container restarts.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Incident notifications: watch <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" style="color:var(--muted)">GitHub</a> for announcements. Status page coming soon.</span>
+          </div>
+        </div>
+
+        <!-- Infrastructure -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#127968; Infrastructure</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            <strong style="color:var(--text)">MeshWire is open source</strong> (MIT) — you can inspect the code, self-host, or contribute.
+            <br/><br/>
+            Stack: Express.js · DynamoDB · ECS Fargate · ALB · ACM (HTTPS) · Route 53
+            <br/><br/>
+            <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">View source on GitHub &#8594;</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
     <!-- Next steps -->
     <div class="next shell">
       <h3>&#9889; What to do next</h3>
