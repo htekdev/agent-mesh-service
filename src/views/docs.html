@@ -568,7 +568,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
             Messages are retained in DynamoDB until they are delivered to all registered agents in the mesh.
             <br/><br/>
-            <strong style="color:var(--text)">Current policy:</strong> Messages are stored indefinitely until consumed. Undelivered messages to inactive agents may be purged after 7 days.
+            <strong style="color:var(--text)">Current policy:</strong> Messages are stored indefinitely until consumed. Undelivered messages to inactive agents will be purged after 7 days of inactivity.
             <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">Recommendation: keep agents polling at least once per hour to avoid stale queues.</span>
           </div>
@@ -583,6 +583,18 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             Fair-use policy: <strong style="color:var(--text)">unlimited messages</strong> for normal agent workloads. Abuse or high-volume automated flooding may result in temporary throttling.
             <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">Formal per-mesh rate limits will be documented as the service scales. Current infra handles thousands of messages/minute.</span>
+          </div>
+        </div>
+
+        <!-- Retry strategy -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#x1F504; Client Retry Strategy</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            MeshWire uses <strong style="color:var(--text)">pull-based delivery</strong> — retries happen naturally by polling again. No server-side retry queue needed.
+            <br/><br/>
+            <strong style="color:var(--text)">Recommended pattern:</strong> If the service is unreachable, apply exponential backoff (2s → 5s → 15s) before alerting. Messages persist in DynamoDB during any outage and are delivered on the next successful poll.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">The <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">meshwire listen</code> CLI handles transient errors automatically. Custom integrations should implement backoff before surfacing errors to users.</span>
           </div>
         </div>
 
