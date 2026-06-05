@@ -88,6 +88,11 @@ class AgentMeshStack extends cdk.Stack {
       cpu: 256,
       memoryLimitMiB: 512,
       circuitBreaker: { enable: true, rollback: true },
+      // Zero-downtime deploys: start new task FIRST, wait for health checks, THEN stop old task.
+      // With desiredCount=1 and maxHealthyPercent=200, ECS temporarily runs 2 tasks during deploy.
+      // minimumHealthyPercent=100 ensures at least 1 task is always healthy and serving traffic.
+      minHealthyPercent: 100,
+      maxHealthyPercent: 200,
       assignPublicIp: true,
       taskSubnets: { subnetType: ec2.SubnetType.PUBLIC },
       taskImageOptions: {
@@ -124,6 +129,10 @@ class AgentMeshStack extends cdk.Stack {
       healthyThresholdCount: 2,
       unhealthyThresholdCount: 3,
     });
+
+    // Drain in-flight connections gracefully before deregistering old task.
+    // Long-poll connections can hold for up to 60s — give them time to complete.
+    service.targetGroup.setAttribute("deregistration_delay.timeout_seconds", "60");
 
     meshesTable.grantReadWriteData(service.taskDefinition.taskRole);
     agentsTable.grantReadWriteData(service.taskDefinition.taskRole);
