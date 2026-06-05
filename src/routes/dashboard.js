@@ -123,5 +123,5 @@ dashboardRouter.post("/api/meshes", requireSessionAuth, async (req, res, next) =
 });
 
 dashboardRouter.get("/upgrade", (_req, res) => {
-  res.redirect(process.env.STRIPE_CHECKOUT_URL || "https://meshwire.io/upgrade");
+  res.redirect("https://github.com/sponsors/htekdev");
 });

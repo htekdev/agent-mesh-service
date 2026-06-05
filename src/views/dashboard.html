@@ -233,8 +233,7 @@
       }
 
       .upgrade-card {
-        border-color: rgba(124, 58, 237, 0.38);
-        box-shadow: 0 24px 80px rgba(124, 58, 237, 0.12);
+        border-color: rgba(124, 58, 237, 0.28);
       }
 
       @media (max-width: 900px) {
@@ -257,7 +256,7 @@
             <span>MeshWire</span>
           </div>
           <div class="user-bar">
-            <span id="plan-badge" class="badge">Free Plan</span>
+              <span class="badge" style="background:rgba(52,211,153,0.15);color:#34d399">Free · Open Source</span>
             <img id="user-avatar" class="avatar" alt="User avatar" />
             <strong id="user-login">github-user</strong>
             <a href="/auth/logout" class="btn-link">Logout</a>
@@ -300,9 +299,12 @@
           </article>
 
           <aside id="upgrade-card" class="card upgrade-card">
-            <h3>Need more than 10 agents?</h3>
-            <p class="muted">Go Pro for unlimited meshes, unlimited agents, and priority support.</p>
-            <a href="/upgrade" class="btn">$10/mo → Upgrade</a>
+            <h3>❤️ Free & Open Source</h3>
+            <p class="muted">MeshWire is completely free — unlimited meshes, unlimited agents, no credit card, no limits. If it saves you time, a ⭐ or sponsor goes a long way.</p>
+            <div class="actions" style="margin-top:16px">
+              <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" class="btn secondary">⭐ Star on GitHub</a>
+              <a href="https://github.com/sponsors/htekdev" target="_blank" rel="noopener" class="btn-link">❤️ Sponsor</a>
+            </div>
           </aside>
         </section>
       </div>
@@ -320,18 +322,12 @@
 
       const tokenBlock = document.getElementById("token-block");
       const tokenStatus = document.getElementById("token-status");
-      const planBadge = document.getElementById("plan-badge");
       const userAvatar = document.getElementById("user-avatar");
       const userLogin = document.getElementById("user-login");
       const setupBlock = document.getElementById("setup-block");
       const meshContainer = document.getElementById("mesh-container");
       const meshFeedback = document.getElementById("mesh-feedback");
-      const upgradeCard = document.getElementById("upgrade-card");
       const meshNameInput = document.getElementById("mesh-name");
-
-      function planLabel(plan) {
-        return plan === "pro" ? "Pro Plan" : "Free Plan";
-      }
 
       function maskedToken(user) {
         return user?.maskedToken || "mw_••••••••••••••••";
@@ -381,13 +377,11 @@
 
       function render() {
         const user = state.payload?.user || state.bootstrap;
-        planBadge.textContent = planLabel(user.plan);
         userAvatar.src = user.avatar_url || "https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png";
         userLogin.textContent = user.login || "github-user";
         tokenBlock.textContent = visibleToken();
         setupBlock.textContent = buildSetupText();
         document.getElementById("copy-token").disabled = !state.liveToken;
-        upgradeCard.style.display = user.plan === "pro" ? "none" : "block";
 
         if (state.liveToken) {
           tokenStatus.textContent = "Save this — shown once!";

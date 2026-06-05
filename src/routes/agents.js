@@ -2,7 +2,6 @@
 import { Router } from "express";
 import { nanoid } from "nanoid";
 import { registerAgent, listAgents, getAgent, updateAgentHeartbeat, getMesh } from "../db/dynamo.js";
-import { canRegisterAgent, FREE_PLAN_AGENT_LIMIT_MESSAGE } from "../lib/planLimits.js";
 
 export const agentsRouter = Router({ mergeParams: true });
 
@@ -12,11 +11,6 @@ agentsRouter.use(async (req, res, next) => {
     if (!mesh) {
       return res.status(404).json({ error: "Mesh not found" });
     }
-
-    if (mesh.owner_id && mesh.owner_id !== req.user?.user_id) {
-      return res.status(403).json({ error: "You do not have access to this mesh." });
-    }
-
     req.mesh = mesh;
     return next();
   } catch (err) {
@@ -30,11 +24,6 @@ agentsRouter.post("/", async (req, res, next) => {
     const { name, description, workspace, metadata } = req.body || {};
     if (!name) {
       return res.status(400).json({ error: "Agent name is required" });
-    }
-
-    const agents = await listAgents(meshId);
-    if (!canRegisterAgent(req.user, agents.length)) {
-      return res.status(403).json({ error: FREE_PLAN_AGENT_LIMIT_MESSAGE });
     }
 
     const agent = {
