@@ -11,7 +11,7 @@ export async function cmdStatus() {
   if (!config.token) {
     console.log(chalk.yellow('  Not configured.'));
     console.log(chalk.dim('  Run `meshwire init` to set up your token and mesh.\n'));
-    process.exit(0); // not configured is not an error
+    process.exit(0);
   }
 
   // Print config
