@@ -1,157 +1,154 @@
-// Generates the new MeshWire dashboard — guided wizard flow
-import { writeFileSync } from 'fs';
+// Generates the Opus-quality MeshWire dashboard v3
+import { writeFileSync, readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Read the template (we write it inline here)
+const BASE_URL_PLACEHOLDER = 'https://meshwire.io';
 
 const html = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MeshWire Dashboard</title>
+    <title>MeshWire</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#080808;--bg2:#0d0d0d;--panel:rgba(255,255,255,.04);--panelh:rgba(255,255,255,.07);
-  --border:rgba(255,255,255,.08);--bordera:rgba(124,58,237,.4);
-  --text:#f0f0f0;--muted:rgba(240,240,240,.62);--muted2:rgba(240,240,240,.36);
-  --accent:#7c3aed;--accentl:#a78bfa;--accentg:rgba(124,58,237,.18);
-  --cyan:#22d3ee;--green:#4ade80;--warn:#fbbf24;--red:#fb7185;
-  --font:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",monospace;
-  --r:16px;--rs:10px
+  --bg:#080808;--s1:#0f0f0f;--s2:rgba(255,255,255,.04);--s3:rgba(255,255,255,.07);
+  --b:rgba(255,255,255,.08);--b2:rgba(255,255,255,.14);--ba:rgba(124,58,237,.45);
+  --t:#f0f0f0;--sub:rgba(240,240,240,.65);--dim:rgba(240,240,240,.38);
+  --ac:#7c3aed;--acl:#a78bfa;--acg:rgba(124,58,237,.18);
+  --cy:#22d3ee;--gr:#4ade80;--wn:#fbbf24;--re:#fb7185;
+  --ff:"Inter",system-ui,sans-serif;--fm:"JetBrains Mono",monospace
 }
 html{scroll-behavior:smooth}
-body{font-family:var(--font);background:radial-gradient(circle at top,rgba(124,58,237,.15),transparent 40%),var(--bg);color:var(--text);line-height:1.5;min-height:100vh}
+body{font-family:var(--ff);background:var(--bg);color:var(--t);line-height:1.55;min-height:100vh}
 a{color:inherit;text-decoration:none}
-button,input{font:inherit}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:rgba(124,58,237,.45);border-radius:99px}
+button{font:inherit;cursor:pointer}
+input,select{font:inherit}
 
-/* Layout */
-.page{max-width:860px;margin:0 auto;padding:0 20px 60px}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 80px}
 
-/* Header */
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 0 24px;gap:14px;flex-wrap:wrap}
-.hdr-brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.05rem}
-.hdr-logo{width:26px;height:26px;flex-shrink:0}
-.hdr-right{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.hdr-badge{padding:4px 11px;border-radius:999px;background:rgba(52,211,153,.12);color:#34d399;font-size:.76rem;font-weight:700}
-.hdr-links{display:flex;align-items:center;gap:12px;font-size:.84rem;color:var(--muted2)}
-.hdr-links a:hover{color:var(--muted)}
-.avatar{width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.12);object-fit:cover}
-.btn-logout{padding:5px 12px;border-radius:999px;border:1px solid var(--border);background:none;color:var(--muted2);font-size:.78rem;cursor:pointer;transition:all .2s}
-.btn-logout:hover{border-color:rgba(255,255,255,.18);color:var(--muted)}
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 28px;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--b);margin-bottom:36px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.05rem}
+.lm{width:24px;height:24px;flex-shrink:0}
+.br{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.bfree{padding:3px 10px;border-radius:999px;background:rgba(74,222,128,.1);color:#4ade80;font-size:.72rem;font-weight:700}
+.blinks{display:flex;gap:16px;font-size:.8rem;color:var(--dim)}
+.blinks a:hover{color:var(--sub)}
+.upill{display:flex;align-items:center;gap:8px}
+.upill img{width:28px;height:28px;border-radius:50%;border:1px solid var(--b)}
+.upill span{font-size:.82rem;font-weight:600}
+.bso{padding:4px 11px;border-radius:999px;border:1px solid var(--b);background:none;color:var(--dim);font-size:.75rem;transition:all .2s}
+.bso:hover{border-color:var(--b2);color:var(--sub)}
 
-/* Step wrappers */
-.step-block{margin-bottom:28px}
-.step-label{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.step-num{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800;flex-shrink:0}
-.step-title{font-size:1.05rem;font-weight:700}
+/* sections */
+.sec{margin-bottom:32px}
+.sec-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.sec-n{width:22px;height:22px;border-radius:50%;background:var(--ac);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:800;flex-shrink:0;margin-top:1px}
+.sec-t{font-size:1rem;font-weight:700}
+.sec-st{font-size:.81rem;color:var(--sub);margin-left:32px;margin-bottom:14px}
 
-/* Cards */
-.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+/* card */
+.card{background:var(--s1);border:1px solid var(--b);border-radius:16px;overflow:hidden}
 
-/* Tabs */
-.tabs{display:flex;border-bottom:1px solid var(--border)}
-.tab{padding:11px 18px;font-size:.85rem;font-weight:600;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .18s;white-space:nowrap;display:flex;align-items:center;gap:7px}
-.tab:hover{color:var(--muted)}
-.tab.active{color:var(--accentl);border-bottom-color:var(--accent)}
-.tab-content{padding:22px;display:none}
-.tab-content.active{display:block}
+/* token */
+.tc{padding:22px}
+.tlbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-bottom:9px}
+.tnb{display:flex;align-items:center;gap:7px;padding:9px 13px;background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.2);border-radius:9px;margin-bottom:12px;font-size:.78rem;color:var(--wn)}
+.tr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tv{flex:1 1 240px;font-family:var(--fm);font-size:.86rem;padding:12px 15px;background:#050505;border:1px solid var(--b);border-radius:10px;color:var(--cy);word-break:break-all;cursor:pointer;transition:border-color .2s;user-select:all}
+.tv:hover{border-color:var(--acl)}
+.tact{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
 
-/* Code blocks */
-.cb{background:#050505;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden;margin:10px 0}
-.cb-bar{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border)}
-.cb-lbl{font-family:var(--mono);font-size:.7rem;color:var(--muted2);letter-spacing:.04em}
-.cb-copy{background:none;border:1px solid var(--border);border-radius:6px;padding:3px 9px;color:var(--muted2);font-size:.7rem;font-family:var(--mono);cursor:pointer;transition:all .18s}
-.cb-copy:hover{border-color:var(--accentl);color:var(--accentl)}
-.cb-copy.copied{border-color:var(--green);color:var(--green)}
-.cb-body{padding:14px 16px;font-family:var(--mono);font-size:.8rem;line-height:1.78;overflow-x:auto}
-.c-cmd::before{content:"$ ";color:var(--cyan);user-select:none}
-.c-out{color:var(--green)}.c-cmt{color:rgba(255,255,255,.28)}.c-key{color:var(--accentl)}.c-str{color:var(--cyan)}.c-warn{color:var(--warn)}
+/* buttons */
+.bp{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:9px;background:var(--ac);color:#fff;font-weight:700;font-size:.81rem;border:none;transition:all .2s}
+.bp:hover{background:#6d28d9}
+.bs{padding:8px 15px;border-radius:9px;border:1px solid var(--b);background:none;color:var(--sub);font-size:.81rem;font-weight:600;transition:all .2s}
+.bs:hover{border-color:var(--b2);color:var(--t)}
+.bg{background:none;border:none;color:var(--acl);font-size:.79rem;font-weight:600;padding:2px 0}
+.bg:hover{color:#c4b5fd}
 
-/* Token display */
-.token-display{font-family:var(--mono);font-size:.88rem;padding:14px 16px;background:#050505;border:1px solid var(--border);border-radius:var(--rs);color:var(--cyan);word-break:break-all;cursor:pointer;transition:border-color .2s;user-select:all}
-.token-display:hover{border-color:var(--accentl)}
-.token-new{border-color:rgba(251,191,36,.5)!important;background:rgba(251,191,36,.04)!important}
-.token-warn{font-size:.8rem;color:var(--warn);margin:8px 0 12px;display:flex;align-items:center;gap:6px}
-.token-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+/* THE COPY BUTTON — prominent, reliable */
+.cp{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:none;color:var(--dim);font-size:.71rem;font-family:var(--fm);transition:all .18s;white-space:nowrap}
+.cp:hover{border-color:var(--acl);color:var(--acl)}
+.cp.ok{border-color:var(--gr)!important;color:var(--gr)!important}
 
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:10px;background:var(--accent);color:#fff;font-weight:700;font-size:.85rem;border:none;cursor:pointer;transition:all .22s}
-.btn:hover{background:#6d28d9;box-shadow:0 6px 24px var(--accentg);transform:translateY(-1px)}
-.btn.secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.btn.secondary:hover{border-color:rgba(255,255,255,.2);color:var(--text);box-shadow:none;transform:none}
-.btn.ghost{background:none;border:none;color:var(--accentl);padding:6px 0;font-size:.82rem;cursor:pointer}
-.btn.ghost:hover{color:#c4b5fd}
-.btn.danger-ghost{background:none;border:none;color:var(--muted2);font-size:.78rem;cursor:pointer}
+/* tabs */
+.tabs{display:flex;overflow-x:auto;border-bottom:1px solid var(--b);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:11px 17px;font-size:.83rem;font-weight:600;color:var(--dim);white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .18s;flex-shrink:0;display:flex;align-items:center;gap:5px}
+.tab:hover{color:var(--sub)}
+.tab.on{color:var(--acl);border-bottom-color:var(--ac)}
+.pane{display:none;padding:22px}
+.pane.on{display:block}
 
-/* Info callout */
-.info{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);border-radius:var(--rs);padding:11px 14px;font-size:.83rem;color:var(--muted);margin:10px 0;display:flex;gap:9px;align-items:flex-start}
-.info code{font-family:var(--mono);color:var(--accentl);font-size:.85em;background:rgba(124,58,237,.12);padding:1px 5px;border-radius:4px}
+/* code block */
+.cb{background:#050505;border:1px solid var(--b);border-radius:11px;overflow:hidden;margin:12px 0}
+.cbh{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:rgba(255,255,255,.022);border-bottom:1px solid var(--b)}
+.cbl{font-family:var(--fm);font-size:.68rem;color:var(--dim);letter-spacing:.04em}
+.cbb{padding:14px 17px;font-family:var(--fm);font-size:.82rem;line-height:1.8;overflow-x:auto}
+.cmd::before{content:"$ ";color:var(--cy);user-select:none}
 
-/* Harness what-you-get list */
-.gets{list-style:none;display:flex;flex-direction:column;gap:7px;margin:12px 0}
-.gets li{display:flex;align-items:flex-start;gap:8px;font-size:.84rem;color:var(--muted)}
-.gets li::before{content:"✓";color:var(--green);font-weight:700;flex-shrink:0;margin-top:1px}
+/* prompt block */
+.pb{background:#050505;border:1px solid rgba(124,58,237,.3);border-radius:11px;overflow:hidden;margin:12px 0}
+.pbh{display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:rgba(124,58,237,.07);border-bottom:1px solid rgba(124,58,237,.2)}
+.pbl{font-size:.68rem;font-weight:700;color:var(--acl);letter-spacing:.05em;text-transform:uppercase}
+.pbb{padding:15px 17px;font-size:.83rem;line-height:1.72;color:var(--sub);white-space:pre-wrap;font-family:var(--ff)}
 
-/* Mesh list */
-.mesh-row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .18s;gap:12px}
-.mesh-row:last-child{border-bottom:none}
-.mesh-row:hover{background:var(--panelh)}
-.mesh-name{font-weight:700;font-size:.9rem;margin-bottom:3px}
-.mesh-id{font-family:var(--mono);font-size:.74rem;color:var(--muted2)}
-.mesh-meta{font-size:.78rem;color:var(--muted2)}
-.mesh-arrow{color:var(--muted2);font-size:.9rem;flex-shrink:0}
-.mesh-empty{padding:24px;text-align:center;color:var(--muted2);font-size:.88rem}
-.mesh-create{display:flex;gap:10px;padding:16px;border-top:1px solid var(--border);flex-wrap:wrap}
-.mesh-input{flex:1 1 180px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:9px 13px;color:var(--text);font-size:.85rem;transition:border-color .18s}
-.mesh-input:focus{outline:none;border-color:var(--accentl)}
+/* what you get */
+.gets{list-style:none;margin:14px 0 0;display:flex;flex-direction:column;gap:6px}
+.gets li{display:flex;align-items:flex-start;gap:8px;font-size:.81rem;color:var(--sub)}
+.gets li::before{content:"✓";color:var(--gr);font-weight:700;flex-shrink:0;margin-top:2px}
+.gets code{font-family:var(--fm);font-size:.8em;color:var(--acl);background:rgba(124,58,237,.1);padding:1px 5px;border-radius:4px}
 
-/* Feedback bar */
-.fb{padding:8px 16px;font-size:.82rem;border-radius:var(--rs);margin:10px 16px;display:none}
-.fb.success{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:var(--green)}
-.fb.error{background:rgba(251,113,133,.1);border:1px solid rgba(251,113,133,.25);color:var(--red)}
-.fb.show{display:block}
+/* mesh list */
+.mr{display:flex;align-items:center;justify-content:space-between;padding:14px 17px;border-bottom:1px solid var(--b);cursor:pointer;transition:background .17s;gap:12px}
+.mr:last-child{border-bottom:none}
+.mr:hover{background:var(--s2)}
+.mrn{font-weight:700;font-size:.88rem;margin-bottom:3px}
+.mri{font-family:var(--fm);font-size:.71rem;color:var(--dim)}
+.mra{font-size:.75rem;color:var(--dim)}
+.mempty{padding:26px 17px;text-align:center;color:var(--dim);font-size:.83rem}
+.mfoot{padding:13px 17px;border-top:1px solid var(--b);display:flex;gap:9px;flex-wrap:wrap}
+.mi{flex:1 1 160px;padding:8px 12px;background:var(--s2);border:1px solid var(--b);border-radius:9px;color:var(--t);font-size:.82rem;transition:border-color .18s}
+.mi:focus{outline:none;border-color:var(--acl)}
 
-/* Modal */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
-.modal-bg.hidden{display:none}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
-.modal-title{font-weight:800;font-size:1rem}
-.modal-close{background:none;border:none;color:var(--muted2);font-size:1.2rem;cursor:pointer;padding:4px;line-height:1}
-.modal-close:hover{color:var(--text)}
-.modal-body{padding:20px}
-.modal-mesh-id{font-family:var(--mono);font-size:.8rem;color:var(--muted2);margin-bottom:14px}
+/* feedback */
+.fb{padding:8px 17px;font-size:.79rem;border-radius:9px;margin:6px 17px;display:none}
+.fb.ok{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);color:var(--gr);display:block}
+.fb.err{background:rgba(251,113,133,.07);border:1px solid rgba(251,113,133,.2);color:var(--re);display:block}
 
-/* Harness selector in modal */
-.harness-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
-.htab{padding:6px 13px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--muted2);font-size:.8rem;font-weight:600;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:5px}
-.htab:hover{border-color:rgba(255,255,255,.15);color:var(--muted)}
-.htab.active{border-color:var(--bordera);background:var(--accentg);color:var(--accentl)}
-.modal-panel{display:none}.modal-panel.active{display:block}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px)}
+.ov.off{display:none}
+.mdl{background:var(--s1);border:1px solid var(--b);border-radius:18px;width:100%;max-width:500px;max-height:88vh;overflow-y:auto}
+.mdlt{display:flex;align-items:flex-start;justify-content:space-between;padding:19px;border-bottom:1px solid var(--b);gap:12px}
+.mdln{font-weight:800;font-size:.98rem;margin-bottom:3px}
+.mdli{font-family:var(--fm);font-size:.7rem;color:var(--dim)}
+.mdlx{background:none;border:none;color:var(--dim);font-size:1.3rem;line-height:1;padding:2px}
+.mdlx:hover{color:var(--t)}
+.mdlb{padding:19px}
+.int-url{font-family:var(--fm);font-size:.78rem;padding:11px 14px;background:#050505;border:1px solid rgba(34,211,238,.22);border-radius:9px;color:var(--cy);word-break:break-all;margin:8px 0}
+.slbl{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:6px}
 
-/* JSON card */
-.json-card{background:#050505;border:1px solid rgba(34,211,238,.2);border-radius:var(--rs);overflow:hidden;margin:10px 0}
-.json-card .cb-bar{background:rgba(34,211,238,.04);border-color:rgba(34,211,238,.15)}
-.json-card .cb-lbl{color:rgba(34,211,238,.55)}
-
-/* Responsive */
-@media(max-width:600px){.page{padding:0 14px 48px}.hdr{padding:14px 0 18px}.tabs{overflow-x:auto}.tab{padding:9px 12px;font-size:.78rem}}
+@media(max-width:580px){.wrap{padding:0 13px 56px}.bar{padding:13px 0 18px}.pane{padding:15px}.tr{flex-direction:column;align-items:stretch}}
     </style>
   </head>
   <body>
-    <div class="page">
+    <div class="wrap">
 
-      <!-- Header -->
-      <header class="hdr">
-        <a href="/" class="hdr-brand">
-          <svg class="hdr-logo" viewBox="0 0 32 32" fill="none">
+      <!-- header -->
+      <header class="bar">
+        <a href="/" class="logo">
+          <svg class="lm" viewBox="0 0 32 32" fill="none">
             <circle cx="16" cy="4" r="2.5" fill="#a78bfa"/>
             <circle cx="28" cy="12" r="2.5" fill="#a78bfa"/>
             <circle cx="28" cy="22" r="2.5" fill="#22d3ee"/>
@@ -170,540 +167,288 @@ button,input{font:inherit}
           </svg>
           MeshWire
         </a>
-        <div class="hdr-right">
-          <div class="hdr-badge">Free &middot; Open Source</div>
-          <div class="hdr-links">
-            <a href="/docs">Docs</a>
-            <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener">GitHub &#9733;</a>
-          </div>
-          <img id="user-avatar" class="avatar" alt="avatar" />
-          <strong id="user-login" style="font-size:.88rem"></strong>
-          <button class="btn-logout" onclick="location.href='/auth/logout'">Sign out</button>
+        <div class="br">
+          <div class="bfree">FREE</div>
+          <div class="blinks"><a href="/docs">Docs</a><a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener">GitHub</a></div>
+          <div class="upill"><img id="ua" src="" alt="" /><span id="ul"></span></div>
+          <button class="bso" onclick="location.href='/auth/logout'">Sign out</button>
         </div>
       </header>
 
-      <!-- ── Step 1: Your API Token ────────────────────────────────── -->
-      <div class="step-block">
-        <div class="step-label">
-          <div class="step-num">1</div>
-          <div class="step-title">Your API Token</div>
-        </div>
+      <!-- Step 1 -->
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-n">1</div><div class="sec-t">Your API token</div></div>
+        <div class="sec-st">Used by the CLI and any direct API calls. Shown once — copy it now.</div>
         <div class="card">
-          <div class="tabs" id="auth-tabs">
-            <div class="tab active" data-tab="auth-cli">&#128187; CLI Login</div>
-            <div class="tab" data-tab="auth-env">&#128274; Token</div>
-          </div>
-
-          <!-- CLI Login tab -->
-          <div class="tab-content active" id="auth-cli">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">The simplest way. One command opens your browser, signs you in, and saves credentials automatically.</p>
-            <div class="cb">
-              <div class="cb-bar">
-                <span class="cb-lbl">terminal</span>
-                <button class="cb-copy" data-copy="meshwire login">copy</button>
-              </div>
-              <div class="cb-body">
-                <div class="c-cmd">npm install -g meshwire</div>
-                <div class="c-cmd">meshwire login</div>
-                <div class="c-out">  &check; Signed in &mdash; credentials saved to ~/.meshwire/credentials.json</div>
-              </div>
+          <div class="tc">
+            <div id="tnb" class="tnb" style="display:none">&#9888;&nbsp;<strong>Save this — it won't be shown again.</strong></div>
+            <div class="tlbl">Token</div>
+            <div class="tr">
+              <div id="tv" class="tv" onclick="selTok(this)" title="Click to select all">mw_&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</div>
+              <button class="cp" onclick="copyTok(this)">&#128203; Copy</button>
             </div>
-            <div class="info">
-              <span>&#128161;</span>
-              <div>After <code>meshwire login</code>, every CLI command reads your credentials automatically. No env vars to set, no tokens to copy.</div>
+            <div class="tact">
+              <button class="bs" onclick="toggleTok()">&#128065; Show / Hide</button>
+              <button class="bg" onclick="regenTok()">Regenerate &rarr;</button>
             </div>
           </div>
-
-          <!-- Token tab -->
-          <div class="tab-content" id="auth-env">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:10px">Your API token &mdash; use this in scripts, environment variables, or any HTTP client.</p>
-            <div id="token-warn" class="token-warn" style="display:none">&#9888; Save this &mdash; shown once. It won&apos;t be visible again.</div>
-            <div id="token-display" class="token-display">mw_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div>
-            <div class="token-actions">
-              <button class="btn" id="copy-token">&#128203; Copy Token</button>
-              <button class="btn secondary" id="toggle-token">&#128065; Show / Hide</button>
-              <button class="btn ghost" id="regen-token">Regenerate</button>
-            </div>
-            <div class="cb" style="margin-top:14px">
-              <div class="cb-bar">
-                <span class="cb-lbl">environment variable</span>
-                <button class="cb-copy" id="copy-env-btn">copy</button>
-              </div>
-              <div class="cb-body" id="env-block" style="color:var(--cyan)">MESHWIRE_TOKEN=mw_&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</div>
-            </div>
-          </div>
+          <div id="tok-fb" class="fb"></div>
         </div>
       </div>
 
-      <!-- ── Step 2: Wire up your agent ───────────────────────────── -->
-      <div class="step-block">
-        <div class="step-label">
-          <div class="step-num">2</div>
-          <div class="step-title">Wire up your agent platform</div>
-        </div>
+      <!-- Step 2 -->
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-n">2</div><div class="sec-t">Connect your agent</div></div>
+        <div class="sec-st">Pick your platform and run one command.</div>
         <div class="card">
-          <div class="tabs" id="harness-tabs">
-            <div class="tab active" data-tab="h-copilot">&#9881; Copilot CLI</div>
-            <div class="tab" data-tab="h-claude">&#129302; Claude</div>
-            <div class="tab" data-tab="h-hermes">&#127744; Hermes / Pi</div>
-            <div class="tab" data-tab="h-raw">&#128187; Any Agent</div>
+          <div class="tabs" id="ht">
+            <div class="tab on"  onclick="ht('copilot',this)">&#9881;&#xFE0F; Copilot</div>
+            <div class="tab"     onclick="ht('hermes',this)">&#128218; Hermes</div>
+            <div class="tab"     onclick="ht('pi',this)">&#960; Pi</div>
+            <div class="tab"     onclick="ht('any',this)">&#127775; Any agent</div>
           </div>
 
           <!-- Copilot -->
-          <div class="tab-content active" id="h-copilot">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">Sets up a user-level Copilot CLI extension that activates automatically in every session.</p>
+          <div class="pane on" id="pane-copilot">
+            <p style="font-size:.84rem;color:var(--sub);margin-bottom:14px">Installs a user-level extension. Active in every Copilot session with no extra setup.</p>
             <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">terminal</span><button class="cb-copy" data-copy="meshwire init --harness copilot">copy</button></div>
-              <div class="cb-body">
-                <div class="c-cmd">meshwire init --harness copilot</div>
-                <div class="c-out">  &check; .mesh.json written to this workspace</div>
-                <div class="c-out">  &check; Extension: ~/.copilot/extensions/meshwire.mjs</div>
-                <div class="c-out">  &check; Registered as copilot-agent in your mesh</div>
-              </div>
-            </div>
-            <p style="font-size:.83rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px">What you get</p>
-            <ul class="gets">
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">mesh_send_message</code> &mdash; send to any agent or broadcast</li>
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">mesh_get_messages</code> &mdash; poll for incoming messages</li>
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">mesh_list_agents</code> &mdash; discover who&apos;s in the mesh</li>
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">mesh_status</code> &mdash; check connection health</li>
-              <li>Auto-registers on every Copilot session start</li>
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">.mesh.json</code> in your repo &mdash; commit it so teammates auto-connect</li>
-            </ul>
-            <p style="font-size:.83rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px">Test it</p>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">terminal</span><button class="cb-copy" data-copy="meshwire status">copy</button></div>
-              <div class="cb-body">
-                <div class="c-cmd">meshwire status</div>
-                <div class="c-out">  Service : &check; online</div>
-                <div class="c-out">  Mesh    : &check; exists</div>
-                <div class="c-out">  Agents  : 1 registered, 1 active</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Claude -->
-          <div class="tab-content" id="h-claude">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">Adds MeshWire as an MCP server in Claude Desktop. Restart Claude after running this.</p>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">terminal</span><button class="cb-copy" data-copy="meshwire init --harness claude">copy</button></div>
-              <div class="cb-body">
-                <div class="c-cmd">meshwire init --harness claude</div>
-                <div class="c-out">  &check; .mesh.json written</div>
-                <div class="c-out">  &check; claude_desktop_config.json updated</div>
-                <div class="c-out">  &check; Registered as claude-agent in mesh</div>
-              </div>
+              <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="copy('meshwire init --harness copilot',this)">Copy</button></div>
+              <div class="cbb"><div class="cmd">meshwire init --harness copilot</div></div>
             </div>
             <ul class="gets">
-              <li>MeshWire MCP server added to <code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">claude_desktop_config.json</code></li>
-              <li>Available tools: <code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">meshwire_send_message</code>, <code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">meshwire_get_messages</code>, <code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">meshwire_list_agents</code></li>
-              <li>Restart Claude Desktop to activate</li>
+              <li>Generates <code>~/.copilot/extensions/meshwire.mjs</code> — no manual config needed</li>
+              <li>Adds tools to every Copilot session: <code>mesh_send_message</code>, <code>mesh_get_messages</code>, <code>mesh_list_agents</code></li>
+              <li>Auto-registers your agent on session start via <code>onSessionStart</code></li>
+              <li>Writes <code>.mesh.json</code> — commit it so teammates auto-connect</li>
             </ul>
-            <div class="info"><span>&#128161;</span><div>Also works with Cursor &mdash; use <code>meshwire init --harness cursor</code></div></div>
           </div>
 
           <!-- Hermes -->
-          <div class="tab-content" id="h-hermes">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">Creates an env file and skill document for Hermes, Pi, and other harness-based agents.</p>
+          <div class="pane" id="pane-hermes">
+            <p style="font-size:.84rem;color:var(--sub);margin-bottom:14px">Creates an env file and skill document for Hermes integration.</p>
             <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">terminal</span><button class="cb-copy" data-copy="meshwire init --harness hermes">copy</button></div>
-              <div class="cb-body">
-                <div class="c-cmd">meshwire init --harness hermes</div>
-                <div class="c-out">  &check; .mesh.json written</div>
-                <div class="c-out">  &check; .env.meshwire written &mdash; source in startup</div>
-                <div class="c-out">  &check; MESHWIRE_SKILL.md written &mdash; drop in context</div>
-              </div>
+              <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="copy('meshwire init --harness hermes',this)">Copy</button></div>
+              <div class="cbb"><div class="cmd">meshwire init --harness hermes</div></div>
             </div>
             <ul class="gets">
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">.env.meshwire</code> &mdash; MESHWIRE_TOKEN, URL, MESH_ID</li>
-              <li><code style="font-family:var(--mono);font-size:.83em;color:var(--accentl)">MESHWIRE_SKILL.md</code> &mdash; full API reference for agent context</li>
+              <li>Creates <code>.env.meshwire</code> — source in your Hermes startup script</li>
+              <li>Creates <code>MESHWIRE_SKILL.md</code> — add to Hermes context for full API awareness</li>
+              <li>Registers your agent in the mesh</li>
             </ul>
           </div>
 
-          <!-- Any Agent (raw) -->
-          <div class="tab-content" id="h-raw">
-            <p style="color:var(--muted);font-size:.88rem;margin-bottom:14px">MeshWire is a plain REST API. Any agent that can make HTTP requests can join a mesh.</p>
+          <!-- Pi -->
+          <div class="pane" id="pane-pi">
+            <p style="font-size:.84rem;color:var(--sub);margin-bottom:14px">Sets up Pi as an extension that bridges into the mesh as a named agent.</p>
             <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">register any agent</span><button class="cb-copy" data-copy="meshwire integrate">copy</button></div>
-              <div class="cb-body">
-                <div class="c-cmd">meshwire integrate</div>
-                <div class="c-out">  Returns: steps, tool defs, curl examples, SKILL.md</div>
-              </div>
+              <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="copy('meshwire init --harness pi',this)">Copy</button></div>
+              <div class="cbb"><div class="cmd">meshwire init --harness pi</div></div>
             </div>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">or via HTTP directly</span></div>
-              <div class="cb-body">
-                <div class="c-cmt"># Register</div>
-                <div style="color:var(--text)">POST <span style="color:var(--accentl)">/mesh/:meshId/agents</span></div>
-                <div style="color:var(--muted2);font-size:.76rem">Authorization: Bearer mw_...</div>
-                <div style="height:6px"></div>
-                <div class="c-cmt"># Long-poll for messages</div>
-                <div style="color:var(--text)">GET <span style="color:var(--accentl)">/mesh/:meshId/messages?timeout=30</span></div>
-              </div>
+            <ul class="gets">
+              <li>Generates Pi extension configuration in the current workspace</li>
+              <li>Writes <code>.mesh.json</code> with your mesh ID and agent name</li>
+              <li>Start the Pi bridge: <code>meshwire node start pi</code></li>
+            </ul>
+          </div>
+
+          <!-- Any agent -->
+          <div class="pane" id="pane-any">
+            <p style="font-size:.84rem;color:var(--sub);margin-bottom:4px">Give any AI agent this prompt. It tells the agent to call <code style="font-family:var(--fm);font-size:.82em;color:var(--acl)">/integrate</code> and self-bootstrap into the mesh.</p>
+            <p style="font-size:.79rem;color:var(--dim);margin-bottom:14px">Select a mesh, then copy the prompt into your agent's context.</p>
+            <label style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);display:block;margin-bottom:6px">Mesh</label>
+            <select id="any-sel" onchange="updateAny()" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 11px;color:var(--t);font-size:.82rem;width:100%;max-width:320px;margin-bottom:14px">
+              <option value="">— create a mesh below first —</option>
+            </select>
+            <div class="pb">
+              <div class="pbh"><span class="pbl">Agent prompt — copy &amp; paste into any AI agent</span><button class="cp" onclick="copyAny(this)">Copy</button></div>
+              <div class="pbb" id="any-txt">Select a mesh above to generate the prompt.</div>
             </div>
-            <div class="info"><span>&#128203;</span><div>Get the full integration guide at <a href="/docs" style="color:var(--accentl)">meshwire.io/docs</a> &mdash; covers Python, Node.js, curl, and tool definitions.</div></div>
           </div>
 
         </div>
       </div>
 
-      <!-- ── Step 3: Your Meshes ───────────────────────────────────── -->
-      <div class="step-block">
-        <div class="step-label">
-          <div class="step-num">3</div>
-          <div class="step-title">Your Meshes</div>
-        </div>
+      <!-- Step 3 -->
+      <div class="sec">
+        <div class="sec-hd"><div class="sec-n">3</div><div class="sec-t">Your meshes</div></div>
+        <div class="sec-st">Click any mesh to get its integrate URL and setup commands.</div>
         <div class="card">
-          <div id="mesh-list">
-            <div class="mesh-empty">Loading meshes&hellip;</div>
-          </div>
-          <div id="mesh-fb" class="fb"></div>
-          <div class="mesh-create">
-            <input id="mesh-name" class="mesh-input" type="text" placeholder="mesh-name (e.g. my-fleet)" />
-            <button class="btn" id="create-mesh">+ Create Mesh</button>
+          <div id="ml"><div class="mempty">Loading&hellip;</div></div>
+          <div id="mfb" class="fb"></div>
+          <div class="mfoot">
+            <input id="mn" class="mi" type="text" placeholder="mesh name (e.g. my-fleet)" />
+            <button class="bp" onclick="createMesh()">+ Create mesh</button>
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- .page -->
-
-    <!-- Mesh Setup Modal -->
-    <div class="modal-bg hidden" id="mesh-modal">
-      <div class="modal">
-        <div class="modal-hdr">
-          <div>
-            <div class="modal-title" id="modal-mesh-name">Mesh Setup</div>
-            <div class="modal-mesh-id" id="modal-mesh-id"></div>
-          </div>
-          <button class="modal-close" id="close-modal">&times;</button>
+    <!-- modal -->
+    <div class="ov off" id="ov" onclick="maybeClose(event)">
+      <div class="mdl">
+        <div class="mdlt">
+          <div><div class="mdln" id="mn2"></div><div class="mdli" id="mi2"></div></div>
+          <button class="mdlx" onclick="closeM()">&times;</button>
         </div>
-        <div class="modal-body">
-          <p style="font-size:.84rem;color:var(--muted);margin-bottom:14px">Drop <code style="font-family:var(--mono);color:var(--accentl);font-size:.88em">.mesh.json</code> in your project and run the init command for your platform.</p>
+        <div class="mdlb">
+          <p style="font-size:.83rem;color:var(--sub);margin-bottom:16px">Use this mesh in your init command, or copy the integrate URL to let any agent self-bootstrap.</p>
 
-          <div class="harness-tabs" id="modal-harness-tabs">
-            <div class="htab active" data-htab="m-copilot">&#9881; Copilot</div>
-            <div class="htab" data-htab="m-claude">&#129302; Claude</div>
-            <div class="htab" data-htab="m-hermes">&#127744; Hermes</div>
-            <div class="htab" data-htab="m-raw">&#128187; Raw API</div>
-          </div>
+          <div class="slbl">Integrate URL</div>
+          <div class="int-url" id="murl"></div>
+          <div style="margin-bottom:18px"><button class="cp" onclick="cpUrl(this)">Copy URL</button></div>
 
-          <!-- Copilot -->
-          <div class="modal-panel active" id="m-copilot">
-            <div class="json-card cb">
-              <div class="cb-bar"><span class="cb-lbl">.mesh.json &mdash; commit this to your repo</span><button class="cb-copy" id="copy-meshjson-copilot">copy</button></div>
-              <div class="cb-body" id="meshjson-copilot"></div>
-            </div>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">then run</span><button class="cb-copy" id="copy-init-copilot">copy</button></div>
-              <div class="cb-body" id="init-copilot"></div>
-            </div>
-          </div>
+          <div class="slbl" style="margin-bottom:8px">Agent prompt</div>
+          <div class="pb"><div class="pbh"><span class="pbl">Copy &amp; paste into any AI agent</span><button class="cp" onclick="cpPrm(this)">Copy</button></div><div class="pbb" id="mprm"></div></div>
 
-          <!-- Claude -->
-          <div class="modal-panel" id="m-claude">
-            <div class="json-card cb">
-              <div class="cb-bar"><span class="cb-lbl">.mesh.json &mdash; commit to your repo</span><button class="cb-copy" id="copy-meshjson-claude">copy</button></div>
-              <div class="cb-body" id="meshjson-claude"></div>
-            </div>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">then run</span><button class="cb-copy" id="copy-init-claude">copy</button></div>
-              <div class="cb-body" id="init-claude"></div>
-            </div>
-          </div>
-
-          <!-- Hermes -->
-          <div class="modal-panel" id="m-hermes">
-            <div class="json-card cb">
-              <div class="cb-bar"><span class="cb-lbl">.mesh.json</span><button class="cb-copy" id="copy-meshjson-hermes">copy</button></div>
-              <div class="cb-body" id="meshjson-hermes"></div>
-            </div>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">then run</span><button class="cb-copy" id="copy-init-hermes">copy</button></div>
-              <div class="cb-body" id="init-hermes"></div>
-            </div>
-          </div>
-
-          <!-- Raw API -->
-          <div class="modal-panel" id="m-raw">
-            <div class="json-card cb">
-              <div class="cb-bar"><span class="cb-lbl">.mesh.json &mdash; or set MESHWIRE_MESH_ID</span><button class="cb-copy" id="copy-meshjson-raw">copy</button></div>
-              <div class="cb-body" id="meshjson-raw"></div>
-            </div>
-            <div class="cb">
-              <div class="cb-bar"><span class="cb-lbl">register via HTTP</span></div>
-              <div class="cb-body" id="init-raw"></div>
-            </div>
-          </div>
-
+          <div class="slbl" style="margin-top:18px;margin-bottom:8px">CLI init command</div>
+          <div class="cb"><div class="cbh"><span class="cbl">pick your platform</span><button class="cp" onclick="cpInit(this)">Copy</button></div><div class="cbb" id="minit"></div></div>
         </div>
       </div>
     </div>
 
     <script>
 window.__USER__ = __USER_JSON__;
+const S = { b: window.__USER__||{}, tok: window.__USER__?.newToken||null, rev: Boolean(window.__USER__?.newToken), mx: [], mc: {}, mm: null };
+const BASE = (window.__USER__?.baseUrl || 'https://meshwire.io').replace(/\\/$/,'');
 
-const S = {
-  bootstrap: window.__USER__ || {},
-  liveToken: window.__USER__?.newToken || null,
-  revealed: Boolean(window.__USER__?.newToken),
-  meshes: [],
-  agentCounts: {},
-  activeMesh: null,
-};
-
-// ── DOM refs ────────────────────────────────────────────────────────
-const $id = id => document.getElementById(id);
-const userAvatar = $id('user-avatar');
-const userLogin = $id('user-login');
-const tokenDisplay = $id('token-display');
-const tokenWarn = $id('token-warn');
-const meshList = $id('mesh-list');
-const meshFb = $id('mesh-fb');
-
-// ── Helpers ─────────────────────────────────────────────────────────
-function masked() { return S.bootstrap.maskedToken || 'mw_\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022'; }
-function visibleToken() { return (S.liveToken && S.revealed) ? S.liveToken : masked(); }
-
-function showFb(el, msg, type, ms = 3000) {
-  el.textContent = msg;
-  el.className = 'fb ' + type + ' show';
-  if (ms) setTimeout(() => el.classList.remove('show'), ms);
+/* ── THE ONE COPY FUNCTION ──────────────────────────────────── */
+function copy(txt, btn) {
+  if (!txt || !txt.trim()) { fl(btn,'—'); return; }
+  const ok = () => fl(btn,'Copied!');
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(txt).then(ok).catch(() => fb2(txt, btn));
+  } else { fb2(txt, btn); }
+}
+function fb2(txt, btn) {
+  const el = document.createElement('textarea');
+  el.value = txt; el.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+  document.body.appendChild(el); el.select();
+  try { document.execCommand('copy'); fl(btn,'Copied!'); } catch { fl(btn,'!'); }
+  document.body.removeChild(el);
+}
+function fl(btn, msg) {
+  if (!btn) return;
+  const o = btn.textContent; btn.textContent = msg; btn.classList.add('ok');
+  setTimeout(() => { btn.textContent = o; btn.classList.remove('ok'); }, 1800);
 }
 
-async function copyText(text, btn) {
-  try {
-    await navigator.clipboard.writeText(text);
-    if (btn) { const orig = btn.textContent; btn.textContent = 'copied!'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1600); }
-    return true;
-  } catch { return false; }
+/* ── Token ───────────────────────────────────────────────────── */
+function mk() { return S.b.maskedToken || 'mw_\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022'; }
+function rtok() {
+  document.getElementById('tv').textContent = (S.tok && S.rev) ? S.tok : mk();
+  const nb = document.getElementById('tnb');
+  if (nb) nb.style.display = S.tok ? 'flex' : 'none';
+}
+function selTok(el) { window.getSelection().selectAllChildren(el); }
+function copyTok(btn) { copy(S.tok||'', btn); }
+function toggleTok() { if (!S.tok) return; S.rev = !S.rev; rtok(); }
+async function regenTok() {
+  if (!confirm('Regenerate token? Current one stops working immediately.')) return;
+  const r = await fetch('/auth/regenerate-token',{method:'POST',credentials:'same-origin'});
+  const d = await r.json();
+  if (!r.ok) { sfb('tok-fb', d.error||'Failed','err'); return; }
+  S.tok = d.token; S.rev = true;
+  S.b.maskedToken = 'mw_\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022' + d.token.slice(-8);
+  rtok(); sfb('tok-fb','\\u2713 New token. Save it now.','ok',8000);
 }
 
-function meshJsonFor(mesh, harness) {
-  return JSON.stringify({
-    mesh_id: mesh.mesh_id,
-    workspace_name: mesh.name || 'my-workspace',
-    agent_name: harness + '-agent',
-    harness,
-  }, null, 2);
+/* ── Harness tabs ────────────────────────────────────────────── */
+function ht(id, el) {
+  document.querySelectorAll('#ht .tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('pane-'+id)?.classList.add('on');
 }
 
-// ── Render header ────────────────────────────────────────────────────
-function renderHeader(user) {
-  userAvatar.src = user?.avatar_url || 'https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png';
-  userLogin.textContent = user?.login || '';
+/* ── Any agent prompt ────────────────────────────────────────── */
+function prompt4(meshId, meshName) {
+  return 'You have access to MeshWire, a multi-agent messaging service.\\n\\n' +
+    'Your mesh: ' + (meshName||meshId) + ' (ID: ' + meshId + ')\\n\\n' +
+    'To receive your complete integration guide — including how to register as an agent, send and receive messages, and discover other agents — call:\\n\\n' +
+    '  GET ' + BASE + '/mesh/' + meshId + '/integrate\\n\\n' +
+    'That endpoint returns step-by-step instructions, OpenAPI tool definitions, and a SKILL.md document. Make that request first, then follow the guide to connect.';
 }
+function updateAny() {
+  const id = document.getElementById('any-sel')?.value;
+  const el = document.getElementById('any-txt');
+  if (!id) { el.textContent = 'Select a mesh above to generate the prompt.'; return; }
+  el.textContent = prompt4(id, S.mx.find(m=>m.mesh_id===id)?.name);
+}
+function copyAny(btn) { copy(document.getElementById('any-txt')?.textContent||'', btn); }
 
-// ── Render token ─────────────────────────────────────────────────────
-function renderToken() {
-  tokenDisplay.textContent = visibleToken();
-  if (S.liveToken) {
-    tokenDisplay.classList.add('token-new');
-    tokenWarn.style.display = 'flex';
-  } else {
-    tokenDisplay.classList.remove('token-new');
-    tokenWarn.style.display = 'none';
+/* ── Meshes ──────────────────────────────────────────────────── */
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function rmx() {
+  const el = document.getElementById('ml');
+  el.innerHTML = S.mx.length
+    ? S.mx.map(m => '<div class="mr" onclick="openM(\\''+m.mesh_id+'\\')"><div><div class="mrn">'+esc(m.name)+'</div><div class="mri">'+m.mesh_id+'</div></div><div style="display:flex;align-items:center;gap:10px"><div class="mra">'+(S.mc[m.mesh_id]||0)+' agents</div><div style="color:var(--dim)">&#8250;</div></div></div>').join('')
+    : '<div class="mempty">No meshes yet — create your first one below.</div>';
+
+  const sel = document.getElementById('any-sel');
+  if (sel) {
+    sel.innerHTML = S.mx.length
+      ? S.mx.map(m=>'<option value="'+m.mesh_id+'">'+esc(m.name)+' ('+m.mesh_id+')</option>').join('')
+      : '<option value="">— create a mesh below first —</option>';
+    updateAny();
   }
-  // Env block
-  const envBlock = $id('env-block');
-  if (envBlock) envBlock.textContent = 'MESHWIRE_TOKEN=' + (S.liveToken || masked());
+}
+async function createMesh() {
+  const inp = document.getElementById('mn');
+  const name = (inp?.value||'').trim()||'Untitled Mesh';
+  const r = await fetch('/api/meshes',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({name})});
+  const d = await r.json();
+  if (!r.ok) { sfb('mfb',d.error||'Failed','err'); return; }
+  if (inp) inp.value='';
+  S.mx.unshift(d); S.mc[d.mesh_id]=0; rmx();
+  sfb('mfb','\\u2713 "'+d.name+'" created.','ok');
 }
 
-// ── Render meshes ────────────────────────────────────────────────────
-function renderMeshes() {
-  if (!S.meshes.length) {
-    meshList.innerHTML = '<div class="mesh-empty">No meshes yet &mdash; create your first one below.</div>';
-    return;
-  }
-  meshList.innerHTML = S.meshes.map(m => {
-    const agents = S.agentCounts[m.mesh_id] || 0;
-    const date = m.created_at ? new Date(m.created_at).toLocaleDateString() : '';
-    return '<div class="mesh-row" data-mesh-id="' + m.mesh_id + '">' +
-      '<div><div class="mesh-name">' + esc(m.name) + '</div><div class="mesh-id">' + m.mesh_id + '</div></div>' +
-      '<div style="display:flex;align-items:center;gap:16px">' +
-      '<div class="mesh-meta">' + agents + ' agent' + (agents === 1 ? '' : 's') + (date ? ' &middot; ' + date : '') + '</div>' +
-      '<span class="mesh-arrow">&#8250;</span></div></div>';
-  }).join('');
-  meshList.querySelectorAll('.mesh-row').forEach(row => {
-    row.addEventListener('click', () => openMeshModal(row.dataset.meshId));
-  });
+/* ── Modal ───────────────────────────────────────────────────── */
+function openM(id) {
+  const m = S.mx.find(x=>x.mesh_id===id); if (!m) return;
+  S.mm = m;
+  const url = BASE+'/mesh/'+id+'/integrate';
+  document.getElementById('mn2').textContent = m.name||id;
+  document.getElementById('mi2').textContent = id;
+  document.getElementById('murl').textContent = url;
+  document.getElementById('mprm').textContent = prompt4(id, m.name);
+  document.getElementById('minit').innerHTML =
+    '<div style="color:var(--dim);font-size:.72rem;margin-bottom:5px"># Copilot</div><div class="cmd">meshwire init --harness copilot --mesh '+id+'</div>'+
+    '<div style="color:var(--dim);font-size:.72rem;margin-top:8px;margin-bottom:5px"># Hermes</div><div class="cmd">meshwire init --harness hermes --mesh '+id+'</div>'+
+    '<div style="color:var(--dim);font-size:.72rem;margin-top:8px;margin-bottom:5px"># Pi</div><div class="cmd">meshwire init --harness pi --mesh '+id+'</div>';
+  document.getElementById('ov').classList.remove('off');
+  document.body.style.overflow='hidden';
+}
+function closeM() { document.getElementById('ov').classList.add('off'); document.body.style.overflow=''; }
+function maybeClose(e) { if (e.target.id==='ov') closeM(); }
+function cpUrl(btn) { copy(S.mm ? BASE+'/mesh/'+S.mm.mesh_id+'/integrate' : '', btn); }
+function cpPrm(btn) { copy(document.getElementById('mprm')?.textContent||'', btn); }
+function cpInit(btn) { copy(S.mm ? 'meshwire init --harness copilot --mesh '+S.mm.mesh_id : '', btn); }
+
+/* ── Feedback ────────────────────────────────────────────────── */
+function sfb(id, msg, cls, ms=3200) {
+  const el = document.getElementById(id); if (!el) return;
+  el.textContent = msg; el.className = 'fb '+cls;
+  if (ms) setTimeout(()=>el.className='fb', ms);
 }
 
-function esc(str) { return (str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// ── Load dashboard data ──────────────────────────────────────────────
-async function loadData() {
+/* ── Boot ────────────────────────────────────────────────────── */
+async function boot() {
   try {
-    const r = await fetch('/api/me', { credentials: 'same-origin' });
-    if (!r.ok) return;
-    const { user, meshes, agentCounts } = await r.json();
-    S.bootstrap = { ...S.bootstrap, ...user };
-    S.meshes = meshes || [];
-    S.agentCounts = agentCounts || {};
-    renderHeader(user);
-    renderMeshes();
-  } catch { /* ignore */ }
+    const r = await fetch('/api/me',{credentials:'same-origin'}); if (!r.ok) return;
+    const {user,meshes,agentCounts} = await r.json();
+    S.b = {...S.b,...user}; S.mx = meshes||[]; S.mc = agentCounts||{};
+    document.getElementById('ua').src = user?.avatar_url||'';
+    document.getElementById('ul').textContent = user?.login||'';
+    rmx();
+  } catch {}
 }
-
-// ── Mesh modal ───────────────────────────────────────────────────────
-function openMeshModal(meshId) {
-  const mesh = S.meshes.find(m => m.mesh_id === meshId);
-  if (!mesh) return;
-  S.activeMesh = mesh;
-
-  $id('modal-mesh-name').textContent = mesh.name || meshId;
-  $id('modal-mesh-id').textContent = meshId;
-
-  const harnesses = ['copilot', 'claude', 'hermes', 'raw'];
-  harnesses.forEach(h => {
-    const json = meshJsonFor(mesh, h);
-    const jsonEl = $id('meshjson-' + h);
-    if (jsonEl) {
-      // Syntax-highlight the JSON
-      jsonEl.innerHTML = json
-        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-        .replace(/"([^"]+)":/g, '<span style="color:var(--accentl)">"$1"</span>:')
-        .replace(/: "([^"]+)"/g, ': <span style="color:var(--cyan)">"$1"</span>');
-    }
-    const cpBtn = $id('copy-meshjson-' + h);
-    if (cpBtn) cpBtn.dataset.copyValue = json;
-
-    if (h !== 'raw') {
-      const initEl = $id('init-' + h);
-      const initCmd = 'meshwire init --harness ' + h + ' --mesh ' + meshId;
-      if (initEl) initEl.innerHTML = '<div class="c-cmd">' + initCmd + '</div>';
-      const cpInitBtn = $id('copy-init-' + h);
-      if (cpInitBtn) cpInitBtn.dataset.copyValue = initCmd;
-    } else {
-      const initEl = $id('init-raw');
-      if (initEl) initEl.innerHTML =
-        '<div style="color:var(--text)">POST <span style="color:var(--accentl)">/mesh/' + meshId + '/agents</span></div>' +
-        '<div style="color:var(--muted2);font-size:.76rem">Authorization: Bearer mw_...</div>' +
-        '<div style="height:4px"></div>' +
-        '<div class="c-cmt"># Or use the CLI:</div>' +
-        '<div class="c-cmd">meshwire mesh use ' + meshId + '</div>';
-      const cpInitBtn = $id('copy-init-raw');
-      if (cpInitBtn) cpInitBtn.dataset.copyValue = 'meshwire mesh use ' + meshId;
-    }
-  });
-
-  $id('mesh-modal').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  $id('mesh-modal').classList.add('hidden');
-  document.body.style.overflow = '';
-}
-
-// ── Tab systems ──────────────────────────────────────────────────────
-function bindTabs(tabContainerId, contentPrefix) {
-  const container = $id(tabContainerId);
-  if (!container) return;
-  container.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.dataset.tab;
-      document.querySelectorAll('[id^="' + contentPrefix + '"]').forEach(el => {
-        el.classList.toggle('active', el.id === target);
-      });
-    });
-  });
-}
-
-function bindHTabs(containerId) {
-  const container = $id(containerId);
-  if (!container) return;
-  container.querySelectorAll('.htab').forEach(htab => {
-    htab.addEventListener('click', () => {
-      container.querySelectorAll('.htab').forEach(t => t.classList.remove('active'));
-      htab.classList.add('active');
-      const target = htab.dataset.htab;
-      document.querySelectorAll('.modal-panel').forEach(p => {
-        p.classList.toggle('active', p.id === target);
-      });
-    });
-  });
-}
-
-// ── Event wiring ─────────────────────────────────────────────────────
-document.querySelectorAll('.cb-copy[data-copy]').forEach(btn => {
-  btn.addEventListener('click', () => copyText(btn.dataset.copy, btn));
-});
-
-// Dynamic copy buttons (mesh modal)
-document.addEventListener('click', e => {
-  const btn = e.target.closest('.cb-copy[data-copy-value]');
-  if (btn) copyText(btn.dataset.copyValue, btn);
-});
-
-$id('copy-token')?.addEventListener('click', () => {
-  const token = S.liveToken || S.bootstrap.maskedToken || '';
-  if (token.includes('\\u2022')) { showFb(meshFb, 'Token is masked — regenerate to get a new one.', 'error'); return; }
-  copyText(S.liveToken || token, $id('copy-token'));
-  showFb(meshFb, 'Token copied.', 'success');
-});
-
-$id('toggle-token')?.addEventListener('click', () => {
-  S.revealed = !S.revealed;
-  renderToken();
-});
-
-$id('regen-token')?.addEventListener('click', async () => {
-  if (!confirm('Regenerate your token? The old one will stop working.')) return;
-  const r = await fetch('/auth/regenerate-token', { method: 'POST', credentials: 'same-origin' });
-  const data = await r.json();
-  if (!r.ok) { showFb(meshFb, data.error || 'Failed', 'error'); return; }
-  S.liveToken = data.token;
-  S.revealed = true;
-  S.bootstrap.maskedToken = 'mw_\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022' + data.token.slice(-8);
-  renderToken();
-  showFb(meshFb, 'New token generated. Save it now.', 'success', 8000);
-});
-
-$id('copy-env-btn')?.addEventListener('click', () => {
-  const t = S.liveToken || '';
-  if (!t) { showFb(meshFb, 'Token is masked. Show it first.', 'error'); return; }
-  copyText('MESHWIRE_TOKEN=' + t, $id('copy-env-btn'));
-});
-
-$id('create-mesh')?.addEventListener('click', async () => {
-  const name = $id('mesh-name').value.trim() || 'Untitled Mesh';
-  const r = await fetch('/api/meshes', {
-    method: 'POST', credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name }),
-  });
-  const data = await r.json();
-  if (!r.ok) { showFb(meshFb, data.error || 'Failed', 'error'); return; }
-  $id('mesh-name').value = '';
-  showFb(meshFb, 'Created: ' + data.name, 'success');
-  S.meshes.unshift(data);
-  S.agentCounts[data.mesh_id] = 0;
-  renderMeshes();
-});
-
-$id('close-modal')?.addEventListener('click', closeModal);
-$id('mesh-modal')?.addEventListener('click', e => { if (e.target === $id('mesh-modal')) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ── Init ─────────────────────────────────────────────────────────────
-bindTabs('auth-tabs', 'auth-');
-bindTabs('harness-tabs', 'h-');
-bindHTabs('modal-harness-tabs');
-
-renderHeader(S.bootstrap);
-renderToken();
-
-// Show env tab if new token (so they see it right away)
-if (S.liveToken) {
-  document.querySelector('#auth-tabs .tab[data-tab="auth-env"]')?.click();
-}
-
-loadData();
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeM(); });
+rtok();
+boot();
     </script>
   </body>
 </html>`;
 
 writeFileSync(join(__dirname, '..', 'views', 'dashboard.html'), html, 'utf8');
-console.log('dashboard.html written:', html.length, 'chars');
+console.log('Written:', html.length, 'chars');
