@@ -122,6 +122,24 @@ class AgentMeshStack extends cdk.Stack {
       idleTimeout: cdk.Duration.seconds(65),
     });
 
+    // ─── Phase 3: HTTPS + meshwire.io domain ───────────────────
+    // ACM Certificate ARN (issued 2026-06-05, validated via Route 53 DNS)
+    // Zone ID: Z0713769PI648X8HIZK3
+    // Cert ARN: arn:aws:acm:us-east-1:250230555773:certificate/fbaa4655-bfcd-465e-85ab-74aa1550a6af
+    // Uncomment and run cdk deploy once NS records propagate to GoDaddy and cert is ISSUED:
+    //
+    // const cert = acm.Certificate.fromCertificateArn(this, "MeshWireCert",
+    //   "arn:aws:acm:us-east-1:250230555773:certificate/fbaa4655-bfcd-465e-85ab-74aa1550a6af");
+    // service.loadBalancer.addListener("HttpsListener", {
+    //   port: 443,
+    //   protocol: elbv2.ApplicationProtocol.HTTPS,
+    //   certificates: [cert],
+    //   defaultTargetGroups: [service.targetGroup],
+    // });
+    // service.listener.addAction("HttpRedirect", {
+    //   action: elbv2.ListenerAction.redirect({ protocol: "HTTPS", port: "443", permanent: true }),
+    // });
+
     service.targetGroup.configureHealthCheck({
       path: "/health",
       interval: cdk.Duration.seconds(30),
