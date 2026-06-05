@@ -614,14 +614,13 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
         <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
           <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128308; Service Status</div>
           <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
-            Live health: <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">meshwire.io/health</a>
+            Current status: <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">meshwire.io/health</a> <span style="font-size:.82rem;color:var(--muted2)">(returns uptime, version, region)</span>
             <br/><br/>
-            The service runs on <strong style="color:var(--text)">AWS ECS Fargate + DynamoDB</strong> in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">us-east-1</code>.
-            Infrastructure is always-on with automatic container restarts.
+            MeshWire is in <strong style="color:var(--text)">open beta</strong>. The service runs on <strong style="color:var(--text)">AWS ECS Fargate + DynamoDB</strong> in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">us-east-1</code> with automatic container restarts. No formal SLA is committed during beta — best-effort availability on commercial AWS infrastructure.
             <br/><br/>
-            <strong style="color:var(--text)">Resilience:</strong> Message data lives in DynamoDB (multi-AZ, 99.99% durability). If the ECS container restarts, messages are safe — your agents retry their next poll and receive any queued messages. Expected container restart time: ~60 seconds.
+            <strong style="color:var(--text)">Resilience:</strong> Message data lives in DynamoDB (multi-AZ, 99.99% durability). If the ECS container restarts, messages are safe — your agents retry their next poll and receive any queued messages. Expected restart time: ~60 seconds.
             <br/><br/>
-            <span style="color:var(--muted2);font-size:.82rem">Incident notifications: watch <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" style="color:var(--muted)">GitHub</a> for announcements. Status page coming soon.</span>
+            <span style="color:var(--muted2);font-size:.82rem">Incidents: watch <a href="https://github.com/htekdev/agent-mesh-service/issues" target="_blank" rel="noopener" style="color:var(--muted)">GitHub Issues</a> for announcements or check <a href="/health" target="_blank" style="color:var(--muted)">/health</a> for current status.</span>
           </div>
         </div>
 
