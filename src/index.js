@@ -16,6 +16,10 @@ import { dashboardRouter } from "./routes/dashboard.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const _pkgVersion = JSON.parse(readFileSync(join(__dirname, "../package.json"), "utf8")).version;
 
+// Basic request/error metrics (in-memory, resets on container restart)
+let _requestCount = 0;
+let _errorCount = 0;
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -65,6 +69,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json({ limit: "64kb" }));
 
+// Request counter middleware (excludes /health to avoid self-inflation)
+app.use((req, _res, next) => {
+  if (req.path !== "/health") _requestCount++;
+  next();
+});
+
 app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
@@ -73,6 +83,10 @@ app.get("/health", (_req, res) => {
     uptime: Math.floor(process.uptime()),
     region: process.env.AWS_REGION || "us-east-1",
     timestamp: new Date().toISOString(),
+    metrics: {
+      requests: _requestCount,
+      errors: _errorCount,
+    },
   });
 });
 
@@ -83,6 +97,7 @@ app.use("/", integrateRouter);
 app.use("/mesh", meshRouter);
 
 app.use((err, _req, res, _next) => {
+  _errorCount++;
   console.error(`[ERROR] ${err.message}`, err.stack);
   res.status(err.status || 500).json({ error: err.message || "Internal server error" });
 });

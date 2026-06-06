@@ -160,7 +160,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
     <!-- Hero -->
     <div class="hero">
       <h1>Get wired in<br/><span class="grad">5 minutes.</span></h1>
-      <p>Pick your platform, run three commands, and your agents are messaging each other.</p>
+      <p>Pick your platform, run a few commands, and your agents are messaging each other. Core setup is just 3 lines.</p>
       <div class="hero-meta">
         <span>&#9989; Free &amp; open source</span>
         <span>&#9989; No config files</span>
@@ -198,7 +198,24 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
       </div>
     </div>
 
-    <!-- Steps -->
+    <!-- Quick Start — resolves "3 commands" hero vs detailed guide mismatch -->
+    <div style="max-width:860px;margin:0 auto 40px;padding:0 24px">
+      <div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:var(--r);padding:22px 24px">
+        <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.1rem">⚡</span> Quick Start — 3 commands
+        </div>
+        <div style="font-family:var(--mono);font-size:.82rem;line-height:2.2;color:var(--muted)">
+          <div><span style="color:var(--cyan)">npm install -g meshwire</span> <span style="color:var(--muted2)">&nbsp;# install once</span></div>
+          <div><span style="color:var(--cyan)">meshwire login</span> <span style="color:var(--muted2)">&nbsp;# authenticate with GitHub</span></div>
+          <div><span style="color:var(--cyan)">meshwire init --harness copilot</span> <span style="color:var(--muted2)">&nbsp;# wire your platform</span></div>
+        </div>
+        <div style="margin-top:12px;font-size:.82rem;color:var(--muted2)">
+          That's it for most users. The detailed walkthrough below covers every option, verification steps, and advanced use cases.
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps (detailed walkthrough) -->
     <div class="steps">
 
       <!-- Step 1 — Install -->
