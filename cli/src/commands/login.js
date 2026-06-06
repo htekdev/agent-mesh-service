@@ -1,4 +1,4 @@
-// meshwire login — browser-based OAuth, saves credentials to ~/.meshwire/credentials.json
+// meshwire login -- browser-based OAuth, saves credentials to ~/.meshwire/credentials.json
 //
 // Flow:
 // 1. Find a free local port
@@ -50,14 +50,14 @@ function waitForCallback(port, timeoutMs = 120_000) {
           <style>body{font-family:system-ui;background:#080808;color:#f5f5f5;display:grid;place-items:center;height:100vh;margin:0}
           .box{text-align:center;padding:40px;border:1px solid rgba(124,58,237,.4);border-radius:20px;background:rgba(124,58,237,.08)}
           h2{color:#a78bfa;margin-bottom:12px}p{color:rgba(255,255,255,.6)}</style></head>
-          <body><div class="box"><h2>✅ Signed in as ${login || 'you'}!</h2>
+          <body><div class="box"><h2>[OK] Signed in as ${login || 'you'}!</h2>
           <p>You can close this tab and return to your terminal.</p></div></body></html>`);
       } else {
         res.end(`<!DOCTYPE html><html><head><title>MeshWire</title>
           <style>body{font-family:system-ui;background:#080808;color:#f5f5f5;display:grid;place-items:center;height:100vh;margin:0}
           .box{text-align:center;padding:40px;border:1px solid rgba(251,113,133,.4);border-radius:20px}
           h2{color:#fb7185;margin-bottom:12px}p{color:rgba(255,255,255,.6)}</style></head>
-          <body><div class="box"><h2>❌ Login failed</h2>
+          <body><div class="box"><h2>[X] Login failed</h2>
           <p>${error || 'Unknown error'}. Please close this tab and try again.</p></div></body></html>`);
       }
 
@@ -98,7 +98,7 @@ async function openBrowser(url) {
 export async function cmdLogin(opts) {
   const meshwireUrl = opts.url || readConfig().url || DEFAULT_URL;
 
-  console.log('\n' + chalk.bold('🕸  MeshWire Login') + '\n');
+  console.log('\n' + chalk.bold('*  MeshWire Login') + '\n');
 
   // Check if already logged in
   const existing = readCredentials();
@@ -135,7 +135,7 @@ export async function cmdLogin(opts) {
   try {
     result = await waitForCallback(port);
   } catch (err) {
-    console.error('\n' + chalk.red(`  ✗ ${err.message}\n`));
+    console.error('\n' + chalk.red(`  [X] ${err.message}\n`));
     process.exit(1);
   }
 
@@ -147,7 +147,7 @@ export async function cmdLogin(opts) {
   // Also update legacy config.json for backward compat
   writeConfig({ token });
 
-  console.log(chalk.bold.green(`\n  ✅ Signed in as ${login}!\n`));
+  console.log(chalk.bold.green(`\n  [OK] Signed in as ${login}!\n`));
   console.log(chalk.dim('  Credentials saved to ~/.meshwire/credentials.json\n'));
 
   // Optionally create a mesh if none exists
@@ -167,13 +167,13 @@ export async function cmdLogin(opts) {
   try {
     const client = new MeshWireClient({ url: meshwireUrl, token });
     await client.health();
-    console.log(chalk.green('  ✓ Connected to MeshWire\n'));
+    console.log(chalk.green('  [OK] Connected to MeshWire\n'));
   } catch {
-    console.log(chalk.yellow('  ⚠ Could not verify connection — check your URL\n'));
+    console.log(chalk.yellow('  [!] Could not verify connection -- check your URL\n'));
   }
 
   console.log(chalk.dim('  Next steps:'));
-  console.log(chalk.cyan('    meshwire init') + chalk.dim('                 — full workspace setup'));
-  console.log(chalk.cyan('    meshwire init --harness copilot') + chalk.dim(' — set up Copilot CLI extension'));
-  console.log(chalk.cyan('    meshwire status') + chalk.dim('               — verify everything is wired\n'));
+  console.log(chalk.cyan('    meshwire init') + chalk.dim('                 -- full workspace setup'));
+  console.log(chalk.cyan('    meshwire init --harness copilot') + chalk.dim(' -- set up Copilot CLI extension'));
+  console.log(chalk.cyan('    meshwire status') + chalk.dim('               -- verify everything is wired\n'));
 }

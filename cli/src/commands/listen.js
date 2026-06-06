@@ -1,4 +1,4 @@
-// meshwire listen — long-poll for incoming messages, print them as they arrive
+// meshwire listen -- long-poll for incoming messages, print them as they arrive
 import chalk from 'chalk';
 import { requireConfig, writeConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';
@@ -28,7 +28,7 @@ export async function cmdListen(opts) {
   }
 
   console.log(
-    '\n' + chalk.bold('🕸  MeshWire') + chalk.dim(` listening on mesh ${meshId}`) + '\n' +
+    '\n' + chalk.bold('*  MeshWire') + chalk.dim(` listening on mesh ${meshId}`) + '\n' +
     chalk.dim(`  Agent: ${config.agentName || agentId} (${agentId})`) + '\n' +
     chalk.dim('  Press Ctrl+C to stop\n')
   );
@@ -65,7 +65,7 @@ export async function cmdListen(opts) {
         console.error(chalk.red('  Connection lost. Retrying in 5s...'));
         await sleep(5000);
       } else {
-        console.error(chalk.dim(`  Poll error: ${err.message} — retrying...`));
+        console.error(chalk.dim(`  Poll error: ${err.message} -- retrying...`));
         await sleep(2000);
       }
     }
@@ -85,7 +85,7 @@ function printMessage(msg, raw) {
 
   console.log(
     chalk.dim(time) + '  ' +
-    chalk.cyan(from) + chalk.dim(' → ') +
+    chalk.cyan(from) + chalk.dim(' -> ') +
     chalk.dim(msg.recipient_id === '*' ? 'all' : msg.recipient_id) + '\n' +
     '  ' + priority + msg.content + '\n'
   );

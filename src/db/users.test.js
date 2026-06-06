@@ -21,7 +21,7 @@ describe("users token helpers", () => {
   it("builds a masked token preview from the stored suffix", () => {
     assert.strictEqual(
       getMaskedToken({ token_suffix: "90abcdef" }),
-      "mw_••••••••••••••••90abcdef"
+      "mw_****************90abcdef"
     );
   });
 });

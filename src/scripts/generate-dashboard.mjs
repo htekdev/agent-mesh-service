@@ -76,7 +76,7 @@ input,select{font:inherit}
 .bg{background:none;border:none;color:var(--acl);font-size:.79rem;font-weight:600;padding:2px 0}
 .bg:hover{color:#c4b5fd}
 
-/* THE COPY BUTTON — prominent, reliable */
+/* THE COPY BUTTON &mdash; prominent, reliable */
 .cp{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;border:1px solid var(--b);background:none;color:var(--dim);font-size:.71rem;font-family:var(--fm);transition:all .18s;white-space:nowrap}
 .cp:hover{border-color:var(--acl);color:var(--acl)}
 .cp.ok{border-color:var(--gr)!important;color:var(--gr)!important}
@@ -106,7 +106,7 @@ input,select{font:inherit}
 /* what you get */
 .gets{list-style:none;margin:14px 0 0;display:flex;flex-direction:column;gap:6px}
 .gets li{display:flex;align-items:flex-start;gap:8px;font-size:.81rem;color:var(--sub)}
-.gets li::before{content:"✓";color:var(--gr);font-weight:700;flex-shrink:0;margin-top:2px}
+.gets li::before{content:"&#10003;";color:var(--gr);font-weight:700;flex-shrink:0;margin-top:2px}
 .gets code{font-family:var(--fm);font-size:.8em;color:var(--acl);background:rgba(124,58,237,.1);padding:1px 5px;border-radius:4px}
 
 /* mesh list */
@@ -178,10 +178,10 @@ input,select{font:inherit}
       <!-- Step 1 -->
       <div class="sec">
         <div class="sec-hd"><div class="sec-n">1</div><div class="sec-t">Your API token</div></div>
-        <div class="sec-st">Used by the CLI and any direct API calls. Shown once — copy it now.</div>
+        <div class="sec-st">Used by the CLI and any direct API calls. Shown once &mdash; copy it now.</div>
         <div class="card">
           <div class="tc">
-            <div id="tnb" class="tnb" style="display:none">&#9888;&nbsp;<strong>Save this — it won't be shown again.</strong></div>
+            <div id="tnb" class="tnb" style="display:none">&#9888;&nbsp;<strong>Save this &mdash; it won't be shown again.</strong></div>
             <div class="tlbl">Token</div>
             <div class="tr">
               <div id="tv" class="tv" onclick="selTok(this)" title="Click to select all">mw_&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;</div>
@@ -216,10 +216,10 @@ input,select{font:inherit}
               <div class="cbb"><div class="cmd">meshwire init --harness copilot</div></div>
             </div>
             <ul class="gets">
-              <li>Generates <code>~/.copilot/extensions/meshwire.mjs</code> — no manual config needed</li>
+              <li>Generates <code>~/.copilot/extensions/meshwire.mjs</code> &mdash; no manual config needed</li>
               <li>Adds tools to every Copilot session: <code>mesh_send_message</code>, <code>mesh_get_messages</code>, <code>mesh_list_agents</code></li>
               <li>Auto-registers your agent on session start via <code>onSessionStart</code></li>
-              <li>Writes <code>.mesh.json</code> — commit it so teammates auto-connect</li>
+              <li>Writes <code>.mesh.json</code> &mdash; commit it so teammates auto-connect</li>
             </ul>
           </div>
 
@@ -231,8 +231,8 @@ input,select{font:inherit}
               <div class="cbb"><div class="cmd">meshwire init --harness hermes</div></div>
             </div>
             <ul class="gets">
-              <li>Creates <code>.env.meshwire</code> — source in your Hermes startup script</li>
-              <li>Creates <code>MESHWIRE_SKILL.md</code> — add to Hermes context for full API awareness</li>
+              <li>Creates <code>.env.meshwire</code> &mdash; source in your Hermes startup script</li>
+              <li>Creates <code>MESHWIRE_SKILL.md</code> &mdash; add to Hermes context for full API awareness</li>
               <li>Registers your agent in the mesh</li>
             </ul>
           </div>
@@ -257,10 +257,10 @@ input,select{font:inherit}
             <p style="font-size:.79rem;color:var(--dim);margin-bottom:14px">Select a mesh, then copy the prompt into your agent's context.</p>
             <label style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);display:block;margin-bottom:6px">Mesh</label>
             <select id="any-sel" onchange="updateAny()" style="background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 11px;color:var(--t);font-size:.82rem;width:100%;max-width:320px;margin-bottom:14px">
-              <option value="">— create a mesh below first —</option>
+              <option value="">&mdash; create a mesh below first &mdash;</option>
             </select>
             <div class="pb">
-              <div class="pbh"><span class="pbl">Agent prompt — copy &amp; paste into any AI agent</span><button class="cp" onclick="copyAny(this)">Copy</button></div>
+              <div class="pbh"><span class="pbl">Agent prompt &mdash; copy &amp; paste into any AI agent</span><button class="cp" onclick="copyAny(this)">Copy</button></div>
               <div class="pbb" id="any-txt">Select a mesh above to generate the prompt.</div>
             </div>
           </div>
@@ -288,12 +288,12 @@ input,select{font:inherit}
           <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--dim);flex-shrink:0">&#10133;</div>
           <div class="sec-t" style="color:var(--sub)">Integrations <span style="font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:999px;background:rgba(124,58,237,.15);color:var(--acl);margin-left:6px;vertical-align:middle">Coming soon</span></div>
         </div>
-        <div class="sec-st">Connect Telegram, Slack, and Teams directly to your mesh. Enter a bot token — MeshWire handles the webhook. No containers, no servers.</div>
+        <div class="sec-st">Connect Telegram, Slack, and Teams directly to your mesh. Enter a bot token &mdash; MeshWire handles the webhook. No containers, no servers.</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
           <div style="background:var(--s1);border:1px dashed rgba(255,255,255,.1);border-radius:14px;padding:20px;opacity:.55;cursor:not-allowed">
             <div style="font-size:1.6rem;margin-bottom:10px">&#128172;</div>
             <div style="font-weight:700;font-size:.9rem;margin-bottom:5px">Telegram</div>
-            <div style="font-size:.78rem;color:var(--dim);line-height:1.5">Bot token → webhook. Messages from your Telegram bot appear in the mesh.</div>
+            <div style="font-size:.78rem;color:var(--dim);line-height:1.5">Bot token &rarr; webhook. Messages from your Telegram bot appear in the mesh.</div>
           </div>
           <div style="background:var(--s1);border:1px dashed rgba(255,255,255,.1);border-radius:14px;padding:20px;opacity:.55;cursor:not-allowed">
             <div style="font-size:1.6rem;margin-bottom:10px">&#128101;</div>
@@ -303,7 +303,7 @@ input,select{font:inherit}
           <div style="background:var(--s1);border:1px dashed rgba(255,255,255,.1);border-radius:14px;padding:20px;opacity:.55;cursor:not-allowed">
             <div style="font-size:1.6rem;margin-bottom:10px">&#128276;</div>
             <div style="font-weight:700;font-size:.9rem;margin-bottom:5px">Slack</div>
-            <div style="font-size:.78rem;color:var(--dim);line-height:1.5">Bot OAuth token → Events API. Slack messages become mesh messages instantly.</div>
+            <div style="font-size:.78rem;color:var(--dim);line-height:1.5">Bot OAuth token &rarr; Events API. Slack messages become mesh messages instantly.</div>
           </div>
         </div>
       </div>
@@ -339,9 +339,9 @@ window.__USER__ = __USER_JSON__;
 const S = { b: window.__USER__||{}, tok: window.__USER__?.newToken||null, rev: Boolean(window.__USER__?.newToken), mx: [], mc: {}, mm: null };
 const BASE = (window.__USER__?.baseUrl || 'https://meshwire.io').replace(/\\/$/,'');
 
-/* ── THE ONE COPY FUNCTION ──────────────────────────────────── */
+/* &mdash;&mdash; THE ONE COPY FUNCTION &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function copy(txt, btn) {
-  if (!txt || !txt.trim()) { fl(btn,'—'); return; }
+  if (!txt || !txt.trim()) { fl(btn,'&mdash;'); return; }
   const ok = () => fl(btn,'Copied!');
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(txt).then(ok).catch(() => fb2(txt, btn));
@@ -360,7 +360,7 @@ function fl(btn, msg) {
   setTimeout(() => { btn.textContent = o; btn.classList.remove('ok'); }, 1800);
 }
 
-/* ── Token ───────────────────────────────────────────────────── */
+/* &mdash;&mdash; Token &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function mk() { return S.b.maskedToken || 'mw_\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022\\u2022'; }
 function rtok() {
   document.getElementById('tv').textContent = (S.tok && S.rev) ? S.tok : mk();
@@ -380,7 +380,7 @@ async function regenTok() {
   rtok(); sfb('tok-fb','\\u2713 New token. Save it now.','ok',8000);
 }
 
-/* ── Harness tabs ────────────────────────────────────────────── */
+/* &mdash;&mdash; Harness tabs &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function ht(id, el) {
   document.querySelectorAll('#ht .tab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
@@ -388,11 +388,11 @@ function ht(id, el) {
   document.getElementById('pane-'+id)?.classList.add('on');
 }
 
-/* ── Any agent prompt ────────────────────────────────────────── */
+/* &mdash;&mdash; Any agent prompt &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function prompt4(meshId, meshName) {
   return 'You have access to MeshWire, a multi-agent messaging service.\\n\\n' +
     'Your mesh: ' + (meshName||meshId) + ' (ID: ' + meshId + ')\\n\\n' +
-    'To receive your complete integration guide — including how to register as an agent, send and receive messages, and discover other agents — call:\\n\\n' +
+    'To receive your complete integration guide &mdash; including how to register as an agent, send and receive messages, and discover other agents &mdash; call:\\n\\n' +
     '  GET ' + BASE + '/mesh/' + meshId + '/integrate\\n\\n' +
     'That endpoint returns step-by-step instructions, OpenAPI tool definitions, and a SKILL.md document. Make that request first, then follow the guide to connect.';
 }
@@ -404,19 +404,19 @@ function updateAny() {
 }
 function copyAny(btn) { copy(document.getElementById('any-txt')?.textContent||'', btn); }
 
-/* ── Meshes ──────────────────────────────────────────────────── */
+/* &mdash;&mdash; Meshes &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function rmx() {
   const el = document.getElementById('ml');
   el.innerHTML = S.mx.length
     ? S.mx.map(m => '<div class="mr" onclick="openM(\\''+m.mesh_id+'\\')"><div><div class="mrn">'+esc(m.name)+'</div><div class="mri">'+m.mesh_id+'</div></div><div style="display:flex;align-items:center;gap:10px"><div class="mra">'+(S.mc[m.mesh_id]||0)+' agents</div><div style="color:var(--dim)">&#8250;</div></div></div>').join('')
-    : '<div class="mempty">No meshes yet — create your first one below.</div>';
+    : '<div class="mempty">No meshes yet &mdash; create your first one below.</div>';
 
   const sel = document.getElementById('any-sel');
   if (sel) {
     sel.innerHTML = S.mx.length
       ? S.mx.map(m=>'<option value="'+m.mesh_id+'">'+esc(m.name)+' ('+m.mesh_id+')</option>').join('')
-      : '<option value="">— create a mesh below first —</option>';
+      : '<option value="">&mdash; create a mesh below first &mdash;</option>';
     updateAny();
   }
 }
@@ -431,7 +431,7 @@ async function createMesh() {
   sfb('mfb','\\u2713 "'+d.name+'" created.','ok');
 }
 
-/* ── Modal ───────────────────────────────────────────────────── */
+/* &mdash;&mdash; Modal &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function openM(id) {
   const m = S.mx.find(x=>x.mesh_id===id); if (!m) return;
   S.mm = m;
@@ -448,14 +448,14 @@ function maybeClose(e) { if (e.target.id==='ov') closeM(); }
 function cpUse(btn) { copy(S.mm ? 'meshwire mesh use '+S.mm.mesh_id : '', btn); }
 function cpPrm(btn) { copy(document.getElementById('mprm')?.textContent||'', btn); }
 
-/* ── Feedback ────────────────────────────────────────────────── */
+/* &mdash;&mdash; Feedback &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 function sfb(id, msg, cls, ms=3200) {
   const el = document.getElementById(id); if (!el) return;
   el.textContent = msg; el.className = 'fb '+cls;
   if (ms) setTimeout(()=>el.className='fb', ms);
 }
 
-/* ── Boot ────────────────────────────────────────────────────── */
+/* &mdash;&mdash; Boot &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash; */
 async function boot() {
   try {
     const r = await fetch('/api/me',{credentials:'same-origin'}); if (!r.ok) return;

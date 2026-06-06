@@ -1,4 +1,4 @@
-// meshwire mesh — create, list, switch meshes
+// meshwire mesh -- create, list, switch meshes
 import chalk from 'chalk';
 import { requireConfig, writeConfig, readConfig } from '../config.js';
 import { writeMeshJson } from '../mesh-schema.js';
@@ -13,10 +13,10 @@ export async function cmdMesh(subcommand, opts) {
       const name = opts.name || `mesh-${Date.now()}`;
       try {
         const mesh = await client.createMesh(name);
-        console.log(chalk.green(`✓ Created mesh: ${mesh.mesh_id}`) + chalk.dim(` "${mesh.name}"`));
+        console.log(chalk.green(`[OK] Created mesh: ${mesh.mesh_id}`) + chalk.dim(` "${mesh.name}"`));
         console.log(chalk.dim(`  Run \`meshwire mesh use ${mesh.mesh_id}\` to activate it.`));
       } catch (err) {
-        console.error(chalk.red(`✗ ${err.message}`));
+        console.error(chalk.red(`[X] ${err.message}`));
         process.exit(1);
       }
       break;
@@ -37,7 +37,7 @@ export async function cmdMesh(subcommand, opts) {
         harness: config.harness || 'copilot',
       });
 
-      console.log(chalk.green(`✓ Active mesh: ${meshId}`));
+      console.log(chalk.green(`[OK] Active mesh: ${meshId}`));
       console.log(chalk.dim(`  ~/.meshwire/config.json updated`));
       console.log(chalk.dim(`  .mesh.json written to current directory`));
       break;

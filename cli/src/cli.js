@@ -1,4 +1,4 @@
-// MeshWire CLI — main entry, command dispatch
+// MeshWire CLI -- main entry, command dispatch
 import { Command } from 'commander';
 import chalk from 'chalk';
 
@@ -18,22 +18,22 @@ export async function run(version) {
   program
     .name('meshwire')
     .description(
-      chalk.bold('🕸  MeshWire') +
-      ' — Wire your agents together.\n' +
+      chalk.bold('*  MeshWire') +
+      ' -- Wire your agents together.\n' +
       chalk.dim('  Multi-agent messaging infrastructure. meshwire.io')
     )
     .version(version, '-v, --version');
 
-  // ─── meshwire login ──────────────────────────────────────────────
+  // --- meshwire login ----------------------------------------------
   program
     .command('login')
-    .description('Sign in with GitHub — saves credentials to ~/.meshwire/credentials.json')
+    .description('Sign in with GitHub -- saves credentials to ~/.meshwire/credentials.json')
     .option('--url <url>', 'MeshWire URL', 'https://meshwire.io')
     .option('--force', 'Re-authenticate even if already signed in')
     .option('--skip-mesh', 'Skip mesh setup prompt after login')
     .action(cmdLogin);
 
-  // ─── meshwire init ───────────────────────────────────────────────
+  // --- meshwire init -----------------------------------------------
   program
     .command('init')
     .description('Configure MeshWire with your API token and mesh')
@@ -48,13 +48,13 @@ export async function run(version) {
     .option('--workspace <name>', 'Workspace name for .mesh.json')
     .action(cmdInit);
 
-  // ─── meshwire status ─────────────────────────────────────────────
+  // --- meshwire status ---------------------------------------------
   program
     .command('status')
     .description('Show current configuration and connection health')
     .action(cmdStatus);
 
-  // ─── meshwire send ───────────────────────────────────────────────
+  // --- meshwire send -----------------------------------------------
   program
     .command('send <message>')
     .description('Send a message to the mesh')
@@ -63,7 +63,7 @@ export async function run(version) {
     .option('-p, --priority <level>', 'Priority: urgent|high|normal|low', 'normal')
     .action(cmdSend);
 
-  // ─── meshwire listen ─────────────────────────────────────────────
+  // --- meshwire listen ---------------------------------------------
   program
     .command('listen')
     .description('Poll for incoming messages (runs continuously)')
@@ -73,7 +73,7 @@ export async function run(version) {
     .option('--timeout <seconds>', 'Long-poll timeout per request', '30')
     .action(cmdListen);
 
-  // ─── meshwire agents ─────────────────────────────────────────────
+  // --- meshwire agents ---------------------------------------------
   program
     .command('agents')
     .description('List agents registered in the mesh')
@@ -81,7 +81,7 @@ export async function run(version) {
     .option('--json', 'Output raw JSON')
     .action(cmdAgents);
 
-  // ─── meshwire mesh ───────────────────────────────────────────────
+  // --- meshwire mesh -----------------------------------------------
   const mesh = program
     .command('mesh')
     .description('Manage meshes');
@@ -101,7 +101,7 @@ export async function run(version) {
     .description('Set the active mesh in your config')
     .action((meshId) => cmdMesh('use', { meshId }));
 
-  // ─── meshwire integrate ──────────────────────────────────────────
+  // --- meshwire integrate ------------------------------------------
   program
     .command('integrate')
     .description('Print the full integration guide for your mesh')
@@ -110,7 +110,7 @@ export async function run(version) {
     .option('--json', 'Output raw JSON')
     .action(cmdIntegrate);
 
-  // ─── meshwire mcp ────────────────────────────────────────────────
+  // --- meshwire mcp ------------------------------------------------
   program
     .command('mcp')
     .description('Start an MCP stdio server (for Copilot CLI and MCP-compatible agents)')
@@ -118,7 +118,7 @@ export async function run(version) {
     .option('-a, --agent <name>', 'Agent name to register as')
     .action(cmdMcp);
 
-  // ─── Global error handling ───────────────────────────────────────
+  // --- Global error handling ---------------------------------------
   program.exitOverride();
 
   try {

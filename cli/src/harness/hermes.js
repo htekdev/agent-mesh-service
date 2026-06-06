@@ -9,11 +9,11 @@ import { readCredentials } from '../auth.js';
 import { MeshWireClient } from '../api.js';
 
 export async function setupHermes({ meshId, agentName, meshwireUrl, workspaceName }) {
-  console.log('\n' + chalk.bold('⚙️  Setting up Hermes / generic harness') + '\n');
+  console.log('\n' + chalk.bold('[*]  Setting up Hermes / generic harness') + '\n');
 
   const creds = readCredentials();
   if (!creds?.token) {
-    console.error(chalk.red('  ✗ Not authenticated. Run `meshwire login` first.\n'));
+    console.error(chalk.red('  [X] Not authenticated. Run `meshwire login` first.\n'));
     process.exit(1);
   }
 
@@ -26,12 +26,12 @@ export async function setupHermes({ meshId, agentName, meshwireUrl, workspaceNam
   };
 
   if (!meshJsonData.mesh_id) {
-    console.error(chalk.red('  ✗ No mesh ID. Run `meshwire mesh create` first.\n'));
+    console.error(chalk.red('  [X] No mesh ID. Run `meshwire mesh create` first.\n'));
     process.exit(1);
   }
 
   writeMeshJson(meshJsonData);
-  console.log(chalk.green('  ✓ .mesh.json written'));
+  console.log(chalk.green('  [OK] .mesh.json written'));
 
   // Write a .env.meshwire file for Hermes to source
   const envContent = [
@@ -43,10 +43,10 @@ export async function setupHermes({ meshId, agentName, meshwireUrl, workspaceNam
   ].join('\n');
 
   writeFileSync(join(process.cwd(), '.env.meshwire'), envContent, 'utf8');
-  console.log(chalk.green('  ✓ .env.meshwire written'));
+  console.log(chalk.green('  [OK] .env.meshwire written'));
 
   // Write skill document
-  const skillContent = `# MeshWire Skill — ${meshJsonData.workspace_name}
+  const skillContent = `# MeshWire Skill -- ${meshJsonData.workspace_name}
 
 ## Mesh
 \`\`\`
@@ -79,7 +79,7 @@ curl -s "$MESHWIRE_URL/mesh/${meshJsonData.mesh_id}/agents" \\
 `;
 
   writeFileSync(join(process.cwd(), 'MESHWIRE_SKILL.md'), skillContent, 'utf8');
-  console.log(chalk.green('  ✓ MESHWIRE_SKILL.md written'));
+  console.log(chalk.green('  [OK] MESHWIRE_SKILL.md written'));
 
   // Register agent
   try {
@@ -90,12 +90,12 @@ curl -s "$MESHWIRE_URL/mesh/${meshJsonData.mesh_id}/agents" \\
       workspace: meshJsonData.workspace_name,
       metadata: { platform: 'hermes', harness: 'meshwire' },
     });
-    console.log(chalk.green(`  ✓ Registered as ${agent.name} (${agent.agent_id})`));
+    console.log(chalk.green(`  [OK] Registered as ${agent.name} (${agent.agent_id})`));
   } catch (err) {
-    console.log(chalk.yellow(`  ⚠ ${err.message}`));
+    console.log(chalk.yellow(`  [!] ${err.message}`));
   }
 
-  console.log('\n' + chalk.bold.green('  ✅ Hermes harness ready!\n'));
+  console.log('\n' + chalk.bold.green('  [OK] Hermes harness ready!\n'));
   console.log(chalk.dim('  Source .env.meshwire in your Hermes startup script.'));
   console.log(chalk.dim('  Drop MESHWIRE_SKILL.md into your agent context.\n'));
 }

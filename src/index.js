@@ -1,4 +1,4 @@
-// Agent Mesh Service — Entry Point
+// Agent Mesh Service -- Entry Point
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -30,7 +30,7 @@ configurePassport();
 
 app.use(
   helmet({
-    // HSTS enabled — meshwire.io serves HTTPS exclusively; ALB redirects HTTP→HTTPS (301).
+    // HSTS enabled -- meshwire.io serves HTTPS exclusively; ALB redirects HTTP->HTTPS (301).
     // Start conservatively at 1 day; increase to 1 year after HSTS is proven stable.
     hsts: {
       maxAge: 86400,
@@ -103,7 +103,7 @@ app.use((err, _req, res, _next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🕸️  Agent Mesh Service running on port ${PORT}`);
+  console.log(`*  Agent Mesh Service running on port ${PORT}`);
 });
 
 export default app;

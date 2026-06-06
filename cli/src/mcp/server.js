@@ -1,20 +1,20 @@
-// meshwire mcp — MCP stdio server for Copilot CLI and MCP-compatible agents
+// meshwire mcp -- MCP stdio server for Copilot CLI and MCP-compatible agents
 // Starts an MCP server over stdio that exposes MeshWire tools.
 // Usage: meshwire mcp --mesh <meshId> --agent <name>
 //
 // Tool inventory:
-//   meshwire_send_message   — send a message to the mesh
-//   meshwire_get_messages   — long-poll for incoming messages
-//   meshwire_register_agent — register as an agent (auto-called on start)
-//   meshwire_list_agents    — list agents in the mesh
-//   meshwire_heartbeat      — send heartbeat to stay active
-//   meshwire_mesh_info      — get mesh metadata
+//   meshwire_send_message   -- send a message to the mesh
+//   meshwire_get_messages   -- long-poll for incoming messages
+//   meshwire_register_agent -- register as an agent (auto-called on start)
+//   meshwire_list_agents    -- list agents in the mesh
+//   meshwire_heartbeat      -- send heartbeat to stay active
+//   meshwire_mesh_info      -- get mesh metadata
 
 import chalk from 'chalk';
 import { readConfig, writeConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';
 
-// ─── MCP Protocol Helpers ─────────────────────────────────────────────────────
+// --- MCP Protocol Helpers -----------------------------------------------------
 
 function mcpResponse(id, result) {
   return JSON.stringify({ jsonrpc: '2.0', id, result });
@@ -28,7 +28,7 @@ function mcpNotification(method, params) {
   return JSON.stringify({ jsonrpc: '2.0', method, params });
 }
 
-// ─── Tool Definitions ─────────────────────────────────────────────────────────
+// --- Tool Definitions ---------------------------------------------------------
 
 function buildTools(meshId) {
   return [
@@ -75,7 +75,7 @@ function buildTools(meshId) {
   ];
 }
 
-// ─── MCP Server ───────────────────────────────────────────────────────────────
+// --- MCP Server ---------------------------------------------------------------
 
 export async function cmdMcp(opts) {
   const config = readConfig();
@@ -106,7 +106,7 @@ export async function cmdMcp(opts) {
     writeConfig({ agentId, agentName });
     process.stderr.write(`meshwire-mcp: registered as ${agentName} (${agentId})\n`);
   } catch (err) {
-    process.stderr.write(`meshwire-mcp: agent registration failed — ${err.message}\n`);
+    process.stderr.write(`meshwire-mcp: agent registration failed -- ${err.message}\n`);
   }
 
   // Heartbeat every 20s
@@ -119,7 +119,7 @@ export async function cmdMcp(opts) {
   process.on('SIGINT', () => { clearInterval(hbInterval); process.exit(0); });
   process.on('SIGTERM', () => { clearInterval(hbInterval); process.exit(0); });
 
-  // MCP stdio protocol — read JSON-RPC from stdin, write to stdout
+  // MCP stdio protocol -- read JSON-RPC from stdin, write to stdout
   process.stdin.setEncoding('utf8');
   let buf = '';
 
@@ -137,7 +137,7 @@ export async function cmdMcp(opts) {
         const response = await handleMcpMessage(msg, { client, meshId, agentId, agentName });
         if (response) process.stdout.write(response + '\n');
       } catch (err) {
-        process.stderr.write(`meshwire-mcp: parse error — ${err.message}\n`);
+        process.stderr.write(`meshwire-mcp: parse error -- ${err.message}\n`);
       }
     }
   });
@@ -149,7 +149,7 @@ async function handleMcpMessage(msg, { client, meshId, agentId }) {
   const { id, method, params } = msg;
 
   switch (method) {
-    // ── Capability negotiation ──────────────────────────────────
+    // -- Capability negotiation ----------------------------------
     case 'initialize':
       return mcpResponse(id, {
         protocolVersion: '2024-11-05',
@@ -160,11 +160,11 @@ async function handleMcpMessage(msg, { client, meshId, agentId }) {
     case 'notifications/initialized':
       return null; // Notification, no response
 
-    // ── Tool listing ────────────────────────────────────────────
+    // -- Tool listing --------------------------------------------
     case 'tools/list':
       return mcpResponse(id, { tools: buildTools(meshId) });
 
-    // ── Tool execution ──────────────────────────────────────────
+    // -- Tool execution ------------------------------------------
     case 'tools/call': {
       const { name, arguments: args = {} } = params;
       try {
@@ -202,7 +202,7 @@ async function executeTool(name, args, { client, meshId, agentId }) {
       });
       if (count === 0) return 'No new messages.';
       return messages.map((m) =>
-        `[${m.message_id}] from:${m.sender_id} to:${m.recipient_id} — ${m.content}`
+        `[${m.message_id}] from:${m.sender_id} to:${m.recipient_id} -- ${m.content}`
       ).join('\n');
     }
 
@@ -210,12 +210,12 @@ async function executeTool(name, args, { client, meshId, agentId }) {
       const { agents, count } = await client.listAgents(meshId);
       if (count === 0) return 'No agents registered.';
       return agents.map((a) =>
-        `${a.status === 'active' ? '●' : '○'} ${a.name} (${a.agent_id})`
+        `${a.status === 'active' ? '*' : '-'} ${a.name} (${a.agent_id})`
       ).join('\n');
     }
 
     case 'meshwire_heartbeat': {
-      if (!agentId) return 'No agent ID — run meshwire init first.';
+      if (!agentId) return 'No agent ID -- run meshwire init first.';
       await client.heartbeat(meshId, agentId);
       return `Heartbeat sent (${new Date().toISOString()})`;
     }

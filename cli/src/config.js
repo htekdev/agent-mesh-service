@@ -1,4 +1,4 @@
-// MeshWire config — read/write ~/.meshwire/config.json
+// MeshWire config -- read/write ~/.meshwire/config.json
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { homedir } from 'os';
 import { join } from 'path';

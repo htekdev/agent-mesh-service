@@ -1,12 +1,12 @@
-// .mesh.json — workspace-level mesh config
+// .mesh.json -- workspace-level mesh config
 // Lives in the repo root. Defines which mesh this workspace participates in.
 //
 // Schema:
 // {
-//   "mesh_id": "kR9xQpLmW3aZ",          — which mesh this workspace joins
-//   "workspace_name": "rocha-family",    — human label for this workspace
-//   "agent_name": "copilot-assistant",   — how this agent appears in the mesh
-//   "harness": "copilot"                 — which harness drives this workspace
+//   "mesh_id": "kR9xQpLmW3aZ",          -- which mesh this workspace joins
+//   "workspace_name": "rocha-family",    -- human label for this workspace
+//   "agent_name": "copilot-assistant",   -- how this agent appears in the mesh
+//   "harness": "copilot"                 -- which harness drives this workspace
 // }
 
 import { existsSync, readFileSync, writeFileSync } from 'fs';
@@ -34,8 +34,8 @@ export function meshJsonExists(cwd = process.cwd()) {
 }
 
 export const MESH_JSON_SCHEMA = {
-  mesh_id: 'string — which mesh this workspace connects to',
-  workspace_name: 'string — human-readable label for this workspace',
-  agent_name: 'string — how this agent appears in the mesh',
-  harness: 'string — copilot | claude | hermes | cursor | raw',
+  mesh_id: 'string -- which mesh this workspace connects to',
+  workspace_name: 'string -- human-readable label for this workspace',
+  agent_name: 'string -- how this agent appears in the mesh',
+  harness: 'string -- copilot | claude | hermes | cursor | raw',
 };

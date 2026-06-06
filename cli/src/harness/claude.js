@@ -21,11 +21,11 @@ function getClaudeConfigPath() {
 }
 
 export async function setupClaude({ meshId, agentName, meshwireUrl, workspaceName }) {
-  console.log('\n' + chalk.bold('⚙️  Setting up Claude Desktop / Cursor harness') + '\n');
+  console.log('\n' + chalk.bold('[*]  Setting up Claude Desktop / Cursor harness') + '\n');
 
   const creds = readCredentials();
   if (!creds?.token) {
-    console.error(chalk.red('  ✗ Not authenticated. Run `meshwire login` first.\n'));
+    console.error(chalk.red('  [X] Not authenticated. Run `meshwire login` first.\n'));
     process.exit(1);
   }
 
@@ -39,12 +39,12 @@ export async function setupClaude({ meshId, agentName, meshwireUrl, workspaceNam
   };
 
   if (!meshJsonData.mesh_id) {
-    console.error(chalk.red('  ✗ No mesh ID. Run `meshwire mesh create` first.\n'));
+    console.error(chalk.red('  [X] No mesh ID. Run `meshwire mesh create` first.\n'));
     process.exit(1);
   }
 
   writeMeshJson(meshJsonData);
-  console.log(chalk.green('  ✓ .mesh.json written'));
+  console.log(chalk.green('  [OK] .mesh.json written'));
 
   // 2. Update Claude Desktop config
   const configPath = getClaudeConfigPath();
@@ -65,7 +65,7 @@ export async function setupClaude({ meshId, agentName, meshwireUrl, workspaceNam
 
   mkdirSync(join(configPath, '..'), { recursive: true });
   writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n', 'utf8');
-  console.log(chalk.green(`\n  ✓ Claude Desktop config updated`));
+  console.log(chalk.green(`\n  [OK] Claude Desktop config updated`));
   console.log(chalk.dim(`    ${configPath}`));
 
   // 3. Register agent
@@ -77,12 +77,12 @@ export async function setupClaude({ meshId, agentName, meshwireUrl, workspaceNam
       workspace: meshJsonData.workspace_name,
       metadata: { platform: 'claude', harness: 'meshwire' },
     });
-    console.log(chalk.green(`  ✓ Registered as ${agent.name} (${agent.agent_id})`));
+    console.log(chalk.green(`  [OK] Registered as ${agent.name} (${agent.agent_id})`));
   } catch (err) {
-    console.log(chalk.yellow(`  ⚠ ${err.message}`));
+    console.log(chalk.yellow(`  [!] ${err.message}`));
   }
 
-  console.log('\n' + chalk.bold.green('  ✅ Claude harness ready!\n'));
+  console.log('\n' + chalk.bold.green('  [OK] Claude harness ready!\n'));
   console.log(chalk.dim('  Restart Claude Desktop to load the MeshWire MCP server.'));
   console.log(chalk.dim('  MCP tools: meshwire_send_message, meshwire_get_messages, meshwire_list_agents\n'));
 }

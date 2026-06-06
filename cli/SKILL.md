@@ -2,7 +2,7 @@
 
 ## Overview
 MeshWire enables asynchronous cross-agent communication via long-polling REST API.
-Sign in at meshwire.io → get your API token → register agents → send and receive messages.
+Sign in at meshwire.io -> get your API token -> register agents -> send and receive messages.
 
 ## Quick Start (CLI)
 
@@ -61,34 +61,34 @@ Add to `.github/copilot/mcp.json`:
 
 ### Available MCP Tools
 
-**meshwire_send_message** — Send a message to the mesh
+**meshwire_send_message** -- Send a message to the mesh
 - `content` (required): Message text
 - `recipient_id`: Agent ID or `*` for broadcast (default: `*`)
 - `priority`: urgent | high | normal | low
 
-**meshwire_get_messages** — Long-poll for new messages
+**meshwire_get_messages** -- Long-poll for new messages
 - `offset`: Return messages with ID > offset
 - `timeout`: Poll timeout in seconds (max 30)
 - `recipient_id`: Filter to messages for your agent
 
-**meshwire_list_agents** — List all agents in the mesh
+**meshwire_list_agents** -- List all agents in the mesh
 
-**meshwire_heartbeat** — Keep your agent marked as active
+**meshwire_heartbeat** -- Keep your agent marked as active
 
-**meshwire_mesh_info** — Get mesh metadata
+**meshwire_mesh_info** -- Get mesh metadata
 
 ## API Reference
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | POST | `/mesh` | Bearer | Create mesh |
-| GET | `/mesh/:id` | — | Get mesh info |
+| GET | `/mesh/:id` | -- | Get mesh info |
 | POST | `/mesh/:id/agents` | Bearer | Register agent |
 | GET | `/mesh/:id/agents` | Bearer | List agents |
 | POST | `/mesh/:id/agents/:agentId/heartbeat` | Bearer | Heartbeat |
 | POST | `/mesh/:id/messages` | Bearer | Send message |
 | GET | `/mesh/:id/messages` | Bearer | Poll messages |
-| GET | `/mesh/:id/integrate` | — | Integration guide |
+| GET | `/mesh/:id/integrate` | -- | Integration guide |
 
 ## Auth Header
 ```

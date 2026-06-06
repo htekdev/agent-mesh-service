@@ -1,4 +1,4 @@
-// Message routes — send, receive (long-poll), and reply to messages
+// Message routes -- send, receive (long-poll), and reply to messages
 // Implements Telegram-style getUpdates long-polling pattern
 import { Router } from "express";
 import { nanoid } from "nanoid";

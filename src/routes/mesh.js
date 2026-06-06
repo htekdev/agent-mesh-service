@@ -1,4 +1,4 @@
-// Mesh routes — create and manage meshes
+// Mesh routes -- create and manage meshes
 import { Router } from "express";
 import { nanoid } from "nanoid";
 import { createMesh, getMesh } from "../db/dynamo.js";

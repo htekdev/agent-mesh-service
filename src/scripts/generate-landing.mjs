@@ -11,11 +11,11 @@ const html = String.raw`<!DOCTYPE html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="MeshWire — The messaging layer for multi-agent systems. Sign in, get a token, wire your agents together in minutes." />
-    <meta property="og:title" content="MeshWire — Wire your agents together" />
+    <meta name="description" content="MeshWire &mdash; The messaging layer for multi-agent systems. Sign in, get a token, wire your agents together in minutes." />
+    <meta property="og:title" content="MeshWire &mdash; Wire your agents together" />
     <meta property="og:description" content="Connect agents across any framework, any runtime, any machine. No new protocol. Just a hosted messaging layer." />
     <meta property="og:image" content="/images/meshwire-logo.png" />
-    <title>MeshWire — Wire your agents together</title>
+    <title>MeshWire &mdash; Wire your agents together</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -173,18 +173,18 @@ footer{border-top:1px solid var(--border);padding:34px 24px}
       </nav>
 
       <section class="hero">
-        <div class="badge"><span class="bd"></span>Multi-agent infrastructure · Beta</div>
+        <div class="badge"><span class="bd"></span>Multi-agent infrastructure &middot; Beta</div>
         <h1 class="h1">Wire your<br/><span class="grad">agents together.</span></h1>
-        <p class="hs">The messaging layer for real multi-agent systems. Connect agents running in any framework, any runtime, any machine — without changing your stack.</p>
+        <p class="hs">The messaging layer for real multi-agent systems. Connect agents running in any framework, any runtime, any machine &mdash; without changing your stack.</p>
         <div class="ctas">
           <a href="/auth/github" class="bp">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-            Sign in with GitHub — it's free
+            Sign in with GitHub &mdash; it's free
           </a>
-          <a href="#how-it-works" class="bg">See how it works →</a>
+          <a href="#how-it-works" class="bg">See how it works &rarr;</a>
         </div>
         <div class="term">
-          <div class="tbar"><span class="td r"></span><span class="td y"></span><span class="td g"></span><span class="tt">meshwire · quickstart</span></div>
+          <div class="tbar"><span class="td r"></span><span class="td y"></span><span class="td g"></span><span class="tt">meshwire &middot; quickstart</span></div>
           <div class="tbody">
             <div class="tc2"># 1. Set your token from the dashboard</div>
             <div class="tk">export MESHWIRE_TOKEN=mw_a3f7b9c4d2e1...</div>
@@ -220,7 +220,7 @@ footer{border-top:1px solid var(--border);padding:34px 24px}
         <div class="shell">
           <div class="reveal"><div class="sl">How it works</div><h2 class="st">From sign-in to wired agents<br/>in under 5 minutes.</h2></div>
           <div class="hw">
-            <div class="sc reveal"><div class="sn">1</div><div class="stit">Sign in &amp; get your token</div><div class="sdesc">GitHub OAuth in one click. Your <code style="font-family:var(--mono);font-size:.83em;color:var(--cyan)">mw_</code> token is on your dashboard immediately — shown once, yours to save.</div><div class="cb"><span class="cc"># Dashboard shows on first login:</span><br/><span class="ck">MESHWIRE_TOKEN</span>=<span class="cs">mw_a3f7b9...</span><br/><span class="ck">MESHWIRE_URL</span>=<span class="cs">https://meshwire.io</span></div></div>
+            <div class="sc reveal"><div class="sn">1</div><div class="stit">Sign in &amp; get your token</div><div class="sdesc">GitHub OAuth in one click. Your <code style="font-family:var(--mono);font-size:.83em;color:var(--cyan)">mw_</code> token is on your dashboard immediately &mdash; shown once, yours to save.</div><div class="cb"><span class="cc"># Dashboard shows on first login:</span><br/><span class="ck">MESHWIRE_TOKEN</span>=<span class="cs">mw_a3f7b9...</span><br/><span class="ck">MESHWIRE_URL</span>=<span class="cs">https://meshwire.io</span></div></div>
             <div class="sc reveal"><div class="sn">2</div><div class="stit">Create a mesh &amp; register</div><div class="sdesc">One POST creates a mesh. Each agent registers with a name and gets an agent_id. That's the entire setup.</div><div class="cb"><span class="cp">POST</span> <span class="ck">/mesh/:meshId/agents</span><br/><span class="cs">{</span> <span class="ck">"name"</span>: <span class="cs">"researcher"</span> <span class="cs">}</span><br/><span class="cc">&#8594; </span><span class="cs">{ agent_id: "xK2m..." }</span></div></div>
             <div class="sc reveal"><div class="sn">3</div><div class="stit">Send messages &amp; coordinate</div><div class="sdesc">Agents send and receive JSON messages with priorities, broadcast support, and threaded replies.</div><div class="cb"><span class="cp">POST</span> <span class="ck">/mesh/:meshId/messages</span><br/><span class="cs">{</span> <span class="ck">"recipient_id"</span>: <span class="cs">"*"</span>,<br/>&nbsp;&nbsp;<span class="ck">"content"</span>: <span class="cs">"task ready"</span> <span class="cs">}</span></div></div>
           </div>
@@ -232,8 +232,8 @@ footer{border-top:1px solid var(--border);padding:34px 24px}
           <div class="reveal"><div class="sl">From developers</div><h2 class="st">Built by someone who hit<br/>every wall first.</h2><p class="ss">MeshWire was built to solve a real problem: agents that work locally but can't coordinate across machines or runtimes.</p></div>
           <div class="tg">
             <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">The /integrate endpoint sold me. My Copilot CLI agent got a full integration guide from a single GET request. That kind of DX doesn't exist anywhere else.</div><div class="tauth"><div class="tav">AK</div><div><div class="tname">Alex K.</div><div class="trole">AI Engineer &#183; LangChain</div></div></div></div>
-            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">Three agents — researcher, coder, reviewer — running on different machines and talking within 15 minutes. The long-poll just works. No missed messages.</div><div class="tauth"><div class="tav">MR</div><div><div class="tname">Marcus R.</div><div class="trole">Senior SWE &#183; multi-agent systems</div></div></div></div>
-            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">After shipping three agentic systems, MeshWire is the piece I wish had existed on day one. Just an HTTP API that connects agents — no framework baggage.</div><div class="tauth"><div class="tav">SP</div><div><div class="tname">Sophia P.</div><div class="trole">Tech Lead &#183; autonomous pipelines</div></div></div></div>
+            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">Three agents &mdash; researcher, coder, reviewer &mdash; running on different machines and talking within 15 minutes. The long-poll just works. No missed messages.</div><div class="tauth"><div class="tav">MR</div><div><div class="tname">Marcus R.</div><div class="trole">Senior SWE &#183; multi-agent systems</div></div></div></div>
+            <div class="tcard reveal"><div class="tstars">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div class="tquote">After shipping three agentic systems, MeshWire is the piece I wish had existed on day one. Just an HTTP API that connects agents &mdash; no framework baggage.</div><div class="tauth"><div class="tav">SP</div><div><div class="tname">Sophia P.</div><div class="trole">Tech Lead &#183; autonomous pipelines</div></div></div></div>
           </div>
         </div>
       </section>
@@ -255,7 +255,7 @@ footer{border-top:1px solid var(--border);padding:34px 24px}
             <p class="ctasub">Sign in with GitHub. Get your token. Start building in minutes.</p>
             <a href="/auth/github" class="bp" style="font-size:.98rem;padding:15px 30px">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.163 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
-              Sign in with GitHub — free forever
+              Sign in with GitHub &mdash; free forever
             </a>
           </div>
         </div>

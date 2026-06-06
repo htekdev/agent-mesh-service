@@ -1,4 +1,4 @@
-// meshwire status — show config + live connection check
+// meshwire status -- show config + live connection check
 import chalk from 'chalk';
 import { readConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';
@@ -6,7 +6,7 @@ import { MeshWireClient } from '../api.js';
 export async function cmdStatus() {
   const config = readConfig();
 
-  console.log('\n' + chalk.bold('🕸  MeshWire Status') + '\n');
+  console.log('\n' + chalk.bold('*  MeshWire Status') + '\n');
 
   if (!config.token) {
     console.log(chalk.yellow('  Not configured.'));
@@ -27,18 +27,18 @@ export async function cmdStatus() {
 
   try {
     const health = await client.health();
-    console.log(`    Service : ${chalk.green('✓ online')}  (${health.timestamp})`);
+    console.log(`    Service : ${chalk.green('[OK] online')}  (${health.timestamp})`);
   } catch (err) {
-    console.log(`    Service : ${chalk.red('✗ unreachable')} — ${err.message}`);
+    console.log(`    Service : ${chalk.red('[X] unreachable')} -- ${err.message}`);
     process.exit(1);
   }
 
   if (config.meshId) {
     try {
       const mesh = await client.getMesh(config.meshId);
-      console.log(`    Mesh    : ${chalk.green('✓ exists')}  "${mesh.name}"`);
+      console.log(`    Mesh    : ${chalk.green('[OK] exists')}  "${mesh.name}"`);
     } catch {
-      console.log(`    Mesh    : ${chalk.red('✗ not found')}`);
+      console.log(`    Mesh    : ${chalk.red('[X] not found')}`);
     }
   }
 
@@ -57,5 +57,5 @@ export async function cmdStatus() {
 
 function maskToken(token) {
   if (!token) return chalk.dim('none');
-  return chalk.dim(token.slice(0, 6)) + chalk.dim('••••••••••••') + chalk.dim(token.slice(-6));
+  return chalk.dim(token.slice(0, 6)) + chalk.dim('************') + chalk.dim(token.slice(-6));
 }

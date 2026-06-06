@@ -1,4 +1,4 @@
-// meshwire agents — list agents in the mesh
+// meshwire agents -- list agents in the mesh
 import chalk from 'chalk';
 import { requireConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';
@@ -16,7 +16,7 @@ export async function cmdAgents(opts) {
       return;
     }
 
-    console.log('\n' + chalk.bold(`🕸  Agents in mesh ${meshId}`) + chalk.dim(` (${count})\n`));
+    console.log('\n' + chalk.bold(`*  Agents in mesh ${meshId}`) + chalk.dim(` (${count})\n`));
 
     if (count === 0) {
       console.log(chalk.dim('  No agents registered yet.\n'));
@@ -25,8 +25,8 @@ export async function cmdAgents(opts) {
 
     for (const agent of agents) {
       const status = agent.status === 'active'
-        ? chalk.green('● active')
-        : chalk.dim('○ inactive');
+        ? chalk.green('* active')
+        : chalk.dim('- inactive');
       const lastSeen = agent.last_seen
         ? chalk.dim(`  last seen ${timeAgo(agent.last_seen)}`)
         : '';
@@ -36,7 +36,7 @@ export async function cmdAgents(opts) {
     }
     console.log('');
   } catch (err) {
-    console.error(chalk.red(`✗ ${err.message}`));
+    console.error(chalk.red(`[X] ${err.message}`));
     process.exit(1);
   }
 }

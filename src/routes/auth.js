@@ -91,8 +91,8 @@ export const authRouter = Router();
 
 authRouter.get("/github", passport.authenticate("github", { scope: ["user:email"] }));
 
-// ─── CLI Auth — browser-based login that returns token to local HTTP server ──
-// GET /auth/cli?port=PORT — starts GitHub OAuth, stores CLI port in session
+// --- CLI Auth -- browser-based login that returns token to local HTTP server --
+// GET /auth/cli?port=PORT -- starts GitHub OAuth, stores CLI port in session
 authRouter.get("/cli", (req, res) => {
   const port = parseInt(req.query.port, 10);
   if (!port || port < 1024 || port > 65535) {
@@ -103,7 +103,7 @@ authRouter.get("/cli", (req, res) => {
   return passport.authenticate("github", { scope: ["user:email"] })(req, res);
 });
 
-// GitHub OAuth callback — handle web and CLI flows.
+// GitHub OAuth callback -- handle web and CLI flows.
 authRouter.get(
   "/github/callback",
   (req, res, next) => {
@@ -115,7 +115,7 @@ authRouter.get(
         return res.redirect("/?error=auth_error");
       }
       if (!user) {
-        console.warn("[OAuth] No user returned — auth denied or state mismatch");
+        console.warn("[OAuth] No user returned -- auth denied or state mismatch");
         const cliPort = req.session?.cliPort;
         if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=auth_failed`);
         return res.redirect("/?error=auth_failed");
@@ -128,11 +128,11 @@ authRouter.get(
           return res.redirect("/?error=login_error");
         }
 
-        // CLI flow — send token back to local server
+        // CLI flow -- send token back to local server
         const cliPort = req.session?.cliPort;
         if (cliPort) {
           delete req.session.cliPort;
-          // Get the plain token — for new users it's in session.newToken, for existing we need to re-issue
+          // Get the plain token -- for new users it's in session.newToken, for existing we need to re-issue
           const token = req.session.newToken || null;
           if (token) {
             delete req.session.newToken;
@@ -140,7 +140,7 @@ authRouter.get(
               res.redirect(`http://localhost:${cliPort}?token=${encodeURIComponent(token)}&login=${encodeURIComponent(user.login)}`);
             });
           }
-          // Existing user — regenerate token so CLI gets a fresh one
+          // Existing user -- regenerate token so CLI gets a fresh one
           regenerateToken(user.user_id).then((freshToken) => {
             res.redirect(`http://localhost:${cliPort}?token=${encodeURIComponent(freshToken)}&login=${encodeURIComponent(user.login)}`);
           }).catch(() => {
@@ -149,7 +149,7 @@ authRouter.get(
           return;
         }
 
-        // Web flow — redirect to dashboard
+        // Web flow -- redirect to dashboard
         return res.redirect("/dashboard");
       });
     })(req, res, next);

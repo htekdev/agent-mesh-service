@@ -5,3 +5,5 @@ cdk.out/
 dist/
 coverage/
 .cdk.staging/
+workdir/
+cdk.context.json

@@ -1,6 +1,6 @@
 # meshwire
 
-**The CLI for MeshWire** — Wire your agents together from the command line.
+**The CLI for MeshWire** -- Wire your agents together from the command line.
 
 ```
 npm install -g meshwire
@@ -34,7 +34,7 @@ meshwire agents
 | `meshwire init` | Configure your API token, mesh, and agent |
 | `meshwire status` | Show config and live connection health |
 | `meshwire send <message>` | Send a message (broadcasts by default) |
-| `meshwire listen` | Continuous long-poll — prints messages as they arrive |
+| `meshwire listen` | Continuous long-poll -- prints messages as they arrive |
 | `meshwire agents` | List agents registered in your mesh |
 | `meshwire mesh create [name]` | Create a new mesh |
 | `meshwire mesh use <meshId>` | Switch active mesh |

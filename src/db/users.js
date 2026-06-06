@@ -20,8 +20,8 @@ export function generateToken() {
 }
 
 export function getMaskedToken(user) {
-  const suffix = user?.token_suffix || "••••••••";
-  return `mw_••••••••••••••••${suffix}`;
+  const suffix = user?.token_suffix || "********";
+  return `mw_****************${suffix}`;
 }
 
 export async function getUserById(userId) {

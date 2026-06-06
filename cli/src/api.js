@@ -1,4 +1,4 @@
-// MeshWire API client — wraps all REST calls
+// MeshWire API client -- wraps all REST calls
 import { readConfig } from './config.js';
 
 export class MeshWireClient {
@@ -34,12 +34,12 @@ export class MeshWireClient {
     return res.text();
   }
 
-  // ─── Health ────────────────────────────────────────────────────
+  // --- Health ----------------------------------------------------
   health() {
     return this.request('GET', '/health');
   }
 
-  // ─── Meshes ────────────────────────────────────────────────────
+  // --- Meshes ----------------------------------------------------
   createMesh(name, description = '') {
     return this.request('POST', '/mesh', { name, description });
   }
@@ -48,7 +48,7 @@ export class MeshWireClient {
     return this.request('GET', `/mesh/${meshId}`);
   }
 
-  // ─── Agents ────────────────────────────────────────────────────
+  // --- Agents ----------------------------------------------------
   registerAgent(meshId = this.meshId, { name, description, workspace, metadata } = {}) {
     return this.request('POST', `/mesh/${meshId}/agents`, {
       name, description, workspace, metadata,
@@ -63,7 +63,7 @@ export class MeshWireClient {
     return this.request('POST', `/mesh/${meshId}/agents/${agentId}/heartbeat`);
   }
 
-  // ─── Messages ──────────────────────────────────────────────────
+  // --- Messages --------------------------------------------------
   sendMessage(meshId = this.meshId, { senderId, recipientId = '*', content, priority = 'normal', metadata } = {}) {
     return this.request('POST', `/mesh/${meshId}/messages`, {
       sender_id: senderId,
@@ -91,7 +91,7 @@ export class MeshWireClient {
     });
   }
 
-  // ─── Integrate ─────────────────────────────────────────────────
+  // --- Integrate -------------------------------------------------
   getIntegrationGuide(meshId = this.meshId, format = 'all') {
     return this.request('GET', `/mesh/${meshId}/integrate?format=${format}`);
   }

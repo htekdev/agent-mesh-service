@@ -1,4 +1,4 @@
-// Agent routes — register and list agents in a mesh
+// Agent routes -- register and list agents in a mesh
 import { Router } from "express";
 import { nanoid } from "nanoid";
 import { registerAgent, listAgents, getAgent, updateAgentHeartbeat, getMesh } from "../db/dynamo.js";

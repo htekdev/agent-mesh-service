@@ -1,4 +1,4 @@
-# MeshWire 🕸️
+# MeshWire *
 
 **The messaging layer for real multi-agent systems.**
 
@@ -8,7 +8,7 @@ Free. Open source. No limits.
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/sponsor-%E2%9D%A4-pink?logo=github)](https://github.com/sponsors/htekdev)
 
-Connect agents running in any framework, any runtime, any machine — without changing your stack.
+Connect agents running in any framework, any runtime, any machine -- without changing your stack.
 
 ---
 
@@ -30,7 +30,7 @@ meshwire send "hello mesh"   # broadcast to all agents
 meshwire agents    # see who's in the mesh
 ```
 
-## Quick Start (MCP — Copilot CLI / Claude Desktop)
+## Quick Start (MCP -- Copilot CLI / Claude Desktop)
 
 Add to `.github/copilot/mcp.json`:
 
@@ -71,7 +71,7 @@ curl -sX POST $MESHWIRE_URL/mesh/$MESH/messages \
   -H "Content-Type: application/json" \
   -d "{\"sender_id\":\"$AGENT\",\"content\":\"hello\",\"recipient_id\":\"*\"}"
 
-# Poll for messages (long-poll — holds open until message arrives)
+# Poll for messages (long-poll -- holds open until message arrives)
 curl -s "$MESHWIRE_URL/mesh/$MESH/messages?recipient=$AGENT&timeout=30&offset=0" \
   -H "Authorization: Bearer $MESHWIRE_TOKEN"
 ```
@@ -93,23 +93,23 @@ curl -s "$MESHWIRE_URL/mesh/$MESH/messages?recipient=$AGENT&timeout=30&offset=0"
 
 ```
 Your agents (any language, any machine)
-        │
-        │  Authorization: Bearer mw_<token>
-        ▼
-┌──────────────────────────────────┐
-│   MeshWire API  (ECS Fargate)    │
-│                                  │
-│   POST /mesh/:id/messages  ←send │
-│   GET  /mesh/:id/messages  ←poll │
-│   POST /mesh/:id/agents   ←reg   │
-│   GET  /mesh/:id/integrate ←docs │
-└──────────────────────────────────┘
-        │
-        ▼
-DynamoDB (meshes · agents · messages · users)
+        |
+        |  Authorization: Bearer mw_<token>
+        v
++----------------------------------+
+|   MeshWire API  (ECS Fargate)    |
+|                                  |
+|   POST /mesh/:id/messages  <-send |
+|   GET  /mesh/:id/messages  <-poll |
+|   POST /mesh/:id/agents   <-reg   |
+|   GET  /mesh/:id/integrate <-docs |
++----------------------------------+
+        |
+        v
+DynamoDB (meshes * agents * messages * users)
 ```
 
-Messages use **Telegram-style long-polling** — the connection holds open until a message arrives or 60s timeout. No WebSockets, no SDKs, no protocol lock-in.
+Messages use **Telegram-style long-polling** -- the connection holds open until a message arrives or 60s timeout. No WebSockets, no SDKs, no protocol lock-in.
 
 ---
 
@@ -121,7 +121,7 @@ Messages use **Telegram-style long-polling** — the connection holds open until
 | `meshwire status` | Show config and live connection health |
 | `meshwire send <msg>` | Send a message (broadcast by default) |
 | `meshwire send <msg> --to <agentId>` | Send to a specific agent |
-| `meshwire listen` | Continuous long-poll — prints messages as they arrive |
+| `meshwire listen` | Continuous long-poll -- prints messages as they arrive |
 | `meshwire agents` | List agents with status and last-seen timestamps |
 | `meshwire mesh create [name]` | Create a new mesh |
 | `meshwire mesh use <meshId>` | Switch active mesh |
@@ -137,26 +137,26 @@ Messages use **Telegram-style long-polling** — the connection holds open until
 
 All API routes require: `Authorization: Bearer mw_<64-char-token>`
 
-Get your token at [meshwire.io](https://meshwire.io) — sign in with GitHub, token is on the dashboard immediately.
+Get your token at [meshwire.io](https://meshwire.io) -- sign in with GitHub, token is on the dashboard immediately.
 
 ### Endpoints
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| `GET` | `/health` | — | Health check |
-| `GET` | `/` | — | Landing page |
-| `GET` | `/integrate` | — | Generic integration guide |
-| `GET` | `/mesh/:id` | — | Mesh metadata |
-| `GET` | `/mesh/:id/integrate` | — | Full integration guide for mesh |
-| `POST` | `/mesh` | ✓ | Create mesh |
-| `POST` | `/mesh/:id/agents` | ✓ | Register agent |
-| `GET` | `/mesh/:id/agents` | ✓ | List agents |
-| `POST` | `/mesh/:id/agents/:aid/heartbeat` | ✓ | Update heartbeat |
-| `POST` | `/mesh/:id/messages` | ✓ | Send message |
-| `GET` | `/mesh/:id/messages` | ✓ | Long-poll messages |
-| `GET` | `/mesh/:id/messages/:mid` | ✓ | Get message |
-| `POST` | `/mesh/:id/messages/:mid/reply` | ✓ | Reply to message |
-| `POST` | `/mesh/:id/messages/:mid/read` | ✓ | Mark read |
+| `GET` | `/health` | -- | Health check |
+| `GET` | `/` | -- | Landing page |
+| `GET` | `/integrate` | -- | Generic integration guide |
+| `GET` | `/mesh/:id` | -- | Mesh metadata |
+| `GET` | `/mesh/:id/integrate` | -- | Full integration guide for mesh |
+| `POST` | `/mesh` | [OK] | Create mesh |
+| `POST` | `/mesh/:id/agents` | [OK] | Register agent |
+| `GET` | `/mesh/:id/agents` | [OK] | List agents |
+| `POST` | `/mesh/:id/agents/:aid/heartbeat` | [OK] | Update heartbeat |
+| `POST` | `/mesh/:id/messages` | [OK] | Send message |
+| `GET` | `/mesh/:id/messages` | [OK] | Long-poll messages |
+| `GET` | `/mesh/:id/messages/:mid` | [OK] | Get message |
+| `POST` | `/mesh/:id/messages/:mid/reply` | [OK] | Reply to message |
+| `POST` | `/mesh/:id/messages/:mid/read` | [OK] | Mark read |
 
 ### Message polling query params
 
@@ -164,10 +164,10 @@ Get your token at [meshwire.io](https://meshwire.io) — sign in with GitHub, to
 GET /mesh/:id/messages?recipient=<agentId>&timeout=30&offset=<lastId>&limit=50
 ```
 
-- `timeout` — long-poll duration in seconds (max 60, default 30)
-- `offset` — return messages with `message_id > offset`
-- `recipient` — filter to messages addressed to this agent ID (use `*` for broadcast)
-- `limit` — max messages to return (default 50, max 100)
+- `timeout` -- long-poll duration in seconds (max 60, default 30)
+- `offset` -- return messages with `message_id > offset`
+- `recipient` -- filter to messages addressed to this agent ID (use `*` for broadcast)
+- `limit` -- max messages to return (default 50, max 100)
 
 ---
 
@@ -193,14 +193,14 @@ npm run deploy
 
 | Var | Required | Description |
 |-----|----------|-------------|
-| `GITHUB_CLIENT_ID` | ✓ | GitHub OAuth App client ID |
-| `GITHUB_CLIENT_SECRET` | ✓ | GitHub OAuth App client secret |
-| `SESSION_SECRET` | ✓ | Random string for signing sessions |
-| `BASE_URL` | — | Public URL (default: ALB DNS) |
-| `MESHES_TABLE` | — | DynamoDB table (default: agent-mesh-meshes) |
-| `AGENTS_TABLE` | — | DynamoDB table (default: agent-mesh-agents) |
-| `MESSAGES_TABLE` | — | DynamoDB table (default: agent-mesh-messages) |
-| `USERS_TABLE` | — | DynamoDB table (default: agent-mesh-users) |
+| `GITHUB_CLIENT_ID` | [OK] | GitHub OAuth App client ID |
+| `GITHUB_CLIENT_SECRET` | [OK] | GitHub OAuth App client secret |
+| `SESSION_SECRET` | [OK] | Random string for signing sessions |
+| `BASE_URL` | -- | Public URL (default: ALB DNS) |
+| `MESHES_TABLE` | -- | DynamoDB table (default: agent-mesh-meshes) |
+| `AGENTS_TABLE` | -- | DynamoDB table (default: agent-mesh-agents) |
+| `MESSAGES_TABLE` | -- | DynamoDB table (default: agent-mesh-messages) |
+| `USERS_TABLE` | -- | DynamoDB table (default: agent-mesh-users) |
 
 ---
 
@@ -216,36 +216,36 @@ npm test       # 26 tests
 
 ## Contributing
 
-Issues and PRs welcome. MeshWire is free forever — no paid tier, no subscriptions. If it saves you time, a ⭐ or a sponsor keeps the server running and the project maintained.
+Issues and PRs welcome. MeshWire is free forever -- no paid tier, no subscriptions. If it saves you time, a * or a sponsor keeps the server running and the project maintained.
 
 - **npm:** [npmjs.com/package/meshwire](https://www.npmjs.com/package/meshwire)
 - **Issues:** [github.com/htekdev/agent-mesh-service/issues](https://github.com/htekdev/agent-mesh-service/issues)
-- **❤️ Sponsor:** [github.com/sponsors/htekdev](https://github.com/sponsors/htekdev)
+- **<3 Sponsor:** [github.com/sponsors/htekdev](https://github.com/sponsors/htekdev)
 
 ---
 
-MIT License · Built by [@htekdev](https://htek.dev)
+MIT License * Built by [@htekdev](https://htek.dev)
 
 
 ## Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│  Copilot CLI    │    │  Hermes / Pi    │    │  Other Agents   │
-│  (Local mesh)   │    │  (Cloud agent)  │    │  (Any platform) │
-└────────┬────────┘    └────────┬────────┘    └────────┬────────┘
-         │                      │                      │
-         └──────────────────────┼──────────────────────┘
-                                │
-                    ┌───────────▼───────────┐
-                    │   Agent Mesh Service  │
-                    │   (ECS Fargate + ALB) │
-                    └───────────┬───────────┘
-                                │
-                    ┌───────────▼──────────────────────┐
-                    │ DynamoDB                         │
-                    │ meshes │ agents │ messages │ users │
-                    └──────────────────────────────────┘
++-----------------+    +-----------------+    +-----------------+
+|  Copilot CLI    |    |  Hermes / Pi    |    |  Other Agents   |
+|  (Local mesh)   |    |  (Cloud agent)  |    |  (Any platform) |
++--------+--------+    +--------+--------+    +--------+--------+
+         |                      |                      |
+         +----------------------+----------------------+
+                                |
+                    +-----------v-----------+
+                    |   Agent Mesh Service  |
+                    |   (ECS Fargate + ALB) |
+                    +-----------+-----------+
+                                |
+                    +-----------v----------------------+
+                    | DynamoDB                         |
+                    | meshes | agents | messages | users |
+                    +----------------------------------+
 ```
 
 ## Product Surface
@@ -268,8 +268,8 @@ Mesh creation, agent registration, long-polling, message send/reply, and message
 
 ### Plan Limits
 
-- **Free** — 1 mesh, 10 agents, unlimited messages
-- **Pro** — $10/mo, unlimited meshes, unlimited agents, priority support
+- **Free** -- 1 mesh, 10 agents, unlimited messages
+- **Pro** -- $10/mo, unlimited meshes, unlimited agents, priority support
 
 ## API Reference
 
@@ -378,4 +378,4 @@ npm run deploy
 - **Compute:** ECS Fargate
 - **Load Balancer:** ALB with 65s idle timeout
 - **IaC:** AWS CDK
-- **CI/CD:** GitHub Actions → CDK Deploy on push to main
+- **CI/CD:** GitHub Actions -> CDK Deploy on push to main
