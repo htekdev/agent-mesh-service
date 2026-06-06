@@ -218,7 +218,7 @@ input,select{font:inherit}
           <div class="tabs" id="harness-tabs">
             <div class="tab on"  onclick="switchHarnessTab('copilot',this)">&#9881;&#xFE0F; Copilot</div>
             <div class="tab"     onclick="switchHarnessTab('hermes',this)">&#128218; Hermes</div>
-            <div class="tab"     onclick="switchHarnessTab('pi',this)">&#960; Pi</div>
+            <div class="tab"     onclick="switchHarnessTab('cursor',this)">&#128075; Cursor</div>
             <div class="tab"     onclick="switchHarnessTab('any',this)">&#127775; Any agent</div>
           </div>
 
@@ -251,17 +251,17 @@ input,select{font:inherit}
             </ul>
           </div>
 
-          <!-- Pi -->
-          <div class="pane" id="pane-pi">
-            <p style="font-size:.84rem;color:var(--sub);margin-bottom:14px">Sets up Pi as an extension that bridges into the mesh as a named agent.</p>
+          <!-- Cursor -->
+          <div class="pane" id="pane-cursor">
+            <p style="font-size:.84rem;color:var(--sub);margin-bottom:14px">Sets up Cursor as an AI agent that connects directly to the mesh.</p>
             <div class="cb">
-              <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="copy('meshwire init --harness pi',this)">Copy</button></div>
-              <div class="cbb"><div class="cmd">meshwire init --harness pi</div></div>
+              <div class="cbh"><span class="cbl">terminal</span><button class="cp" onclick="copy('meshwire init --harness cursor',this)">Copy</button></div>
+              <div class="cbb"><div class="cmd">meshwire init --harness cursor</div></div>
             </div>
             <ul class="gets">
-              <li>Generates Pi extension configuration in the current workspace</li>
+              <li>Creates <code>.cursor/meshwire.json</code> with mesh credentials</li>
               <li>Writes <code>.mesh.json</code> with your mesh ID and agent name</li>
-              <li>Pi bridge node &#x2014; <em style="color:var(--dim)">coming soon: <code>meshwire node start pi</code></em></li>
+              <li>Works with Cursor's background agent mode — no manual setup needed</li>
             </ul>
           </div>
 
@@ -395,17 +395,20 @@ async function regenTok() {
 }
 
 /* ── Harness tabs ────────────────────────────────────────────── */
+/* Use explicit IDs — sibling CSS selector (~) can silently return empty in some DOM states */
+const HARNESS_PANES = ['copilot','hermes','cursor','any'];
 function switchHarnessTab(id, el) {
+  HARNESS_PANES.forEach(n => document.getElementById('pane-'+n)?.classList.remove('on'));
   document.querySelectorAll('#harness-tabs .tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('#harness-tabs ~ .pane').forEach(p=>p.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('pane-'+id)?.classList.add('on');
 }
 
 /* ── Auth tabs (CLI / Token) ─────────────────────────────────── */
+const AUTH_PANES = ['cli','token'];
 function switchAuthTab(id, el) {
+  AUTH_PANES.forEach(n => document.getElementById('pane-'+n)?.classList.remove('on'));
   document.querySelectorAll('#auth-tabs .tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('#auth-tabs ~ .pane').forEach(p=>p.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('pane-'+id)?.classList.add('on');
 }
