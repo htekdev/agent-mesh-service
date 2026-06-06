@@ -274,7 +274,7 @@ export async function setupCopilot({ meshId, agentName, meshwireUrl, workspaceNa
     });
     console.log(chalk.green(`  ✔ Registered as ${agent.name} (${agent.agent_id})`));
   } catch (err) {
-    console.log(chalk.yellow(`  ΓÜá Could not register now: ${err.message}`));
+    console.log(chalk.yellow(`  ⚠ Could not register now: ${err.message}`));
     console.log(chalk.dim('    The extension will auto-register on next Copilot CLI session.'));
   }
 
