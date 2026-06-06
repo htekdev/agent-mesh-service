@@ -1,14 +1,14 @@
-// meshwire mcp ΓÇö MCP stdio server for Copilot CLI and MCP-compatible agents
+// meshwire mcp — MCP stdio server for Copilot CLI and MCP-compatible agents
 // Starts an MCP server over stdio that exposes MeshWire tools.
 // Usage: meshwire mcp --mesh <meshId> --agent <name>
 //
 // Tool inventory:
-//   meshwire_send_message   ΓÇö send a message to the mesh
-//   meshwire_get_messages   ΓÇö long-poll for incoming messages
-//   meshwire_register_agent ΓÇö register as an agent (auto-called on start)
-//   meshwire_list_agents    ΓÇö list agents in the mesh
-//   meshwire_heartbeat      ΓÇö send heartbeat to stay active
-//   meshwire_mesh_info      ΓÇö get mesh metadata
+//   meshwire_send_message   — send a message to the mesh
+//   meshwire_get_messages   — long-poll for incoming messages
+//   meshwire_register_agent — register as an agent (auto-called on start)
+//   meshwire_list_agents    — list agents in the mesh
+//   meshwire_heartbeat      — send heartbeat to stay active
+//   meshwire_mesh_info      — get mesh metadata
 
 import chalk from 'chalk';
 import { readConfig, writeConfig } from '../config.js';
@@ -118,7 +118,7 @@ export async function cmdMcp(opts) {
     writeConfig({ agentId, agentName });
     process.stderr.write(`meshwire-mcp: registered as ${agentName} (${agentId})\n`);
   } catch (err) {
-    process.stderr.write(`meshwire-mcp: agent registration failed ΓÇö ${err.message}\n`);
+    process.stderr.write(`meshwire-mcp: agent registration failed — ${err.message}\n`);
   }
 
   // Heartbeat every 20s
@@ -131,7 +131,7 @@ export async function cmdMcp(opts) {
   process.on('SIGINT', () => { clearInterval(hbInterval); process.exit(0); });
   process.on('SIGTERM', () => { clearInterval(hbInterval); process.exit(0); });
 
-  // MCP stdio protocol ΓÇö read JSON-RPC from stdin, write to stdout
+  // MCP stdio protocol — read JSON-RPC from stdin, write to stdout
   process.stdin.setEncoding('utf8');
   let buf = '';
 
@@ -149,7 +149,7 @@ export async function cmdMcp(opts) {
         const response = await handleMcpMessage(msg, { client, meshId, agentId, agentName });
         if (response) process.stdout.write(response + '\n');
       } catch (err) {
-        process.stderr.write(`meshwire-mcp: parse error ΓÇö ${err.message}\n`);
+        process.stderr.write(`meshwire-mcp: parse error — ${err.message}\n`);
       }
     }
   });
@@ -214,7 +214,7 @@ async function executeTool(name, args, { client, meshId, agentId }) {
       });
       if (count === 0) return 'No new messages.';
       return messages.map((m) =>
-        `[${m.message_id}] from:${m.sender_id} to:${m.recipient_id} ΓÇö ${m.content}`
+        `[${m.message_id}] from:${m.sender_id} to:${m.recipient_id} — ${m.content}`
       ).join('\n');
     }
 
@@ -237,7 +237,7 @@ async function executeTool(name, args, { client, meshId, agentId }) {
     }
 
     case 'meshwire_heartbeat': {
-      if (!agentId) return 'No agent ID ΓÇö run meshwire init first.';
+      if (!agentId) return 'No agent ID — run meshwire init first.';
       await client.heartbeat(meshId, agentId);
       return `Heartbeat sent (${new Date().toISOString()})`;
     }
