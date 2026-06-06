@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { createUser, getUserByGithubId, getUserById, regenerateToken } from "../db/users.js";
+import { isMockAuthEnabled, MOCK_USER, MOCK_USER_ID } from "../middleware/mockAuth.js";
 
 const DEFAULT_BASE_URL =
   process.env.BASE_URL ||
@@ -76,6 +77,10 @@ export function configurePassport() {
   });
 
   passport.deserializeUser(async (userId, done) => {
+    // Return mock user without hitting DynamoDB when mock auth is active
+    if (isMockAuthEnabled() && userId === MOCK_USER_ID) {
+      return done(null, MOCK_USER);
+    }
     try {
       const user = await getUserById(userId);
       done(null, user);
@@ -191,4 +196,20 @@ authRouter.post("/regenerate-token", requireSessionAuth, async (req, res, next) 
   } catch (error) {
     next(error);
   }
+});
+
+// ─── Mock Auth — dev/test only, NEVER production ──────────────────────────────
+// GET /auth/mock → bypasses GitHub OAuth, creates a test session instantly.
+// Requires: MOCK_AUTH=true and NODE_ENV !== 'production'.
+// Usage in tests: await page.goto('/auth/mock') → redirects to /dashboard.
+authRouter.get("/mock", (req, res, next) => {
+  if (!isMockAuthEnabled()) {
+    return res.status(404).json({ error: "Not found" });
+  }
+
+  req.logIn(MOCK_USER, (err) => {
+    if (err) return next(err);
+    console.log("[MockAuth] Test session created for user:", MOCK_USER.login);
+    return res.redirect("/dashboard");
+  });
 });

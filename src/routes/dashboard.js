@@ -3,6 +3,7 @@ import { Router } from "express";
 import { listAgents, createMesh } from "../db/dynamo.js";
 import { getMaskedToken, listUserMeshes } from "../db/users.js";
 import { requireSessionAuth } from "./auth.js";
+import { isMockAuthEnabled, MOCK_USER_ID } from "../middleware/mockAuth.js";
 import { nanoid } from "nanoid";
 
 const DEFAULT_BASE_URL =
@@ -92,6 +93,14 @@ dashboardRouter.get("/dashboard", async (req, res, next) => {
 
 dashboardRouter.get("/api/me", requireSessionAuth, async (req, res, next) => {
   try {
+    // Mock mode: return static data without hitting DynamoDB
+    if (isMockAuthEnabled() && req.user?.user_id === MOCK_USER_ID) {
+      return res.json({
+        user: buildDashboardBootstrap(req.user),
+        meshes: [],
+        agentCounts: {},
+      });
+    }
     res.json(await buildDashboardPayload(req.user));
   } catch (error) {
     next(error);
@@ -109,6 +118,11 @@ dashboardRouter.post("/api/meshes", requireSessionAuth, async (req, res, next) =
       created_at: new Date().toISOString(),
       agent_count: 0,
     };
+
+    // Mock mode: skip DynamoDB, return mesh directly
+    if (isMockAuthEnabled() && req.user?.user_id === MOCK_USER_ID) {
+      return res.status(201).json(mesh);
+    }
 
     await createMesh(mesh);
     return res.status(201).json(mesh);

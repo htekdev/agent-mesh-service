@@ -43,6 +43,10 @@ app.use(
         fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
         imgSrc: ["'self'", "data:", "https://avatars.githubusercontent.com", "https://github.githubassets.com"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
+        // Allow inline event handlers (onclick, etc.) — dashboard uses them extensively.
+        // Helmet v7+ sets script-src-attr:'none' by default which blocks all onclick handlers;
+        // this override re-enables them. Consistent with scriptSrc 'unsafe-inline' above.
+        scriptSrcAttr: ["'unsafe-inline'"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       },
     },
