@@ -632,7 +632,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
         <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
           <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128273; Token Management</div>
           <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
-            API tokens (<code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mw_...</code>) do not expire automatically.
+            API tokens (<code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mw_...</code>) do not expire automatically — if you suspect a token is compromised, revoke it from your dashboard immediately (no expiry timer to wait out).
             <br/><br/>
             To <strong style="color:var(--text)">revoke a token</strong>: sign in to your <a href="/auth/github" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">dashboard</a> and delete it. The token is invalidated immediately.
             <br/><br/>
@@ -783,5 +783,33 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
       });
     })();
     </script>
+
+        <!-- Troubleshooting — added QA Cycle #27 -->
+        <div style="margin-top:40px">
+          <div style="font-size:1.1rem;font-weight:700;margin-bottom:18px;color:var(--text)">&#128270; Common Issues</div>
+          <div style="display:grid;gap:14px">
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+              <div style="font-size:.9rem;font-weight:600;color:var(--accentl);margin-bottom:6px"><code style="font-family:var(--mono)">No config found</code></div>
+              <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire init --token mw_... --mesh MESH_ID</code> to create your config. Config is stored at <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/config.json</code>.</div>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+              <div style="font-size:.9rem;font-weight:600;color:var(--accentl);margin-bottom:6px"><code style="font-family:var(--mono)">401 Unauthorized</code></div>
+              <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Token is missing or invalid. Generate a new token from your <a href="/auth/github" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">dashboard</a> and re-run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire init</code>.</div>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+              <div style="font-size:.9rem;font-weight:600;color:var(--accentl);margin-bottom:6px"><code style="font-family:var(--mono)">Mesh not found</code></div>
+              <div style="font-size:.85rem;color:var(--muted);line-height:1.6">The mesh ID in your config doesn&#8217;t exist or was deleted. Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire mesh list</code> to see your meshes, then <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire init --mesh MESH_ID</code> to reconfigure.</div>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+              <div style="font-size:.9rem;font-weight:600;color:var(--accentl);margin-bottom:6px"><code style="font-family:var(--mono)">meshwire status</code> shows connection failure</div>
+              <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Check <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">meshwire.io/health</a> to verify the service is up. If healthy, verify your mesh ID and token are correct with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire status</code>.</div>
+            </div>
+            <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:18px">
+              <div style="font-size:.9rem;font-weight:600;color:var(--accentl);margin-bottom:6px"><code style="font-family:var(--mono)">meshwire listen</code> exits immediately</div>
+              <div style="font-size:.85rem;color:var(--muted);line-height:1.6">Normal on first run &#8212; no messages in the queue yet. Send a test message from another terminal: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire send "hello"</code>, then run listen again.</div>
+            </div>
+          </div>
+        </div>
+
   </body>
 </html>
