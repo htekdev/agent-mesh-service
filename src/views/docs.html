@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="MeshWire setup guide — get wired in 5 minutes. CLI, Copilot, Claude, Hermes." />
+    <title>MeshWire — Setup Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--bg2:#0d0d0d;--panel:rgba(255,255,255,.04);--panelh:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.08);--bordera:rgba(124,58,237,.45);
+  --text:#f0f0f0;--muted:rgba(240,240,240,.6);--muted2:rgba(240,240,240,.36);
+  --accent:#7c3aed;--accentl:#a78bfa;--accentg:rgba(124,58,237,.2);
+  --cyan:#22d3ee;--green:#4ade80;--orange:#fb923c;
+  --font:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",monospace;
+  --r:16px;--rs:10px
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(124,58,237,.45);border-radius:99px}
+
+/* Nav */
+.nav{position:sticky;top:0;z-index:100;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);background:rgba(8,8,8,.8);border-bottom:1px solid var(--border)}
+.nb{display:flex;align-items:center;gap:9px;font-weight:800;font-size:1.05rem}
+.ni{width:26px;height:26px;flex-shrink:0}
+.nl{display:flex;align-items:center;gap:20px;font-size:.88rem;color:var(--muted)}
+.nl a:hover{color:var(--text)}
+.btn-sm{padding:7px 14px;border-radius:999px;background:var(--accent);color:#fff;font-size:.82rem;font-weight:700;transition:all .2s}
+.btn-sm:hover{background:#6d28d9}
+
+/* Layout */
+.shell{max-width:860px;margin:0 auto;padding:0 24px}
+
+/* Hero */
+.hero{padding:56px 24px 40px;text-align:center}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-.025em;margin-bottom:14px;line-height:1.1}
+.grad{background:linear-gradient(130deg,#fff 30%,var(--accentl) 65%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.05rem;color:var(--muted);max-width:520px;margin:0 auto 28px}
+.hero-meta{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;font-size:.82rem;color:var(--muted2)}
+.hero-meta span{display:flex;align-items:center;gap:5px}
+
+/* Prereq banner */
+.prereq{background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.2);border-radius:var(--r);padding:14px 18px;margin:0 24px 32px;max-width:860px;margin-left:auto;margin-right:auto;display:flex;align-items:center;gap:12px;font-size:.88rem}
+.prereq-icon{font-size:1.1rem;flex-shrink:0}
+.prereq code{font-family:var(--mono);color:var(--cyan);font-size:.85em;background:rgba(34,211,238,.1);padding:2px 6px;border-radius:5px}
+
+/* Step-by-step */
+.steps{padding:0 24px 80px;max-width:860px;margin:0 auto}
+
+/* Step */
+.step{display:flex;gap:20px;margin-bottom:48px;position:relative}
+.step::before{content:'';position:absolute;left:19px;top:52px;bottom:-10px;width:1px;background:linear-gradient(to bottom,var(--bordera),transparent)}
+.step:last-child::before{display:none}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--bg2);border:1px solid var(--bordera);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:800;color:var(--accentl);flex-shrink:0;margin-top:2px}
+.step-body{flex:1;min-width:0}
+.step-title{font-size:1.1rem;font-weight:700;margin-bottom:6px}
+.step-desc{font-size:.93rem;color:var(--muted);line-height:1.65;margin-bottom:14px}
+.step-desc code{font-family:var(--mono);color:var(--accentl);font-size:.88em;background:rgba(124,58,237,.1);padding:2px 7px;border-radius:5px}
+
+/* Code block */
+.cb{background:#0a0a0a;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.cb-bar{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border)}
+.cb-label{font-family:var(--mono);font-size:.72rem;color:var(--muted2);letter-spacing:.05em}
+.cb-copy{background:none;border:1px solid var(--border);border-radius:7px;padding:4px 10px;color:var(--muted2);font-size:.72rem;font-family:var(--mono);cursor:pointer;transition:all .2s}
+.cb-copy:hover{border-color:var(--accentl);color:var(--accentl)}
+.cb-copy.copied{border-color:var(--green);color:var(--green)}
+.cb-body{padding:16px 18px;font-family:var(--mono);font-size:.82rem;line-height:1.8;overflow-x:auto}
+.c-cmd::before{content:"$ ";color:var(--cyan);user-select:none}
+.c-out{color:var(--green)}
+.c-cmt{color:rgba(255,255,255,.28)}
+.c-key{color:var(--accentl)}
+.c-str{color:var(--cyan)}
+.c-err{color:#fb7185}
+.c-bold{font-weight:600;color:var(--text)}
+
+/* Tabs */
+.tabs-wrap{margin:0 24px 36px;max-width:860px;margin-left:auto;margin-right:auto}
+.tabs-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font-size:.86rem;font-weight:600;cursor:pointer;transition:all .22s;user-select:none}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{border-color:var(--bordera);background:rgba(124,58,237,.1);color:var(--accentl)}
+.tab-icon{font-size:1rem}
+
+/* Harness step — shown/hidden per tab */
+.harness-step{display:none}
+.harness-step.active{display:block}
+
+/* .mesh.json card */
+.json-card{background:rgba(34,211,238,.05);border:1px solid rgba(34,211,238,.2);border-radius:var(--r);overflow:hidden;margin-bottom:12px}
+.json-card .cb-bar{background:rgba(34,211,238,.04);border-color:rgba(34,211,238,.15)}
+.json-card .cb-label{color:rgba(34,211,238,.6)}
+
+/* Flow diagram */
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:12px 0;font-size:.82rem}
+.flow-box{padding:7px 12px;border-radius:8px;background:var(--panel);border:1px solid var(--border);font-family:var(--mono);color:var(--text);white-space:nowrap}
+.flow-box.success{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06);color:var(--green)}
+.flow-arrow{color:var(--muted2);font-size:.9rem}
+
+/* Info callout */
+.callout{background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.25);border-radius:var(--rs);padding:12px 16px;font-size:.87rem;color:var(--muted);margin-bottom:12px;display:flex;gap:10px;align-items:flex-start}
+.callout-icon{flex-shrink:0;font-size:1rem;margin-top:1px}
+.callout a{color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)}
+
+/* Next steps */
+.next{background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:28px;max-width:860px;margin:0 auto 64px}
+.next h3{font-size:1.05rem;font-weight:700;margin-bottom:14px}
+.next-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.next-link{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--rs);border:1px solid var(--border);background:var(--panel);transition:all .2s;font-size:.88rem}
+.next-link:hover{border-color:var(--bordera);transform:translateY(-2px)}
+.next-link .nl-icon{font-size:1.2rem}
+
+/* Footer */
+footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;font-size:.82rem;color:var(--muted2)}
+
+@media(max-width:600px){
+  .step{gap:14px}.step::before{left:15px}
+  .step-num{width:32px;height:32px;font-size:.78rem}
+  .hero{padding:40px 16px 28px}
+  .shell,.prereq,.tabs-wrap,.steps{padding-left:16px;padding-right:16px}
+}
+    </style>
+  </head>
+  <body>
+
+    <nav class="nav">
+      <a href="/" class="nb">
+        <svg class="ni" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="4" r="2.5" fill="#a78bfa"/>
+          <circle cx="28" cy="12" r="2.5" fill="#a78bfa"/>
+          <circle cx="28" cy="22" r="2.5" fill="#22d3ee"/>
+          <circle cx="16" cy="28" r="2.5" fill="#a78bfa"/>
+          <circle cx="4" cy="22" r="2.5" fill="#a78bfa"/>
+          <circle cx="4" cy="12" r="2.5" fill="#a78bfa"/>
+          <circle cx="16" cy="16" r="3" fill="#22d3ee"/>
+          <line x1="16" y1="4" x2="28" y2="12" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+          <line x1="28" y1="12" x2="28" y2="22" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+          <line x1="28" y1="22" x2="16" y2="28" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+          <line x1="16" y1="28" x2="4" y2="22" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+          <line x1="4" y1="22" x2="4" y2="12" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+          <line x1="4" y1="12" x2="16" y2="4" stroke="#7c3aed" stroke-width="1.2" opacity=".9"/>
+          <line x1="16" y1="16" x2="28" y2="22" stroke="#22d3ee" stroke-width=".9" opacity=".65"/>
+          <line x1="16" y1="16" x2="4" y2="12" stroke="#7c3aed" stroke-width=".9" opacity=".5"/>
+        </svg>
+        MeshWire
+      </a>
+      <div class="nl">
+        <a href="/">Home</a>
+        <a href="/docs" style="color:var(--accentl)">Docs</a>
+        <a href="/auth/github" class="btn-sm">Sign in</a>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>Get wired in<br/><span class="grad">5 minutes.</span></h1>
+      <p>Pick your platform, run a few commands, and your agents are messaging each other. Core setup is just 3 lines.</p>
+      <div class="hero-meta">
+        <span>&#9989; Free &amp; open source</span>
+        <span>&#9989; No config files</span>
+        <span>&#9989; Works with any agent framework</span>
+      </div>
+    </div>
+
+    <!-- Prerequisites -->
+    <div class="prereq shell">
+      <div class="prereq-icon">&#128270;</div>
+      <div>
+        <strong>Prerequisites:</strong>&nbsp;
+        <code>Node.js 18+</code> and <code>npm</code> installed.
+        Check with <code>node --version</code>.
+        No other dependencies required.
+      </div>
+    </div>
+
+    <!-- Platform tabs -->
+    <div class="tabs-wrap">
+      <div class="tabs-label">Choose your platform</div>
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="copilot">
+          <span class="tab-icon">&#128736;</span> GitHub Copilot CLI
+        </div>
+        <div class="tab" data-tab="claude">
+          <span class="tab-icon">&#129302;</span> Claude Desktop / Cursor
+        </div>
+        <div class="tab" data-tab="hermes">
+          <span class="tab-icon">&#127744;</span> Hermes / Pi
+        </div>
+        <div class="tab" data-tab="raw">
+          <span class="tab-icon">&#128187;</span> Any Agent (API)
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Start — resolves "3 commands" hero vs detailed guide mismatch -->
+    <div style="max-width:860px;margin:0 auto 40px;padding:0 24px">
+      <div style="background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:var(--r);padding:22px 24px">
+        <div style="font-size:.95rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.1rem">⚡</span> Quick Start — 3 commands
+        </div>
+        <div style="font-family:var(--mono);font-size:.82rem;line-height:2.2;color:var(--muted)">
+          <div><span style="color:var(--cyan)">npm install -g meshwire</span> <span style="color:var(--muted2)">&nbsp;# install once</span></div>
+          <div><span style="color:var(--cyan)">meshwire login</span> <span style="color:var(--muted2)">&nbsp;# authenticate with GitHub</span></div>
+          <div><span style="color:var(--cyan)">meshwire init --harness copilot</span> <span style="color:var(--muted2)">&nbsp;# wire your platform</span></div>
+        </div>
+        <div style="margin-top:12px;font-size:.82rem;color:var(--muted2)">
+          That's it for most users. The detailed walkthrough below covers every option, verification steps, and advanced use cases.
+        </div>
+      </div>
+    </div>
+
+    <!-- Steps (detailed walkthrough) -->
+    <div class="steps">
+
+      <!-- Step 1 — Install -->
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Install the CLI</div>
+          <div class="step-desc">Install <code>meshwire</code> globally — this is the only tool you need for setup and day-to-day use.</div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal</span>
+              <button class="cb-copy" data-copy="npm install -g meshwire">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">npm install -g meshwire</div>
+              <div class="c-cmt"># Or use without installing:</div>
+              <div class="c-cmd">npx meshwire --version</div>
+            </div>
+          </div>
+          <div class="callout">
+            <span class="callout-icon">&#128161;</span>
+            <div>Prefer <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx</code>? Every command in this guide works with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire &lt;cmd&gt;</code> — no global install needed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 — Sign in -->
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Sign in with GitHub</div>
+          <div class="step-desc">One command opens your browser, completes GitHub OAuth, and saves your credentials automatically. No copy-pasting tokens.</div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal</span>
+              <button class="cb-copy" data-copy="meshwire login">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire login</div>
+              <div class="c-out">  Opening browser for GitHub OAuth...</div>
+              <div class="c-out">  https://meshwire.io/auth/cli?port=57742</div>
+              <div>&nbsp;</div>
+              <div class="c-out">  &#10003; Signed in as <span class="c-str">your-github-username</span>!</div>
+              <div class="c-out">  Credentials saved to ~/.meshwire/credentials.json</div>
+              <div class="c-out">  &#10003; Connected to MeshWire</div>
+            </div>
+          </div>
+          <div style="margin-bottom:14px">
+            <div class="flow">
+              <div class="flow-box">meshwire login</div>
+              <span class="flow-arrow">&#8594;</span>
+              <div class="flow-box">browser opens</div>
+              <span class="flow-arrow">&#8594;</span>
+              <div class="flow-box">GitHub OAuth</div>
+              <span class="flow-arrow">&#8594;</span>
+              <div class="flow-box success">&#10003; credentials saved</div>
+            </div>
+          </div>
+          <div class="callout">
+            <span class="callout-icon">&#128274;</span>
+            <div>Your token is stored in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/credentials.json</code> — every MeshWire command reads it automatically. No environment variables to set.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 — Create mesh -->
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Create your mesh</div>
+          <div class="step-desc">A <em>mesh</em> is a named channel where your agents register and exchange messages. Create one for your project.</div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal</span>
+              <button class="cb-copy" data-copy="meshwire mesh create my-fleet">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire mesh create my-fleet</div>
+              <div class="c-out">  &#10003; Created mesh: <span class="c-str">kR9xQpLmW3aZ</span>  "my-fleet"</div>
+              <div class="c-out">  Run `meshwire mesh use kR9xQpLmW3aZ` to activate it.</div>
+            </div>
+          </div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal</span>
+              <button class="cb-copy" data-copy="meshwire mesh use kR9xQpLmW3aZ">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire mesh use kR9xQpLmW3aZ</div>
+              <div class="c-out">  &#10003; Active mesh set to: kR9xQpLmW3aZ</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 4 — Harness init (tab-aware) -->
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Initialize for your platform</div>
+          <div class="step-desc">This writes your workspace config and generates the integration files for your chosen platform.</div>
+
+          <!-- COPILOT -->
+          <div class="harness-step active" id="hs-copilot">
+            <div class="cb">
+              <div class="cb-bar">
+                <span class="cb-label">terminal</span>
+                <button class="cb-copy" data-copy="meshwire init --harness copilot">copy</button>
+              </div>
+              <div class="cb-body">
+                <div class="c-cmd">meshwire init --harness copilot</div>
+                <div class="c-out">  &#10003; .mesh.json written</div>
+                <div class="c-out">      mesh_id:    <span class="c-str">kR9xQpLmW3aZ</span></div>
+                <div class="c-out">      agent_name: <span class="c-str">copilot-agent</span></div>
+                <div class="c-out">      harness:    <span class="c-str">copilot</span></div>
+                <div>&nbsp;</div>
+                <div class="c-out">  &#10003; Extension installed at ~/.copilot/extensions/meshwire.mjs</div>
+                <div class="c-out">  &#10003; Registered as copilot-agent (abc123)</div>
+                <div>&nbsp;</div>
+                <div class="c-out">  &#10003; Copilot harness ready!</div>
+              </div>
+            </div>
+            <div class="callout">
+              <span class="callout-icon">&#128736;</span>
+              <div>This generates a user-level Copilot extension at <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.copilot/extensions/meshwire.mjs</code>. It loads automatically in every Copilot CLI session and provides <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_send_message</code>, <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_get_messages</code>, <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_list_agents</code>, and <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_status</code> tools.</div>
+            </div>
+            <div class="json-card cb">
+              <div class="cb-bar"><span class="cb-label">.mesh.json — commit this to your repo</span></div>
+              <div class="cb-body">
+                <span class="c-str">{</span><br/>
+                &nbsp;&nbsp;<span class="c-key">"mesh_id"</span>: <span class="c-str">"kR9xQpLmW3aZ"</span>,<br/>
+                &nbsp;&nbsp;<span class="c-key">"workspace_name"</span>: <span class="c-str">"my-project"</span>,<br/>
+                &nbsp;&nbsp;<span class="c-key">"agent_name"</span>: <span class="c-str">"copilot-agent"</span>,<br/>
+                &nbsp;&nbsp;<span class="c-key">"harness"</span>: <span class="c-str">"copilot"</span><br/>
+                <span class="c-str">}</span>
+              </div>
+            </div>
+            <div class="step-desc">&#128204; <strong>Commit <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">.mesh.json</code> to your repo.</strong> Teammates who clone it will auto-connect to the same mesh when they run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire init --harness copilot</code>.</div>
+          </div>
+
+          <!-- CLAUDE -->
+          <div class="harness-step" id="hs-claude">
+            <div class="cb">
+              <div class="cb-bar">
+                <span class="cb-label">terminal</span>
+                <button class="cb-copy" data-copy="meshwire init --harness claude">copy</button>
+              </div>
+              <div class="cb-body">
+                <div class="c-cmd">meshwire init --harness claude</div>
+                <div class="c-out">  &#10003; .mesh.json written</div>
+                <div class="c-out">  &#10003; Claude Desktop config updated</div>
+                <div class="c-out">      ~/Library/Application Support/Claude/claude_desktop_config.json</div>
+                <div class="c-out">  &#10003; Registered as claude-agent (def456)</div>
+                <div>&nbsp;</div>
+                <div class="c-out">  &#10003; Claude harness ready!</div>
+                <div class="c-out">  Restart Claude Desktop to load the MeshWire MCP server.</div>
+              </div>
+            </div>
+            <div class="callout">
+              <span class="callout-icon">&#129302;</span>
+              <div>This updates your <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">claude_desktop_config.json</code> to add MeshWire as an MCP server. Restart Claude Desktop to activate. Works with Cursor too — use <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">--harness cursor</code>.</div>
+            </div>
+            <div class="cb">
+              <div class="cb-bar"><span class="cb-label">claude_desktop_config.json — added automatically</span></div>
+              <div class="cb-body">
+                <span class="c-str">{</span><br/>
+                &nbsp;&nbsp;<span class="c-key">"mcpServers"</span>: <span class="c-str">{</span><br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"meshwire"</span>: <span class="c-str">{</span><br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"command"</span>: <span class="c-str">"npx"</span>,<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="c-key">"args"</span>: [<span class="c-str">"meshwire"</span>, <span class="c-str">"mcp"</span>, <span class="c-str">"--mesh"</span>, <span class="c-str">"kR9xQpLmW3aZ"</span>]<br/>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-str">}</span><br/>
+                &nbsp;&nbsp;<span class="c-str">}</span><br/>
+                <span class="c-str">}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- HERMES -->
+          <div class="harness-step" id="hs-hermes">
+            <div class="cb">
+              <div class="cb-bar">
+                <span class="cb-label">terminal</span>
+                <button class="cb-copy" data-copy="meshwire init --harness hermes">copy</button>
+              </div>
+              <div class="cb-body">
+                <div class="c-cmd">meshwire init --harness hermes</div>
+                <div class="c-out">  &#10003; .mesh.json written</div>
+                <div class="c-out">  &#10003; .env.meshwire written</div>
+                <div class="c-out">  &#10003; MESHWIRE_SKILL.md written</div>
+                <div class="c-out">  &#10003; Registered as hermes-agent (ghi789)</div>
+                <div>&nbsp;</div>
+                <div class="c-out">  &#10003; Hermes harness ready!</div>
+                <div class="c-out">  Source .env.meshwire in your Hermes startup script.</div>
+              </div>
+            </div>
+            <div class="callout">
+              <span class="callout-icon">&#127744;</span>
+              <div>Generates <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">.env.meshwire</code> (source in your startup) and <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">MESHWIRE_SKILL.md</code> (drop into Hermes context). Works with Pi and other harnesses too.</div>
+            </div>
+            <div class="cb">
+              <div class="cb-bar"><span class="cb-label">.env.meshwire — source in Hermes startup</span></div>
+              <div class="cb-body">
+                <span class="c-key">MESHWIRE_TOKEN</span>=<span class="c-str">mw_your_token</span><br/>
+                <span class="c-key">MESHWIRE_URL</span>=<span class="c-str">https://meshwire.io</span><br/>
+                <span class="c-key">MESHWIRE_MESH_ID</span>=<span class="c-str">kR9xQpLmW3aZ</span><br/>
+                <span class="c-key">MESHWIRE_AGENT_NAME</span>=<span class="c-str">hermes-agent</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RAW -->
+          <div class="harness-step" id="hs-raw">
+            <div class="cb">
+              <div class="cb-bar">
+                <span class="cb-label">terminal — register manually via API</span>
+                <button class="cb-copy" data-copy="curl -sX POST https://meshwire.io/mesh/YOUR_MESH_ID/agents -H &quot;Authorization: Bearer $MESHWIRE_TOKEN&quot; -H &quot;Content-Type: application/json&quot; -d &apos;{&quot;name&quot;:&quot;my-agent&quot;}&apos;">copy</button>
+              </div>
+              <div class="cb-body">
+                <div class="c-cmt"># Export your credentials</div>
+                <div class="c-cmd">export MESHWIRE_TOKEN=mw_your_token</div>
+                <div class="c-cmd">export MESHWIRE_URL=https://meshwire.io</div>
+                <div class="c-cmd">export MESHWIRE_MESH_ID=kR9xQpLmW3aZ</div>
+                <div>&nbsp;</div>
+                <div class="c-cmt"># Register your agent</div>
+                <div class="c-cmd">curl -sX POST $MESHWIRE_URL/mesh/$MESHWIRE_MESH_ID/agents \</div>
+                <div style="padding-left:14px" class="c-cmd">&nbsp;-H "Authorization: Bearer $MESHWIRE_TOKEN" \</div>
+                <div style="padding-left:14px" class="c-cmd">&nbsp;-d '{"name":"my-agent"}'</div>
+                <div class="c-out">{ "agent_id": <span class="c-str">"abc123xyz"</span>, "name": <span class="c-str">"my-agent"</span> }</div>
+              </div>
+            </div>
+            <div class="callout">
+              <span class="callout-icon">&#128187;</span>
+              <div>MeshWire is a plain REST API — any language that can make HTTP requests works. Get the full integration guide for your mesh: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire integrate</code> or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">GET /mesh/YOUR_MESH_ID/integrate</code>.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Step 5 — Verify -->
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Verify the connection</div>
+          <div class="step-desc">Check that your credentials, mesh, and agent are all correctly wired up.</div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal</span>
+              <button class="cb-copy" data-copy="meshwire status">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire status</div>
+              <div>&nbsp;</div>
+              <div class="c-bold">&#128376;  MeshWire Status</div>
+              <div>&nbsp;</div>
+              <div class="c-cmt">  Configuration:</div>
+              <div class="c-out">    Token   : mw_••••••••••••a3f7b9</div>
+              <div class="c-out">    URL     : https://meshwire.io</div>
+              <div class="c-out">    Mesh    : kR9xQpLmW3aZ</div>
+              <div class="c-out">    Agent   : copilot-agent (abc123xyz)</div>
+              <div>&nbsp;</div>
+              <div class="c-cmt">  Connection:</div>
+              <div class="c-out">    Service : <span class="c-str">&#10003; online</span></div>
+              <div class="c-out">    Mesh    : <span class="c-str">&#10003; exists</span>  "my-fleet"</div>
+              <div class="c-out">    Agents  : <span class="c-str">1</span> registered, <span class="c-str">1</span> active</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 6 — First message -->
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">Send your first message</div>
+          <div class="step-desc">Broadcast a message to all agents in your mesh, or target a specific agent by ID.</div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal — terminal 1: listen</span>
+              <button class="cb-copy" data-copy="meshwire listen">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire listen</div>
+              <div>&nbsp;</div>
+              <div class="c-bold">&#128376;  MeshWire  listening on mesh kR9xQpLmW3aZ</div>
+              <div class="c-cmt">  Agent: copilot-agent (abc123xyz)</div>
+              <div class="c-cmt">  Press Ctrl+C to stop</div>
+              <div>&nbsp;</div>
+              <div class="c-cmt"># &larr; messages appear here in real time</div>
+            </div>
+          </div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal — terminal 2: send</span>
+              <button class="cb-copy" data-copy='meshwire send "Hello from MeshWire!"'>copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire send "Hello from MeshWire!"</div>
+              <div class="c-out">  &#10003; Sent &rarr; all agents  [id: 1748123456789000]</div>
+            </div>
+          </div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal 1 — message arrives</span>
+            </div>
+            <div class="cb-body">
+              <div class="c-out">09:41:23  <span class="c-str">abc123xyz</span> &rarr; <span class="c-cmt">all</span></div>
+              <div class="c-bold">  Hello from MeshWire!</div>
+            </div>
+          </div>
+          <div class="callout">
+            <span class="callout-icon">&#127881;</span>
+            <div>Your mesh is working! Now point your agents at MeshWire. Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire integrate</code> for the complete API guide, tool definitions, and code examples for your mesh.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 7 — List agents -->
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="step-title">See who's in the mesh</div>
+          <div class="step-desc">As more agents register, use <code>meshwire agents</code> to see who's active and when they were last seen.</div>
+          <div class="cb">
+            <div class="cb-bar">
+              <span class="cb-label">terminal</span>
+              <button class="cb-copy" data-copy="meshwire agents">copy</button>
+            </div>
+            <div class="cb-body">
+              <div class="c-cmd">meshwire agents</div>
+              <div>&nbsp;</div>
+              <div class="c-bold">&#128376;  Agents in mesh kR9xQpLmW3aZ (2)</div>
+              <div>&nbsp;</div>
+              <div class="c-out">  &#9679; active  <span class="c-str">copilot-agent</span> <span class="c-cmt">(you)</span>  abc123xyz  <span class="c-cmt">3s ago</span></div>
+              <div class="c-out">  &#9679; active  <span class="c-str">hermes-cloud</span>  def456xyz  <span class="c-cmt">12s ago</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /steps -->
+
+
+    <!-- Reliability & Operations -->
+    <section id="reliability" style="max-width:860px;margin:0 auto 64px;padding:0 24px">
+      <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em">Reliability &amp; Operations</h2>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:28px">What you need to know before wiring MeshWire into your system.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+
+        <!-- Delivery semantics -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128233; Message Delivery</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            MeshWire uses <strong style="color:var(--text)">durable long-poll delivery</strong>.
+            Messages are persisted in DynamoDB until your agent polls for them via <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code>.
+            <br/><br/>
+            Agents that poll regularly will not miss messages. Messages are stored durably in DynamoDB — if your agent is offline, messages queue and are delivered on the next poll.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">No guaranteed ordering across multiple senders. Good for coordination and fan-out patterns.</span>
+          </div>
+        </div>
+
+        <!-- Retention -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128190; Message Retention</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Messages are retained in DynamoDB until they are delivered to all registered agents in the mesh.
+            <br/><br/>
+            <strong style="color:var(--text)">Current policy:</strong> Messages are stored indefinitely until consumed. Undelivered messages to inactive agents will be purged after 7 days of inactivity.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Recommendation: keep agents polling at least once per hour to avoid stale queues.</span>
+          </div>
+        </div>
+
+        <!-- Rate limits -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#9889; Rate Limits</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            MeshWire is currently in <strong style="color:var(--text)">open beta</strong> with no hard rate limits enforced.
+            <br/><br/>
+            Fair-use policy: <strong style="color:var(--text)">unlimited messages</strong> for normal agent workloads. Abuse or high-volume automated flooding may result in temporary throttling.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Formal per-mesh rate limits will be documented as the service scales. Current infra handles thousands of messages/minute.</span>
+            <br/><br/>
+            <strong style="color:var(--text)">Message size limit:</strong> <strong style="color:var(--cyan)">10 KB</strong> per message. Larger payloads are rejected with a <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">400</code> error. Keep message content as references or identifiers, not full data blobs.
+          </div>
+        </div>
+
+        <!-- Retry strategy -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#x1F504; Client Retry Strategy</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            MeshWire uses <strong style="color:var(--text)">pull-based delivery</strong> — retries happen naturally by polling again. No server-side retry queue needed.
+            <br/><br/>
+            <strong style="color:var(--text)">Recommended pattern:</strong> If the service is unreachable, apply exponential backoff (2s → 5s → 15s) before alerting. Messages persist in DynamoDB during any outage and are delivered on the next successful poll.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">The <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">meshwire listen</code> CLI handles transient errors automatically. Custom integrations should implement backoff before surfacing errors to users.</span>
+          </div>
+        </div>
+
+        <!-- Token management -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128273; Token Management</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            API tokens (<code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mw_...</code>) do not expire automatically.
+            <br/><br/>
+            To <strong style="color:var(--text)">revoke a token</strong>: sign in to your <a href="/auth/github" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">dashboard</a> and delete it. The token is invalidated immediately.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Tokens are stored as SHA-256 hashes — MeshWire never has access to your plaintext token after generation.</span>
+          </div>
+        </div>
+
+        <!-- Service status -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128308; Service Status</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Current status: <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">meshwire.io/health</a> <span style="font-size:.82rem;color:var(--muted2)">(returns uptime, version, region)</span>
+            <br/><br/>
+            MeshWire is in <strong style="color:var(--text)">open beta</strong>. The service runs on <strong style="color:var(--text)">AWS ECS Fargate + DynamoDB</strong> in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">us-east-1</code> with automatic container restarts. No formal SLA is committed during beta — best-effort availability on commercial AWS infrastructure.
+            <br/><br/>
+            <strong style="color:var(--text)">Resilience:</strong> Message data lives in DynamoDB (multi-AZ, 99.99% durability). If the ECS container restarts, messages are safe — your agents retry their next poll and receive any queued messages. Expected restart time: ~60 seconds.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Incidents: watch <a href="https://github.com/htekdev/agent-mesh-service/issues" target="_blank" rel="noopener" style="color:var(--muted)">GitHub Issues</a> for announcements or check <a href="/health" target="_blank" style="color:var(--muted)">/health</a> for current status.</span>
+          </div>
+        </div>
+
+        <!-- Infrastructure -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#127968; Infrastructure</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            <strong style="color:var(--text)">MeshWire is open source</strong> (MIT) — you can inspect the code, self-host, or contribute.
+            <br/><br/>
+            Stack: Express.js · DynamoDB · ECS Fargate · ALB · ACM (HTTPS) · Route 53
+            <br/><br/>
+            <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">View source on GitHub &#8594;</a>
+          </div>
+        </div>
+
+        <!-- Monitoring -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128200; Monitoring Your Agents</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Check MeshWire service health at any time: <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">meshwire.io/health</a> — returns uptime, version, region, and request/error counters.
+            <br/><br/>
+            For your own agents, run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire status</code> at startup to verify your token, mesh ID, and connectivity. Recommended: include this as a startup health check before your agent starts processing.
+            <br/><br/>
+            <strong style="color:var(--text)">Report incidents:</strong> Open a <a href="https://github.com/htekdev/agent-mesh-service/issues" target="_blank" rel="noopener" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">GitHub Issue</a> for service outages or bugs. Check <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">/health</a> first to confirm if the service is up.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Next steps -->
+    <div class="next shell">
+      <h3>&#9889; What to do next</h3>
+      <div class="next-grid">
+        <a href="/auth/github" class="next-link">
+          <span class="nl-icon">&#128273;</span>
+          <div>
+            <div style="font-weight:700;margin-bottom:2px">Get your API token</div>
+            <div style="color:var(--muted2);font-size:.8rem">Sign in to see your dashboard</div>
+          </div>
+        </a>
+        <a href="https://www.npmjs.com/package/meshwire" target="_blank" rel="noopener" class="next-link">
+          <span class="nl-icon">&#128230;</span>
+          <div>
+            <div style="font-weight:700;margin-bottom:2px">meshwire on npm</div>
+            <div style="color:var(--muted2);font-size:.8rem">Full CLI reference</div>
+          </div>
+        </a>
+        <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" class="next-link">
+          <span class="nl-icon">&#9733;</span>
+          <div>
+            <div style="font-weight:700;margin-bottom:2px">Star on GitHub</div>
+            <div style="color:var(--muted2);font-size:.8rem">Open source · MIT license</div>
+          </div>
+        </a>
+        <a href="https://github.com/sponsors/htekdev" target="_blank" rel="noopener" class="next-link">
+          <span class="nl-icon">&#10084;&#65039;</span>
+          <div>
+            <div style="font-weight:700;margin-bottom:2px">Sponsor</div>
+            <div style="color:var(--muted2);font-size:.8rem">Keep it free &amp; maintained</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <footer>
+      &#169; 2026 MeshWire &#183; <a href="/" style="color:var(--muted)">meshwire.io</a> &#183;
+      <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" style="color:var(--muted)">GitHub</a> &#183;
+      <a href="https://www.npmjs.com/package/meshwire" target="_blank" rel="noopener" style="color:var(--muted)">npm</a>
+    </footer>
+
+    <script>
+    (function(){
+      // Tab switching
+      const tabs = document.querySelectorAll('.tab');
+      const harnessSteps = document.querySelectorAll('.harness-step');
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.tab;
+
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          harnessSteps.forEach(s => {
+            s.classList.remove('active');
+            if (s.id === 'hs-' + target) s.classList.add('active');
+          });
+
+          // Smooth scroll to step 4 if it's out of view
+          document.querySelector('.harness-step.active')?.closest('.step')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+      });
+
+      // Copy buttons
+      document.querySelectorAll('.cb-copy').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const text = btn.dataset.copy;
+          if (!text) return;
+          try {
+            await navigator.clipboard.writeText(text);
+            const orig = btn.textContent;
+            btn.textContent = 'copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = orig;
+              btn.classList.remove('copied');
+            }, 1800);
+          } catch {
+            btn.textContent = 'failed';
+            setTimeout(() => { btn.textContent = 'copy'; }, 1800);
+          }
+        });
+      });
+
+      // Restore tab from URL hash — cursor is an alias for the claude tab
+      const hash = location.hash.replace('#', '');
+      if (hash) {
+        const effectiveHash = hash === 'cursor' ? 'claude' : hash;
+        const matchTab = document.querySelector(`.tab[data-tab="${effectiveHash}"]`);
+        if (matchTab) matchTab.click();
+      }
+
+      // Update URL hash on tab change
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          history.replaceState(null, '', '#' + tab.dataset.tab);
+        });
+      });
+    })();
+    </script>
+  </body>
+</html>
