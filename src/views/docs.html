@@ -287,7 +287,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           </div>
           <div class="callout">
             <span class="callout-icon">&#128274;</span>
-            <div>Your token is stored in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/credentials.json</code> — every MeshWire command reads it automatically. No environment variables to set.</div>
+            <div>Your token is stored in <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/credentials.json</code> — every MeshWire command reads it automatically. No environment variables to set.<br/><span style="font-size:.82rem;color:var(--muted2)">Windows path: <code style="font-family:var(--mono);color:var(--accentl);font-size:.82em">%USERPROFILE%\.meshwire\credentials.json</code></span></div>
           </div>
         </div>
       </div>
@@ -612,7 +612,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">Formal per-mesh rate limits will be documented as the service scales. Current infra handles thousands of messages/minute.</span>
             <br/><br/>
-            <strong style="color:var(--text)">Message size limit:</strong> <strong style="color:var(--cyan)">10 KB</strong> per message. Larger payloads are rejected with a <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">400</code> error. Keep message content as references or identifiers, not full data blobs.
+            <strong style="color:var(--text)">Message size limit:</strong> <strong style="color:var(--cyan)">10 KB</strong> per message. Larger payloads are rejected with a <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">400</code> error. Keep message content as references or identifiers, not full data blobs.<br/><br/><strong style="color:var(--text)">Queue depth:</strong> No limit on messages queued per agent. Messages are retained until consumed (subject to the 7-day inactive-agent purge).
           </div>
         </div>
 
