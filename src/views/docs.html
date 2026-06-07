@@ -678,6 +678,25 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           </div>
         </div>
 
+
+        <!-- Threaded replies -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128172; Threaded Replies</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Both the Copilot extension and MCP server support <strong style="color:var(--text)">threaded replies</strong> &#8212; reply to a specific incoming message and route it directly back to the original sender.
+            <br/><br/>
+            <strong style="color:var(--text)">Copilot CLI extension:</strong><br/>
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_reply_to_message({ message_id, content })</code>
+            <br/><br/>
+            <strong style="color:var(--text)">Claude / Cursor (MCP server):</strong><br/>
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire_reply_to_message({ message_id, content })</code>
+            <br/><br/>
+            The reply is routed directly to the original sender and tagged with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">metadata.reply_to</code>. Any agent in the mesh can thread conversations without extra setup.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Parameters: <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">message_id</code> (integer, from the incoming message object) &middot; <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">content</code> (string, max 10&#8239;KB). Use <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">meshwire listen --json</code> to get message IDs.</span>
+          </div>
+        </div>
+
       </div>
     </section>
 
