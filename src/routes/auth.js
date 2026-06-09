@@ -113,34 +113,37 @@ authRouter.get(
   "/github/callback",
   (req, res, next) => {
     passport.authenticate("github", (err, user) => {
+      // IMPORTANT: Read cliPort BEFORE req.logIn() -- Passport 0.6+ regenerates
+      // the session during login, which destroys all pre-existing session data.
+      // This was causing `meshwire login` to hang: the CLI port was lost, so the
+      // server redirected to /dashboard instead of back to localhost.
+      const cliPort = req.session?.cliPort;
+      const pendingNewToken = req.session?.newToken;
+
       if (err) {
         console.error("[OAuth] Callback error:", err.message || err);
-        const cliPort = req.session?.cliPort;
         if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=auth_error`);
         return res.redirect("/?error=auth_error");
       }
       if (!user) {
         console.warn("[OAuth] No user returned -- auth denied or state mismatch");
-        const cliPort = req.session?.cliPort;
         if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=auth_failed`);
         return res.redirect("/?error=auth_failed");
       }
+
       req.logIn(user, (loginErr) => {
         if (loginErr) {
           console.error("[OAuth] Login error:", loginErr.message);
-          const cliPort = req.session?.cliPort;
           if (cliPort) return res.redirect(`http://localhost:${cliPort}?error=login_error`);
           return res.redirect("/?error=login_error");
         }
 
         // CLI flow -- send token back to local server
-        const cliPort = req.session?.cliPort;
         if (cliPort) {
-          delete req.session.cliPort;
-          // Get the plain token -- for new users it's in session.newToken, for existing we need to re-issue
-          const token = req.session.newToken || null;
+          // Get the plain token -- for new users it was in session.newToken (captured
+          // before session regeneration as pendingNewToken), for existing we re-issue.
+          const token = pendingNewToken || req.session.newToken || null;
           if (token) {
-            delete req.session.newToken;
             return req.session.save(() => {
               res.redirect(`http://localhost:${cliPort}?token=${encodeURIComponent(token)}&login=${encodeURIComponent(user.login)}`);
             });
