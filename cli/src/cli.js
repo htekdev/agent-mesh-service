@@ -93,7 +93,7 @@ export async function run(version) {
 
   mesh
     .command('list')
-    .description('List your meshes (requires dashboard session)')
+    .description('List all your meshes')
     .action(() => cmdMesh('list', {}));
 
   mesh

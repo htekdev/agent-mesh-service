@@ -129,6 +129,13 @@ input,select{font:inherit}
 .int-url{font-family:var(--fm);font-size:.78rem;padding:11px 14px;background:#050505;border:1px solid rgba(34,211,238,.22);border-radius:9px;color:var(--cy);word-break:break-all;margin:8px 0}
 .slbl{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-bottom:6px}
 
+/* welcome banner */
+.wbanner{padding:14px 18px;border-radius:12px;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.22);display:flex;align-items:flex-start;gap:12px;margin-bottom:28px}
+.wbanner-icon{font-size:1.15rem;flex-shrink:0;margin-top:1px}
+.wbanner-body{font-size:.83rem;color:var(--sub);line-height:1.6}
+.wbanner-body strong{color:var(--gr)}
+.wbanner-body a{color:var(--acl);text-decoration:underline;text-underline-offset:2px}
+
 @media(max-width:580px){.wrap{padding:0 13px 56px}.bar{padding:13px 0 18px}.pane{padding:15px}.tr{flex-direction:column;align-items:stretch}}
     </style>
   </head>
@@ -164,6 +171,14 @@ input,select{font:inherit}
           <button class="bso" onclick="location.href='/auth/logout'">Sign out</button>
         </div>
       </header>
+
+      <!-- Welcome banner (shown for first-time users with 0 meshes) -->
+      <div id="wb" class="wbanner" style="display:none">
+        <div class="wbanner-icon">&#128075;</div>
+        <div class="wbanner-body">
+          <strong>Welcome to MeshWire!</strong> To get started, scroll down to <a href="#step-meshes">Step 3</a> and create your first mesh. Once you have a mesh ID, the harness setup in Step 2 will connect your agents to it.
+        </div>
+      </div>
 
       <!-- Step 1 -->
       <div class="sec">
@@ -259,7 +274,7 @@ input,select{font:inherit}
       </div>
 
       <!-- Step 3 -->
-      <div class="sec">
+      <div class="sec" id="step-meshes">
         <div class="sec-hd"><div class="sec-n">3</div><div class="sec-t">Your meshes</div></div>
         <div class="sec-st">Click any mesh to get its integrate URL and setup commands.</div>
         <div class="card">
@@ -407,6 +422,10 @@ function rmx() {
   el.innerHTML = S.mx.length
     ? S.mx.map(m => '<div class="mr" onclick="openM(\''+m.mesh_id+'\')"><div><div class="mrn">'+esc(m.name)+'</div><div class="mri">'+m.mesh_id+'</div></div><div style="display:flex;align-items:center;gap:10px"><div class="mra">'+(S.mc[m.mesh_id]||0)+' agents</div><div style="color:var(--dim)">&#8250;</div></div></div>').join('')
     : '<div class="mempty">No meshes yet &mdash; create your first one below.</div>';
+
+  // Show welcome banner for first-time users with no meshes
+  const wb = document.getElementById('wb');
+  if (wb) wb.style.display = S.mx.length === 0 ? 'flex' : 'none';
 
   const sel = document.getElementById('any-sel');
   if (sel) {
