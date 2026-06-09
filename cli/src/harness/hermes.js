@@ -46,7 +46,7 @@ export async function setupHermes({ meshId, agentName, meshwireUrl, workspaceNam
   console.log(chalk.green('  ✓ .env.meshwire written'));
 
   // Write skill document
-  const skillContent = `# MeshWire Skill — ${meshJsonData.workspace_name}
+  const skillContent = `# MeshWire Skill -- ${meshJsonData.workspace_name}
 
 ## Mesh
 \`\`\`

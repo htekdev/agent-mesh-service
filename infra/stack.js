@@ -1,4 +1,4 @@
-// CDK Infrastructure — Agent Mesh Service
+// CDK Infrastructure -- Agent Mesh Service
 // ECS Fargate + ALB + DynamoDB (App Runner deprecated April 2026)
 import * as cdk from "aws-cdk-lib";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
@@ -122,7 +122,7 @@ class AgentMeshStack extends cdk.Stack {
       idleTimeout: cdk.Duration.seconds(65),
     });
 
-    // ─── Phase 3: HTTPS + meshwire.io domain ───────────────────
+    // --- Phase 3: HTTPS + meshwire.io domain -------------------
     // ACM Certificate ARN (issued 2026-06-05, validated via Route 53 DNS)
     // Zone ID: Z0713769PI648X8HIZK3
     // Cert ARN: arn:aws:acm:us-east-1:250230555773:certificate/fbaa4655-bfcd-465e-85ab-74aa1550a6af
@@ -149,7 +149,7 @@ class AgentMeshStack extends cdk.Stack {
     });
 
     // Drain in-flight connections gracefully before deregistering old task.
-    // Long-poll connections can hold for up to 60s — give them time to complete.
+    // Long-poll connections can hold for up to 60s -- give them time to complete.
     service.targetGroup.setAttribute("deregistration_delay.timeout_seconds", "60");
 
     meshesTable.grantReadWriteData(service.taskDefinition.taskRole);

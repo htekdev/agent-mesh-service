@@ -75,7 +75,7 @@ describe("Integration Endpoint", () => {
       const meshId = "test-mesh-456";
       const baseUrl = "http://localhost:3000";
       const meshUrl = `${baseUrl}/mesh/${meshId}`;
-      const skillDoc = `# Agent Mesh Integration — ${meshId}\nBase URL: ${baseUrl}`;
+      const skillDoc = `# Agent Mesh Integration -- ${meshId}\nBase URL: ${baseUrl}`;
       assert.ok(skillDoc.includes(meshId));
       assert.ok(skillDoc.includes(baseUrl));
     });

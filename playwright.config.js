@@ -54,7 +54,7 @@ export default defineConfig({
       MOCK_AUTH: "true",
       NODE_ENV: "test",
       SESSION_SECRET: "playwright-test-secret",
-      // DynamoDB not needed for mock auth — point at local region to avoid real calls
+      // DynamoDB not needed for mock auth -- point at local region to avoid real calls
       AWS_REGION: "us-east-1",
     },
   },

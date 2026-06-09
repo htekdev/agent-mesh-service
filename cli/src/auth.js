@@ -1,4 +1,4 @@
-// MeshWire credential resolution — reads from multiple sources in priority order
+// MeshWire credential resolution -- reads from multiple sources in priority order
 //
 // Priority: credentials.json > MESHWIRE_TOKEN env > .mesh.json > config.json > null
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
@@ -40,7 +40,7 @@ export function resolveToken() {
   return null;
 }
 
-// Resolve mesh ID — workspace .mesh.json takes precedence (it's repo-specific)
+// Resolve mesh ID -- workspace .mesh.json takes precedence (it's repo-specific)
 export function resolveMeshId() {
   // 1. Workspace .mesh.json
   const meshJson = readMeshJson();

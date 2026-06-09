@@ -1,4 +1,4 @@
-// meshwire mesh — create, list, switch meshes
+// meshwire mesh -- create, list, switch meshes
 import chalk from 'chalk';
 import { requireConfig, writeConfig, readConfig } from '../config.js';
 import { writeMeshJson } from '../mesh-schema.js';

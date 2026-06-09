@@ -1,5 +1,5 @@
 /**
- * Mock Auth — bypass GitHub OAuth for local testing and QA automation.
+ * Mock Auth - bypass GitHub OAuth for local testing and QA automation.
  *
  * SAFETY: Only activates when BOTH conditions are true:
  *   1. MOCK_AUTH=true is set in the environment
@@ -10,6 +10,8 @@
 
 export const MOCK_USER_ID = "mock-test-user-001";
 
+export const MOCK_TOKEN = "mw_test_token_abc123def456";
+
 export const MOCK_USER = {
   user_id: MOCK_USER_ID,
   github_id: "mock-github-id",
@@ -19,7 +21,7 @@ export const MOCK_USER = {
   plan: "free",
   token_hash: "mock-token-hash-for-testing-only-never-in-prod",
   token_suffix: "testonly",
-  maskedToken: "mw_••••••••••••••••testonly",
+  maskedToken: "mw_..............testonly",
   tokenSuffix: "testonly",
   created_at: new Date().toISOString(),
 };

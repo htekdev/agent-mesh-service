@@ -1,4 +1,4 @@
-// meshwire agents — list agents in the mesh
+// meshwire agents -- list agents in the mesh
 import chalk from 'chalk';
 import { requireConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';

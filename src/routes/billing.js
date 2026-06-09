@@ -1,4 +1,4 @@
-// MeshWire Billing Routes — Stripe Checkout, Customer Portal, Webhooks
+// MeshWire Billing Routes -- Stripe Checkout, Customer Portal, Webhooks
 import { Router } from "express";
 import Stripe from "stripe";
 import { getUserById, updateUserPlan, setStripeCustomerId } from "../db/users.js";
@@ -16,7 +16,7 @@ const BASE_URL =
   process.env.BASE_URL ||
   "https://meshwire.io";
 
-// ─── GET /upgrade — Create Stripe Checkout session → redirect ────────────────
+// --- GET /upgrade -- Create Stripe Checkout session -> redirect ----------------
 // Requires session auth (web dashboard flow).
 router.get("/upgrade", requireSessionAuth, async (req, res, next) => {
   try {
@@ -27,7 +27,7 @@ router.get("/upgrade", requireSessionAuth, async (req, res, next) => {
     }
 
     if (req.user.plan === "pro") {
-      // Already pro — send to customer portal to manage subscription
+      // Already pro -- send to customer portal to manage subscription
       return res.redirect("/billing/portal");
     }
 
@@ -57,7 +57,7 @@ router.get("/upgrade", requireSessionAuth, async (req, res, next) => {
   }
 });
 
-// ─── GET /billing/success — Post-checkout landing ────────────────────────────
+// --- GET /billing/success -- Post-checkout landing ----------------------------
 router.get("/success", requireSessionAuth, async (req, res, next) => {
   try {
     const { session_id } = req.query;
@@ -80,11 +80,11 @@ router.get("/success", requireSessionAuth, async (req, res, next) => {
   }
 });
 
-// ─── GET /billing/portal — Stripe Customer Portal ────────────────────────────
+// --- GET /billing/portal -- Stripe Customer Portal ----------------------------
 router.get("/portal", requireSessionAuth, async (req, res, next) => {
   try {
     if (!req.user.stripe_customer_id) {
-      // No Stripe customer yet — send to upgrade flow instead
+      // No Stripe customer yet -- send to upgrade flow instead
       return res.redirect("/upgrade");
     }
 
@@ -100,8 +100,8 @@ router.get("/portal", requireSessionAuth, async (req, res, next) => {
   }
 });
 
-// ─── POST /billing/webhook — Stripe event handler ────────────────────────────
-// Must be mounted BEFORE express.json() — needs raw body for signature verification.
+// --- POST /billing/webhook -- Stripe event handler ----------------------------
+// Must be mounted BEFORE express.json() -- needs raw body for signature verification.
 router.post(
   "/webhook",
   (req, res, next) => {
@@ -119,7 +119,7 @@ router.post(
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
     if (!webhookSecret) {
-      console.warn("[Billing] STRIPE_WEBHOOK_SECRET not set — skipping signature check");
+      console.warn("[Billing] STRIPE_WEBHOOK_SECRET not set -- skipping signature check");
       return res.json({ received: true });
     }
 
@@ -145,7 +145,7 @@ router.post(
   }
 );
 
-// ─── Stripe Event Handlers ────────────────────────────────────────────────────
+// --- Stripe Event Handlers ----------------------------------------------------
 
 async function handleStripeEvent(event) {
   switch (event.type) {
@@ -160,7 +160,7 @@ async function handleStripeEvent(event) {
       }
 
       const plan = sub.status === "active" || sub.status === "trialing" ? "pro" : "free";
-      console.log(`[Billing] User ${userId} → plan: ${plan} (sub status: ${sub.status})`);
+      console.log(`[Billing] User ${userId} -> plan: ${plan} (sub status: ${sub.status})`);
 
       await updateUserPlan(userId, plan);
 
@@ -179,12 +179,12 @@ async function handleStripeEvent(event) {
       const sub = event.data.object;
       const userId = sub.metadata?.user_id;
       if (!userId) return;
-      console.log(`[Billing] User ${userId} → downgraded to free (subscription deleted)`);
+      console.log(`[Billing] User ${userId} -> downgraded to free (subscription deleted)`);
       await updateUserPlan(userId, "free");
       break;
     }
 
-    // Successful recurring payment — keep plan active
+    // Successful recurring payment -- keep plan active
     case "invoice.payment_succeeded": {
       const invoice = event.data.object;
       if (invoice.subscription) {
@@ -193,22 +193,22 @@ async function handleStripeEvent(event) {
         const userId = sub.metadata?.user_id;
         if (userId) {
           await updateUserPlan(userId, "pro");
-          console.log(`[Billing] Renewal confirmed — user ${userId} remains Pro`);
+          console.log(`[Billing] Renewal confirmed -- user ${userId} remains Pro`);
         }
       }
       break;
     }
 
-    // Payment failed — could downgrade after retries exhaust, but don't act immediately
+    // Payment failed -- could downgrade after retries exhaust, but don't act immediately
     case "invoice.payment_failed": {
       const invoice = event.data.object;
       console.warn(`[Billing] Payment failed for subscription ${invoice.subscription}`);
-      // Stripe handles retries — we only downgrade on subscription.deleted
+      // Stripe handles retries -- we only downgrade on subscription.deleted
       break;
     }
 
     default:
-      // Unhandled event type — safe to ignore
+      // Unhandled event type -- safe to ignore
       break;
   }
 }

@@ -1,4 +1,4 @@
-// meshwire login — browser-based OAuth, saves credentials to ~/.meshwire/credentials.json
+// meshwire login -- browser-based OAuth, saves credentials to ~/.meshwire/credentials.json
 //
 // Flow:
 // 1. Find a free local port
@@ -169,11 +169,11 @@ export async function cmdLogin(opts) {
     await client.health();
     console.log(chalk.green('  ✓ Connected to MeshWire\n'));
   } catch {
-    console.log(chalk.yellow('  ⚠ Could not verify connection — check your URL\n'));
+    console.log(chalk.yellow('  ⚠ Could not verify connection -- check your URL\n'));
   }
 
   console.log(chalk.dim('  Next steps:'));
-  console.log(chalk.cyan('    meshwire init') + chalk.dim('                 — full workspace setup'));
-  console.log(chalk.cyan('    meshwire init --harness copilot') + chalk.dim(' — set up Copilot CLI extension'));
-  console.log(chalk.cyan('    meshwire status') + chalk.dim('               — verify everything is wired\n'));
+  console.log(chalk.cyan('    meshwire init') + chalk.dim('                 -- full workspace setup'));
+  console.log(chalk.cyan('    meshwire init --harness copilot') + chalk.dim(' -- set up Copilot CLI extension'));
+  console.log(chalk.cyan('    meshwire status') + chalk.dim('               -- verify everything is wired\n'));
 }

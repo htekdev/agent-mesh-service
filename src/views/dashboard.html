@@ -358,8 +358,14 @@ function rtok() {
   if (nb) nb.style.display = S.tok ? 'flex' : 'none';
 }
 function selTok(el) { window.getSelection().selectAllChildren(el); }
-function copyTok(btn) { copy(S.tok||'', btn); }
-function toggleTok() { if (!S.tok) return; S.rev = !S.rev; rtok(); }
+function copyTok(btn) {
+  if (!S.tok) { fl(btn,'Regenerate first'); return; }
+  copy(S.tok, btn);
+}
+function toggleTok() {
+  if (!S.tok) { sfb('tok-fb','Token hidden. Click Regenerate to get a new one you can copy.','err',4000); return; }
+  S.rev = !S.rev; rtok();
+}
 async function regenTok() {
   if (!confirm('Regenerate token? Current one stops working immediately.')) return;
   const r = await fetch('/auth/regenerate-token',{method:'POST',credentials:'same-origin'});

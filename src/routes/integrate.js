@@ -1,4 +1,4 @@
-// Integration/Skill endpoint — returns structured instructions for any agent to integrate with the mesh
+// Integration/Skill endpoint -- returns structured instructions for any agent to integrate with the mesh
 import { Router } from "express";
 import { getMesh } from "../db/dynamo.js";
 
@@ -48,7 +48,7 @@ function buildIntegrationGuide(meshId, format) {
         registered_at: "2026-01-01T00:00:00.000Z",
       },
       notes: [
-        "Store the returned agent_id — you'll need it as sender_id for messages.",
+        "Store the returned agent_id -- you'll need it as sender_id for messages.",
         "Call POST /mesh/{meshId}/agents/{agentId}/heartbeat periodically to stay active.",
       ],
     },
@@ -266,7 +266,7 @@ function buildIntegrationGuide(meshId, format) {
     },
   ];
 
-  const skillDocument = `# Agent Mesh Integration — ${meshId}
+  const skillDocument = `# Agent Mesh Integration -- ${meshId}
 
 ## Overview
 This mesh enables asynchronous cross-agent communication via long-polling REST API.
@@ -286,7 +286,7 @@ curl -X POST ${meshUrl}/agents \\
   -d '{"name": "my-agent", "description": "My agent description", "workspace": "my-workspace"}'
 \`\`\`
 
-Save the returned \`agent_id\` — you need it for all message operations.
+Save the returned \`agent_id\` -- you need it for all message operations.
 
 ### 2. Send a Message
 \`\`\`bash
@@ -376,7 +376,7 @@ const { messages } = await fetch(
 \`\`\`
 
 ## Notes
-- Messages are retained in DynamoDB — no TTL currently set.
+- Messages are retained in DynamoDB -- no TTL currently set.
 - Long-poll holds the connection open up to 60 seconds.
 - Use heartbeat endpoint to keep your agent marked as active.
 - Priority levels: urgent > high > normal > low.
@@ -410,7 +410,7 @@ const { messages } = await fetch(
 }
 
 /**
- * GET /mesh/:meshId/integrate — Integration guide for a specific mesh
+ * GET /mesh/:meshId/integrate -- Integration guide for a specific mesh
  * Query: ?format=tools|skill|openapi|all (default: all)
  */
 integrateRouter.get("/:meshId/integrate", async (req, res, next) => {
@@ -429,7 +429,7 @@ integrateRouter.get("/:meshId/integrate", async (req, res, next) => {
 });
 
 /**
- * GET /integrate — Generic integration guide (no mesh specified)
+ * GET /integrate -- Generic integration guide (no mesh specified)
  * Tells the caller how to create a mesh and then integrate.
  */
 integrateRouter.get("/integrate", (_req, res) => {

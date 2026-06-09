@@ -1,4 +1,4 @@
-// meshwire status — show config + live connection check
+// meshwire status -- show config + live connection check
 import chalk from 'chalk';
 import { readConfig } from '../config.js';
 import { MeshWireClient } from '../api.js';
@@ -29,7 +29,7 @@ export async function cmdStatus() {
     const health = await client.health();
     console.log(`    Service : ${chalk.green('✓ online')}  (${health.timestamp})`);
   } catch (err) {
-    console.log(`    Service : ${chalk.red('✗ unreachable')} — ${err.message}`);
+    console.log(`    Service : ${chalk.red('✗ unreachable')} -- ${err.message}`);
     process.exit(1);
   }
 

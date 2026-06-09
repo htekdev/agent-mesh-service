@@ -4,6 +4,7 @@ import { listAgents, createMesh } from "../db/dynamo.js";
 import { getMaskedToken, listUserMeshes } from "../db/users.js";
 import { requireSessionAuth } from "./auth.js";
 import { isMockAuthEnabled, MOCK_USER_ID } from "../middleware/mockAuth.js";
+import { isMockDataEnabled, mockCreateMesh, mockListMeshesByOwner, mockListAgents } from "../db/mockStore.js";
 import { nanoid } from "nanoid";
 
 const DEFAULT_BASE_URL =
@@ -37,13 +38,21 @@ function buildDashboardBootstrap(user, { newToken = null } = {}) {
 }
 
 async function buildDashboardPayload(user) {
-  const meshes = (await listUserMeshes(user.user_id)).sort((left, right) =>
-    (right.created_at || "").localeCompare(left.created_at || "")
-  );
+  let meshes, counts;
 
-  const counts = await Promise.all(
-    meshes.map(async (mesh) => [mesh.mesh_id, (await listAgents(mesh.mesh_id)).length])
-  );
+  if (isMockDataEnabled()) {
+    meshes = mockListMeshesByOwner(user.user_id).sort((left, right) =>
+      (right.created_at || "").localeCompare(left.created_at || "")
+    );
+    counts = meshes.map((mesh) => [mesh.mesh_id, mockListAgents(mesh.mesh_id).length]);
+  } else {
+    meshes = (await listUserMeshes(user.user_id)).sort((left, right) =>
+      (right.created_at || "").localeCompare(left.created_at || "")
+    );
+    counts = await Promise.all(
+      meshes.map(async (mesh) => [mesh.mesh_id, (await listAgents(mesh.mesh_id)).length])
+    );
+  }
 
   return {
     user: buildDashboardBootstrap(user),
@@ -93,13 +102,9 @@ dashboardRouter.get("/dashboard", async (req, res, next) => {
 
 dashboardRouter.get("/api/me", requireSessionAuth, async (req, res, next) => {
   try {
-    // Mock mode: return static data without hitting DynamoDB
-    if (isMockAuthEnabled() && req.user?.user_id === MOCK_USER_ID) {
-      return res.json({
-        user: buildDashboardBootstrap(req.user),
-        meshes: [],
-        agentCounts: {},
-      });
+    // Mock mode: use in-memory store without hitting DynamoDB
+    if (isMockDataEnabled() && req.user?.user_id === MOCK_USER_ID) {
+      return res.json(await buildDashboardPayload(req.user));
     }
     res.json(await buildDashboardPayload(req.user));
   } catch (error) {
@@ -119,8 +124,9 @@ dashboardRouter.post("/api/meshes", requireSessionAuth, async (req, res, next) =
       agent_count: 0,
     };
 
-    // Mock mode: skip DynamoDB, return mesh directly
-    if (isMockAuthEnabled() && req.user?.user_id === MOCK_USER_ID) {
+    // Mock mode: use in-memory store
+    if (isMockDataEnabled() && req.user?.user_id === MOCK_USER_ID) {
+      mockCreateMesh(mesh);
       return res.status(201).json(mesh);
     }
 
