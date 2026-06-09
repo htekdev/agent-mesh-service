@@ -8,6 +8,21 @@ import {
   UpdateCommand,
   ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
+import {
+  isMockDataEnabled,
+  mockCreateMesh,
+  mockGetMesh,
+  mockListMeshesByOwner,
+  mockCountMeshesByOwner,
+  mockRegisterAgent,
+  mockGetAgent,
+  mockListAgents,
+  mockUpdateAgentHeartbeat,
+  mockCreateMessage,
+  mockGetMessage,
+  mockQueryMessages,
+  mockMarkMessageRead,
+} from "./mockStore.js";
 
 const client = new DynamoDBClient({
   region: process.env.AWS_REGION || "us-east-1",
@@ -26,11 +41,13 @@ export const TABLES = {
 };
 
 export async function createMesh(mesh) {
+  if (isMockDataEnabled()) return mockCreateMesh(mesh);
   await ddb.send(new PutCommand({ TableName: TABLES.meshes, Item: mesh }));
   return mesh;
 }
 
 export async function getMesh(meshId) {
+  if (isMockDataEnabled()) return mockGetMesh(meshId);
   const result = await ddb.send(
     new GetCommand({ TableName: TABLES.meshes, Key: { mesh_id: meshId } })
   );
@@ -38,6 +55,7 @@ export async function getMesh(meshId) {
 }
 
 export async function listMeshesByOwner(userId) {
+  if (isMockDataEnabled()) return mockListMeshesByOwner(userId);
   const result = await ddb.send(
     new ScanCommand({
       TableName: TABLES.meshes,
@@ -49,6 +67,7 @@ export async function listMeshesByOwner(userId) {
 }
 
 export async function countMeshesByOwner(userId) {
+  if (isMockDataEnabled()) return mockCountMeshesByOwner(userId);
   const result = await ddb.send(
     new ScanCommand({
       TableName: TABLES.meshes,
@@ -61,11 +80,13 @@ export async function countMeshesByOwner(userId) {
 }
 
 export async function registerAgent(agent) {
+  if (isMockDataEnabled()) return mockRegisterAgent(agent);
   await ddb.send(new PutCommand({ TableName: TABLES.agents, Item: agent }));
   return agent;
 }
 
 export async function getAgent(meshId, agentId) {
+  if (isMockDataEnabled()) return mockGetAgent(meshId, agentId);
   const result = await ddb.send(
     new GetCommand({ TableName: TABLES.agents, Key: { mesh_id: meshId, agent_id: agentId } })
   );
@@ -73,6 +94,7 @@ export async function getAgent(meshId, agentId) {
 }
 
 export async function listAgents(meshId) {
+  if (isMockDataEnabled()) return mockListAgents(meshId);
   const result = await ddb.send(
     new QueryCommand({
       TableName: TABLES.agents,
@@ -84,6 +106,7 @@ export async function listAgents(meshId) {
 }
 
 export async function updateAgentHeartbeat(meshId, agentId) {
+  if (isMockDataEnabled()) return mockUpdateAgentHeartbeat(meshId, agentId);
   await ddb.send(
     new UpdateCommand({
       TableName: TABLES.agents,
@@ -96,11 +119,13 @@ export async function updateAgentHeartbeat(meshId, agentId) {
 }
 
 export async function createMessage(message) {
+  if (isMockDataEnabled()) return mockCreateMessage(message);
   await ddb.send(new PutCommand({ TableName: TABLES.messages, Item: message }));
   return message;
 }
 
 export async function getMessage(meshId, messageId) {
+  if (isMockDataEnabled()) return mockGetMessage(meshId, messageId);
   const result = await ddb.send(
     new GetCommand({ TableName: TABLES.messages, Key: { mesh_id: meshId, message_id: messageId } })
   );
@@ -108,6 +133,7 @@ export async function getMessage(meshId, messageId) {
 }
 
 export async function queryMessages(meshId, { recipientId, offset = 0, limit = 50 } = {}) {
+  if (isMockDataEnabled()) return mockQueryMessages(meshId, { recipientId, offset, limit });
   const params = {
     TableName: TABLES.messages,
     KeyConditionExpression: "mesh_id = :mid AND message_id > :offset",
@@ -130,6 +156,7 @@ export async function queryMessages(meshId, { recipientId, offset = 0, limit = 5
 }
 
 export async function markMessageRead(meshId, messageId) {
+  if (isMockDataEnabled()) return mockMarkMessageRead(meshId, messageId);
   await ddb.send(
     new UpdateCommand({
       TableName: TABLES.messages,
