@@ -44,8 +44,45 @@ export async function cmdMesh(subcommand, opts) {
     }
 
     case 'list': {
-      console.log(chalk.dim('  Current mesh: ') + (readConfig().meshId || chalk.yellow('not set')));
-      console.log(chalk.dim('  To list all meshes, visit: meshwire.io/dashboard'));
+      const cfg = readConfig();
+      if (!cfg.token) {
+        console.error(chalk.red('✗ Not authenticated.'));
+        console.error(chalk.dim('  Run `meshwire login` to sign in and get your API token.'));
+        process.exit(1);
+      }
+      try {
+        const { meshes } = await client.listMeshes();
+        if (!meshes || meshes.length === 0) {
+          console.log(chalk.dim('  No meshes yet.'));
+          console.log(chalk.dim('  Run `meshwire mesh create --name my-mesh` to create one.'));
+          break;
+        }
+        const activeMeshId = cfg.meshId;
+        console.log('');
+        for (const m of meshes) {
+          const active = m.mesh_id === activeMeshId;
+          const marker = active ? chalk.green('* ') : '  ';
+          const id    = chalk.cyan(m.mesh_id);
+          const name  = chalk.white(m.name || 'Untitled');
+          const agents = chalk.dim(`${m.agent_count ?? 0} agent${(m.agent_count ?? 0) === 1 ? '' : 's'}`);
+          const date  = chalk.dim(m.created_at ? new Date(m.created_at).toLocaleDateString() : '');
+          console.log(`${marker}${id}  ${name}  ${agents}  ${date}`);
+        }
+        console.log('');
+        if (!activeMeshId) {
+          console.log(chalk.dim('  No active mesh. Run `meshwire mesh use <id>` to activate one.'));
+        } else {
+          console.log(chalk.dim(`  Active: ${activeMeshId}  (change with \`meshwire mesh use <id>\`)`));
+        }
+      } catch (err) {
+        if (err.message.startsWith('401')) {
+          console.error(chalk.red('✗ Authentication failed.'));
+          console.error(chalk.dim('  Your token may be expired. Run `meshwire login` to re-authenticate.'));
+        } else {
+          console.error(chalk.red(`✗ ${err.message}`));
+        }
+        process.exit(1);
+      }
       break;
     }
   }

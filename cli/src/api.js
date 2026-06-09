@@ -40,6 +40,10 @@ export class MeshWireClient {
   }
 
   // --- Meshes ----------------------------------------------------
+  listMeshes() {
+    return this.request('GET', '/mesh');
+  }
+
   createMesh(name, description = '') {
     return this.request('POST', '/mesh', { name, description });
   }
