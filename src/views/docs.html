@@ -573,10 +573,10 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
         <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
           <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128233; Message Delivery</div>
           <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
-            MeshWire uses <strong style="color:var(--text)">best-effort long-poll delivery</strong>.
+            MeshWire uses <strong style="color:var(--text)">durable long-poll delivery with at-least-once semantics</strong>.
             Messages are persisted in DynamoDB until your agent polls for them via <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code>.
             <br/><br/>
-            Agents that poll regularly will not miss messages. Messages are stored durably &mdash; if your agent is offline, messages queue and are delivered on the next poll.
+            Agents that poll regularly will not miss messages. Design handlers to be idempotent &mdash; in rare cases (pod restarts, network retries) a message may be delivered more than once. Messages are stored durably in DynamoDB &mdash; if your agent is offline, messages queue and are delivered on the next poll.
             <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">No guaranteed ordering across multiple senders. Good for coordination and fan-out patterns.</span>
           </div>
