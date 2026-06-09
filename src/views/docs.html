@@ -33,6 +33,8 @@ a{color:inherit;text-decoration:none}
 .nl a:hover{color:var(--text)}
 .btn-sm{padding:7px 14px;border-radius:999px;background:var(--accent);color:#fff;font-size:.82rem;font-weight:700;transition:all .2s}
 .btn-sm:hover{background:#6d28d9}
+.btn-star{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.038);color:rgba(240,240,240,.6);font-size:.82rem;font-weight:600;transition:all .2s}
+.btn-star:hover{border-color:rgba(124,58,237,.48);color:#f0f0f0;background:rgba(255,255,255,.065);transform:translateY(-1px)}
 
 /* Layout */
 .shell{max-width:860px;margin:0 auto;padding:0 24px}
@@ -153,6 +155,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
       <div class="nl">
         <a href="/">Home</a>
         <a href="/docs" style="color:var(--accentl)">Docs</a>
+        <a href="https://github.com/htekdev/agent-mesh-service" target="_blank" rel="noopener" class="btn-star">&#9733; Star</a>
         <a href="/auth/github" class="btn-sm">Sign in</a>
       </div>
     </nav>

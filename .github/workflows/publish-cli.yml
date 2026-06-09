@@ -1,0 +1,109 @@
+name: Publish CLI
+
+# ─── Triggers ────────────────────────────────────────────────────────────────
+# Fire on any push to main that touches the CLI package.
+# Skip routine non-code changes (docs, spec files, root service code).
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cli/**"
+      - "!cli/**/*.md"
+      - "!cli/SKILL.md"
+  workflow_dispatch: # allow manual trigger from the Actions tab
+
+# ─── Jobs ─────────────────────────────────────────────────────────────────────
+jobs:
+  # ── 1. Calculate the next semver via GitVersion ──────────────────────────────
+  version:
+    name: Calculate version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    if: |
+      !contains(github.event.head_commit.message, '[skip publish]') &&
+      github.actor != 'dependabot[bot]'
+    outputs:
+      semver: ${{ steps.gitversion.outputs.semVer }}
+      majorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history required for GitVersion
+
+      - uses: gittools/actions/gitversion/setup@bc6623af8fc07d5a8903052dd46da33403eec8e8 # v4.5.0
+        with:
+          versionSpec: "6.x"
+
+      - id: gitversion
+        uses: gittools/actions/gitversion/execute@bc6623af8fc07d5a8903052dd46da33403eec8e8 # v4.5.0
+
+      - name: Show calculated version
+        run: echo "Next version → ${{ steps.gitversion.outputs.semVer }}"
+
+  # ── 2. Publish meshwire to npm ───────────────────────────────────────────────
+  publish:
+    name: Publish to npm
+    needs: version
+    runs-on: ubuntu-latest
+    environment: prod
+    defaults:
+      run:
+        working-directory: cli   # all npm commands run inside the cli/ subdirectory
+    permissions:
+      contents: write  # needed to push the version tag + create GitHub Release
+      id-token: write  # required for npm OIDC Trusted Publisher token exchange
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: cli/package-lock.json
+          # No registry-url here — prevents setup-node from writing a placeholder
+          # NODE_AUTH_TOKEN. npm v11 handles OIDC token exchange internally.
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Upgrade npm to v11 (required for OIDC Trusted Publisher)
+        # npm ≤ v10 has no built-in OIDC Trusted Publisher support.
+        # npm v11 added lib/utils/oidc.js which:
+        #   1. Fetches the GitHub OIDC JWT (audience='npm:registry.npmjs.org')
+        #   2. Exchanges it at /-/npm/v1/oidc/token/exchange/package/meshwire
+        #   3. Injects the short-lived token before the publish step
+        # Requires: id-token: write (set above).
+        run: npm install -g npm@11
+        working-directory: ${{ github.workspace }}  # install globally, not in cli/
+
+      - name: Stamp package version
+        run: npm version ${{ needs.version.outputs.semver }} --no-git-tag-version
+
+      - name: Publish to npm (OIDC Trusted Publisher)
+        run: npm publish --access public --provenance
+
+      # ── Post-publish: tag + GitHub Release ──────────────────────────────────
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        working-directory: ${{ github.workspace }}
+
+      - name: Create and push version tag
+        run: |
+          git tag "v${{ needs.version.outputs.semver }}"
+          git push origin "v${{ needs.version.outputs.semver }}"
+        working-directory: ${{ github.workspace }}
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "v${{ needs.version.outputs.semver }}" \
+            --generate-notes \
+            --title "meshwire v${{ needs.version.outputs.semver }}"
+        working-directory: ${{ github.workspace }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
