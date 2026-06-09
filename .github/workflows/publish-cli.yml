@@ -64,8 +64,9 @@ jobs:
           node-version: "20"
           cache: "npm"
           cache-dependency-path: cli/package-lock.json
-          # No registry-url here — prevents setup-node from writing a placeholder
-          # NODE_AUTH_TOKEN. npm v11 handles OIDC token exchange internally.
+          registry-url: "https://registry.npmjs.org"
+          # registry-url tells npm which registry to authenticate against and
+          # enables the OIDC token exchange endpoint lookup that npm v11 requires.
 
       - name: Install dependencies
         run: npm ci

@@ -10,7 +10,8 @@
   "exports": {
     ".": "./src/index.js",
     "./api": "./src/api.js",
-    "./config": "./src/config.js"
+    "./config": "./src/config.js",
+    "./extension": "./src/extension/index.js"
   },
   "scripts": {
     "test": "node --test src/**/*.test.js",
