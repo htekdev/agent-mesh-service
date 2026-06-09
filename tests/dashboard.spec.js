@@ -45,7 +45,7 @@ test("dashboard loads with all sections", async ({ page }) => {
 test("harness tabs switch and show correct content", async ({ page }) => {
   const copilotTab = page.locator("#ht .tab").filter({ hasText: "Copilot" });
   const hermesTab = page.locator("#ht .tab").filter({ hasText: "Hermes" });
-  const piTab = page.locator("#ht .tab").filter({ hasText: "Pi" });
+  const piTab = page.locator("#ht .tab").filter({ hasText: /^\u03C0 Pi$/ });
   const anyTab = page.locator("#ht .tab").filter({ hasText: /Any/i });
 
   // Copilot starts active
@@ -245,7 +245,7 @@ test.describe("Copy Command Buttons", () => {
     await context.grantPermissions(["clipboard-read", "clipboard-write"]);
 
     // Switch to Pi tab
-    const piTab = page.locator("#ht .tab").filter({ hasText: "Pi" });
+    const piTab = page.locator("#ht .tab").filter({ hasText: /^\u03C0 Pi$/ });
     await piTab.click();
     await expect(page.locator("#pane-pi")).toBeVisible();
 
