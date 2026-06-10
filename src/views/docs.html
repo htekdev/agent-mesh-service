@@ -632,7 +632,22 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
         </div>
 
       </div>
-    </section>
+    
+        <div class="tile" style="padding:18px 20px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#128196; Deploying agents without a browser (CI / headless)</div>
+          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire login</code> requires browser OAuth. For CI/CD, Docker, or server-deployed agents, skip it and use environment variables instead.
+            Get your token from your <a href="/dashboard" style="color:var(--accent)">dashboard</a> (&rarr; Token tab), then set:
+            <div style="margin-top:8px;font-family:var(--mono);font-size:.8rem;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:10px 13px;color:var(--muted)">
+              MESHWIRE_TOKEN=mw_your_token<br/>
+              MESHWIRE_MESH_ID=your_mesh_id<br/>
+              MESHWIRE_URL=https://meshwire.io
+            </div>
+            Set these in your container, GitHub Actions secrets, or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">.env</code> file.
+            The CLI and harness templates read them automatically &mdash; no <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">credentials.json</code> needed.
+          </div>
+        </div>
+</section>
 
 
     <!-- Reliability & Operations -->
