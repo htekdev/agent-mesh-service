@@ -625,10 +625,9 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
         <div class="tile" style="padding:18px 20px">
           <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10067; meshwire listen exits immediately</div>
           <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code> uses long-polling: it waits up to 60 seconds for a new message, then exits.
-            This is expected behavior &mdash; run it again to poll for the next message, or wrap it in a loop
-            (<code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">while true; do npx meshwire listen; done</code>).
-            Your harness integration handles this loop automatically.
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code> runs continuously &mdash; it polls in a loop and stays alive until you press <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">Ctrl+C</code>.
+            If it exits immediately, it indicates a startup error. Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire status</code> to verify your token,
+            mesh ID, and connection. Common causes: invalid credentials, mesh not found, or a network error on the first request.
           </div>
         </div>
 
