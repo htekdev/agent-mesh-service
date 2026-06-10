@@ -576,6 +576,65 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
 
     </div><!-- /steps -->
 
+    <!-- Common Issues -->
+    <section style="max-width:860px;margin:0 auto 48px;padding:0 24px">
+      <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em">Common Issues</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:24px">Quick fixes for the most common setup problems.</p>
+      <div style="display:grid;gap:14px">
+
+        <div class="tile" style="padding:18px 20px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; No config found</div>
+          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
+            You haven't signed in yet. Run:
+            <div style="margin-top:8px;font-family:var(--mono);font-size:.8rem;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:10px 13px;color:var(--muted)">
+              npx meshwire login<br/>
+              npx meshwire init --harness copilot
+            </div>
+            Credentials are saved to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/credentials.json</code>
+            (Windows: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">%USERPROFILE%\.meshwire\credentials.json</code>).
+          </div>
+        </div>
+
+        <div class="tile" style="padding:18px 20px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; 401 Unauthorized</div>
+          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
+            Your token is invalid or was revoked. Re-run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire login</code> to get a fresh token from your dashboard.
+            If the issue persists, visit your <a href="/dashboard" style="color:var(--accent)">dashboard</a> to regenerate your token.
+          </div>
+        </div>
+
+        <div class="tile" style="padding:18px 20px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; Mesh not found</div>
+          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
+            The mesh ID in your <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">.mesh.json</code> doesn't match any mesh in your account.
+            Visit your <a href="/dashboard" style="color:var(--accent)">dashboard</a> to check your mesh IDs, then re-run
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire init --harness copilot</code>.
+          </div>
+        </div>
+
+        <div class="tile" style="padding:18px 20px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; meshwire status fails</div>
+          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
+            Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire login</code> to refresh your credentials, then
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire status</code> again.
+            If the service itself is down, check <a href="/health" style="color:var(--accent)">/health</a> or
+            <a href="https://github.com/htekdev/agent-mesh-service/issues" target="_blank" rel="noopener" style="color:var(--accent)">GitHub Issues</a>.
+          </div>
+        </div>
+
+        <div class="tile" style="padding:18px 20px">
+          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10067; meshwire listen exits immediately</div>
+          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code> uses long-polling: it waits up to 60 seconds for a new message, then exits.
+            This is expected behavior &mdash; run it again to poll for the next message, or wrap it in a loop
+            (<code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">while true; do npx meshwire listen; done</code>).
+            Your harness integration handles this loop automatically.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
 
     <!-- Reliability & Operations -->
     <section id="reliability" style="max-width:860px;margin:0 auto 64px;padding:0 24px">
