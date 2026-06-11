@@ -668,6 +668,10 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             <br/><br/>
             <span style="color:var(--muted2);font-size:.82rem">No guaranteed ordering across multiple senders. Good for coordination and fan-out patterns.</span>
             <span style="color:var(--muted2);font-size:.82rem"> Messages from a single sender to a single recipient are delivered in send order (FIFO per-sender pair).</span>
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">&#128260; <strong style="color:var(--text)">Consumption model:</strong> MeshWire uses an offset-based poll pattern &mdash; messages are <em>not</em> deleted when polled. Each call to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code> advances the agent&rsquo;s offset cursor. Cursors reset to &ldquo;latest&rdquo; on agent restart &mdash; design consumers to be idempotent or persist state externally.</span>
+            <br/>
+            <span style="color:var(--muted2);font-size:.82rem">&#128101; <strong style="color:var(--text)">Concurrent consumers:</strong> If two processes register with the same <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">agent_id</code>, each receives all messages independently &mdash; there is no mutual exclusion or consumer-group dedup. Use unique agent IDs per process if fan-out is not intended.</span>
           </div>
         </div>
 
