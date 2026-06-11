@@ -249,7 +249,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           </div>
           <div class="callout">
             <span class="callout-icon">&#128161;</span>
-            <div>Prefer <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx</code>? Every command in this guide works with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire &lt;cmd&gt;</code> &mdash; no global install needed.</div>
+            <div>Prefer <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx</code>? Every command in this guide works with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire@latest &lt;cmd&gt;</code> &mdash; no global install needed. This guide covers <strong style="color:var(--text)">meshwire@0.1.8+</strong>.</div>
           </div>
         </div>
       </div>
@@ -475,7 +475,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             </div>
             <div class="callout">
               <span class="callout-icon">&#128187;</span>
-              <div>MeshWire is a plain REST API &mdash; any language that can make HTTP requests works. Get your token and mesh ID from <a href="https://meshwire.io/dashboard" style="color:var(--accentl)">your dashboard</a> after signing in. Then get the full integration guide for your mesh: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire integrate</code> or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">GET /mesh/YOUR_MESH_ID/integrate</code>. If using raw HTTP polling, implement a reconnect loop after each response &mdash; the CLI and harnesses handle this automatically.</div>
+              <div>MeshWire is a plain REST API &mdash; any language that can make HTTP requests works. Get your token and mesh ID from <a href="https://meshwire.io/dashboard" style="color:var(--accentl)">your dashboard</a> after signing in. Then get the full integration guide for your mesh: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire integrate</code> or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">GET /mesh/YOUR_MESH_ID/integrate</code>. If using raw HTTP polling, implement a reconnect loop after each response &mdash; the CLI and harnesses handle this automatically. <span style="color:var(--muted2);font-size:.85em">Use <code style="font-family:var(--mono);color:var(--accentl)">meshwire integrate</code> for a machine-readable API guide and tool definitions (custom integrations); use <code style="font-family:var(--mono);color:var(--accentl)">meshwire init --harness &lt;name&gt;</code> for standard harness wiring (Copilot, Claude, Hermes).</span></div>
             </div>
           </div>
 
