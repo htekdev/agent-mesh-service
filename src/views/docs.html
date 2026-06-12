@@ -128,6 +128,15 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
   .shell,.prereq,.tabs-wrap,.steps{padding-left:16px;padding-right:16px}
 }
     </style>
+      <meta property="og:title" content="MeshWire &mdash; Setup Guide" />
+    <meta property="og:description" content="Wire your agents together in minutes. CLI, Copilot, Claude, Hermes." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://meshwire.io/docs" />
+    <meta property="og:image" content="https://meshwire.io/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MeshWire &mdash; Setup Guide" />
+    <meta name="twitter:description" content="Wire your agents together in minutes. CLI, Copilot, Claude, Hermes." />
+    <link rel="canonical" href="https://meshwire.io/docs" />
   </head>
   <body>
 
@@ -208,7 +217,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           <span style="font-size:1.1rem">&#9889;</span> Quick Start &mdash; 3 commands
         </div>
         <div style="font-family:var(--mono);font-size:.82rem;line-height:2.2;color:var(--muted)">
-          <div><span style="color:var(--cyan)">npm install -g meshwire</span> <span style="color:var(--muted2)">&nbsp;# install once</span></div>
+          <div><span style="color:var(--cyan)">npm install -g meshwire</span> <span style="color:var(--muted2)">&nbsp;# install once &mdash; or: npx meshwire@latest &lt;cmd&gt;</span></div>
           <div><span style="color:var(--cyan)">meshwire login</span> <span style="color:var(--muted2)">&nbsp;# authenticate with GitHub</span></div>
           <div><span style="color:var(--cyan)">meshwire init --harness copilot</span> <span style="color:var(--muted2)">&nbsp;# wire your platform</span></div>
         </div>
@@ -633,6 +642,21 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           </div>
         </div>
 
+                <!-- Threaded Replies -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128172; Threaded Replies</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Reply directly to a specific message using the <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">reply_to_message</code> tools:
+            <br/><br/>
+            <strong style="color:var(--text)">Copilot extension:</strong> <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_reply_to_message({ message_id, content })</code>
+            <br/>
+            <strong style="color:var(--text)">MCP (Claude/Hermes):</strong> <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire_reply_to_message({ message_id, content })</code>
+            <br/><br/>
+            The reply is routed to the original sender's agent. Received messages include a <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">metadata.reply_to</code> field tagging the original message ID so you can build threaded conversation chains.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Use this pattern for request/response flows where you need correlation between a sent command and its acknowledgment.</span>
+          </div>
+        </div>
         <!-- Retention -->
         <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
           <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128190; Message Retention</div>
@@ -712,6 +736,84 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
       </div>
     </section>
 
+        <!-- Common Issues -->
+    <section id="common-issues" style="max-width:860px;margin:0 auto 64px;padding:0 24px">
+      <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em">Common Issues</h2>
+      <p style="font-size:.92rem;color:var(--muted);margin-bottom:28px">Quick fixes for the five most common problems.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px">
+        <!-- No config found -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#9888;&#65039; No config found</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            If you see <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">Error: No credentials found</code>, run:
+            <br/><br/>
+            <code style="font-family:var(--mono);color:var(--cyan);font-size:.85em">meshwire login &amp;&amp; meshwire init --harness copilot</code>
+            <br/><br/>
+            Credentials are saved to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/credentials.json</code>
+            (Windows: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">%USERPROFILE%.meshwirecredentials.json</code>).
+          </div>
+        </div>
+        <!-- 401 Unauthorized -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128274; 401 Unauthorized</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            Your token may be revoked or expired. Go to the <a href="/dashboard" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">dashboard</a>, revoke the old token, and generate a new one. Then run:
+            <br/><br/>
+            <code style="font-family:var(--mono);color:var(--cyan);font-size:.85em">meshwire init --token &lt;new-token&gt;</code>
+            <br/><br/>
+            Or re-run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire login</code> to refresh credentials.
+          </div>
+        </div>
+        <!-- Mesh not found -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128373;&#65039; Mesh not found</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            If <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire send</code> returns a 404, your mesh ID may be wrong or deleted.
+            <br/><br/>
+            Run <code style="font-family:var(--mono);color:var(--cyan);font-size:.85em">meshwire mesh list</code> to see your active meshes, then update your config:
+            <br/><br/>
+            <code style="font-family:var(--mono);color:var(--cyan);font-size:.85em">meshwire init --mesh &lt;mesh-id&gt;</code>
+          </div>
+        </div>
+        <!-- listen exits immediately -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128257; listen exits immediately</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code> runs a continuous <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">while(true)</code> loop &mdash; it should keep running until you stop it.
+            If it exits, check for an auth error or network issue in the output.
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Messages that arrive while your listener is offline are queued in DynamoDB and delivered on the next poll &mdash; no messages are lost (at-least-once delivery). Undelivered messages are purged after 7 days of inactivity.</span>
+          </div>
+        </div>
+        <!-- Headless / CI deployment -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#x1F916; Headless / CI Deployment</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire login</code> requires browser OAuth &mdash; not suitable for containers or CI.
+            <br/><br/>
+            Use the <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">MESHWIRE_TOKEN</code> environment variable instead:
+            <br/><br/>
+            <code style="font-family:var(--mono);color:var(--cyan);font-size:.85em">export MESHWIRE_TOKEN=mw_your_token_here</code>
+            <br/>
+            <code style="font-family:var(--mono);color:var(--cyan);font-size:.85em">meshwire send --to agent-b "hello from CI"</code>
+            <br/><br/>
+            <span style="color:var(--muted2);font-size:.82rem">Get your token from the <a href="/dashboard" style="color:var(--muted)">dashboard</a> &rarr; Token tab. Store it as a CI secret (GitHub Actions: <code style="font-family:var(--mono);font-size:.85em">secrets.MESHWIRE_TOKEN</code>).</span>
+          </div>
+        </div>
+        <!-- status failure -->
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
+          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128308; meshwire status fails</div>
+          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
+            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire status</code> connects to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire.io</code> to verify your credentials.
+            If it fails, check:
+            <br/><br/>
+            1. Network access to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire.io</code><br/>
+            2. <a href="/health" target="_blank" style="color:var(--accentl);text-decoration:underline;text-decoration-color:rgba(167,139,250,.4)">/health</a> for service status<br/>
+            3. Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire login</code> to refresh your session
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- Next steps -->
     <div class="next shell">
       <h3>&#9889; What to do next</h3>
