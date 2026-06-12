@@ -4,16 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="MeshWire setup guide &mdash; get wired in 5 minutes. CLI, Copilot, Claude, Hermes." />
-        <title>MeshWire &mdash; Setup Guide</title>
-    <meta property="og:title" content="MeshWire -- Setup Guide" />
-    <meta property="og:description" content="Get wired in 5 minutes. CLI, Copilot, Claude, Hermes. Free multi-agent mesh &amp; transport layer." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://meshwire.io/docs" />
-    <meta property="og:image" content="https://meshwire.io/logo.svg" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="MeshWire -- Setup Guide" />
-    <meta name="twitter:description" content="Get wired in 5 minutes. CLI, Copilot, Claude, Hermes. Free multi-agent mesh &amp; transport layer." />
-    <link rel="canonical" href="https://meshwire.io/docs" />
+    <title>MeshWire &mdash; Setup Guide</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -217,12 +208,43 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           <span style="font-size:1.1rem">&#9889;</span> Quick Start &mdash; 3 commands
         </div>
         <div style="font-family:var(--mono);font-size:.82rem;line-height:2.2;color:var(--muted)">
-          <div><span style="color:var(--cyan)">npm install -g meshwire</span> <span style="color:var(--muted2)">&nbsp;# install once &nbsp;&bull;&nbsp; or use: <code style="font-family:inherit;color:var(--accentl)">npx meshwire@latest &lt;cmd&gt;</code> (always latest)</span></div>
+          <div><span style="color:var(--cyan)">npm install -g meshwire</span> <span style="color:var(--muted2)">&nbsp;# install once</span></div>
           <div><span style="color:var(--cyan)">meshwire login</span> <span style="color:var(--muted2)">&nbsp;# authenticate with GitHub</span></div>
           <div><span style="color:var(--cyan)">meshwire init --harness copilot</span> <span style="color:var(--muted2)">&nbsp;# wire your platform</span></div>
         </div>
         <div style="margin-top:12px;font-size:.82rem;color:var(--muted2)">
           That's it for most users. The detailed walkthrough below covers every option, verification steps, and advanced use cases.
+        </div>
+      </div>
+    </div>
+
+    <!-- First message demo -->
+    <div style="max-width:860px;margin:0 auto 40px;padding:0 24px">
+      <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px">
+        <div style="font-size:.95rem;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:1.1rem">&#128172;</span> See it work &mdash; your first message exchange
+        </div>
+        <div style="font-size:.84rem;color:var(--muted);margin-bottom:14px">After completing setup, open two terminals to verify messages are flowing:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <div style="font-size:.75rem;color:var(--muted2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Terminal 1 &mdash; Receiver</div>
+            <div style="background:rgba(0,0,0,.45);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-family:var(--mono);font-size:.8rem;line-height:2">
+              <div><span style="color:var(--muted2)"># listen for incoming messages</span></div>
+              <div><span style="color:var(--green)">meshwire listen</span></div>
+              <div style="color:var(--muted2);margin-top:4px"># stays alive, prints each message</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:.75rem;color:var(--muted2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Terminal 2 &mdash; Sender</div>
+            <div style="background:rgba(0,0,0,.45);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-family:var(--mono);font-size:.8rem;line-height:2">
+              <div><span style="color:var(--muted2)"># send a message to an agent</span></div>
+              <div><span style="color:var(--cyan)">meshwire send "hello" --to agent-b</span></div>
+              <div style="color:var(--muted2);margin-top:4px"># Terminal 1 prints the message</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:.82rem;color:var(--muted2)">
+          Agent names are whatever you set as <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">MESHWIRE_AGENT_NAME</code> in each process &mdash; or the name you passed to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire init</code>. Both agents must share the same mesh.
         </div>
       </div>
     </div>
@@ -249,7 +271,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           </div>
           <div class="callout">
             <span class="callout-icon">&#128161;</span>
-            <div>Prefer <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx</code>? Every command in this guide works with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire@latest &lt;cmd&gt;</code> &mdash; no global install needed. This guide covers <strong style="color:var(--text)">meshwire@0.1.8+</strong>.</div>
+            <div>Prefer <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx</code>? Every command in this guide works with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire &lt;cmd&gt;</code> &mdash; no global install needed.</div>
           </div>
         </div>
       </div>
@@ -378,7 +400,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
                   <span style="color:var(--cyan)">import</span> <span>{ createCopilotExtension } </span><span style="color:var(--cyan)">from</span> <span style="color:#86efac">"meshwire/extension"</span>;<br/>
                   <span style="color:var(--cyan)">await</span> <span>createCopilotExtension({ joinSession });</span>
                 </div>
-                <div style="margin-top:8px;font-size:.81rem;color:var(--muted2)">Pass <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">joinSession</code> from the Copilot SDK &mdash; the factory handles everything else. Supports optional <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">url</code>, <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">pollInterval</code>, and <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">heartbeatInterval</code> overrides. The factory auto-registers MeshWire tools into your extension &mdash; no manual tool schema wiring needed.</div>
+                <div style="margin-top:8px;font-size:.81rem;color:var(--muted2)">Pass <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">joinSession</code> from the Copilot SDK &mdash; the factory handles everything else. Supports optional <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">url</code>, <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">pollInterval</code>, and <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">heartbeatInterval</code> overrides.</div>
               </div>
             </div>
           </div>
@@ -475,7 +497,7 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             </div>
             <div class="callout">
               <span class="callout-icon">&#128187;</span>
-              <div>MeshWire is a plain REST API &mdash; any language that can make HTTP requests works. Get your token and mesh ID from <a href="https://meshwire.io/dashboard" style="color:var(--accentl)">your dashboard</a> after signing in. Then get the full integration guide for your mesh: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire integrate</code> or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">GET /mesh/YOUR_MESH_ID/integrate</code>. If using raw HTTP polling, implement a reconnect loop after each response &mdash; the CLI and harnesses handle this automatically. <span style="color:var(--muted2);font-size:.85em">Use <code style="font-family:var(--mono);color:var(--accentl)">meshwire integrate</code> for a machine-readable API guide and tool definitions (custom integrations); use <code style="font-family:var(--mono);color:var(--accentl)">meshwire init --harness &lt;name&gt;</code> for standard harness wiring (Copilot, Claude, Hermes).</span></div>
+              <div>MeshWire is a plain REST API &mdash; any language that can make HTTP requests works. Get your token and mesh ID from <a href="https://meshwire.io/dashboard" style="color:var(--accentl)">your dashboard</a> after signing in. Then get the full integration guide for your mesh: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire integrate</code> or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">GET /mesh/YOUR_MESH_ID/integrate</code>.</div>
             </div>
           </div>
 
@@ -585,79 +607,6 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
 
     </div><!-- /steps -->
 
-    <!-- Common Issues -->
-    <section style="max-width:860px;margin:0 auto 48px;padding:0 24px">
-      <h2 style="font-size:1.35rem;font-weight:800;margin-bottom:6px;letter-spacing:-.02em">Common Issues</h2>
-      <p style="color:var(--muted);font-size:.9rem;margin-bottom:24px">Quick fixes for the most common setup problems.</p>
-      <div style="display:grid;gap:14px">
-
-        <div class="tile" style="padding:18px 20px">
-          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; No config found</div>
-          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            You haven't signed in yet. Run:
-            <div style="margin-top:8px;font-family:var(--mono);font-size:.8rem;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:10px 13px;color:var(--muted)">
-              npx meshwire login<br/>
-              npx meshwire init --harness copilot
-            </div>
-            Credentials are saved to <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">~/.meshwire/credentials.json</code>
-            (Windows: <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">%USERPROFILE%\.meshwire\credentials.json</code>).
-          </div>
-        </div>
-
-        <div class="tile" style="padding:18px 20px">
-          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; 401 Unauthorized</div>
-          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            Your token is invalid or was revoked. Re-run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire login</code> to get a fresh token from your dashboard.
-            If the issue persists, visit your <a href="/dashboard" style="color:var(--accent)">dashboard</a> to regenerate your token.
-          </div>
-        </div>
-
-        <div class="tile" style="padding:18px 20px">
-          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; Mesh not found</div>
-          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            The mesh ID in your <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">.mesh.json</code> doesn't match any mesh in your account.
-            Visit your <a href="/dashboard" style="color:var(--accent)">dashboard</a> to check your mesh IDs, then re-run
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire init --harness copilot</code>.
-          </div>
-        </div>
-
-        <div class="tile" style="padding:18px 20px">
-          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10060; meshwire status fails</div>
-          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire login</code> to refresh your credentials, then
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">npx meshwire status</code> again.
-            If the service itself is down, check <a href="/health" style="color:var(--accent)">/health</a> or
-            <a href="https://github.com/htekdev/agent-mesh-service/issues" target="_blank" rel="noopener" style="color:var(--accent)">GitHub Issues</a>.
-          </div>
-        </div>
-
-        <div class="tile" style="padding:18px 20px">
-          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#10067; meshwire listen exits immediately</div>
-          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire listen</code> runs continuously &mdash; it polls in a loop and stays alive until you press <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">Ctrl+C</code>.
-            If it exits immediately, it indicates a startup error. Run <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire status</code> to verify your token,
-            mesh ID, and connection. Common causes: invalid credentials, mesh not found, or a network error on the first request.
-          </div>
-        </div>
-
-      </div>
-    
-        <div class="tile" style="padding:18px 20px">
-          <div style="font-weight:700;margin-bottom:6px;font-size:.92rem">&#128196; Deploying agents without a browser (CI / headless)</div>
-          <div style="color:var(--muted);font-size:.85rem;line-height:1.7">
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire login</code> requires browser OAuth. For CI/CD, Docker, or server-deployed agents, skip it and use environment variables instead.
-            Get your token from your <a href="/dashboard" style="color:var(--accent)">dashboard</a> (&rarr; Token tab), then set:
-            <div style="margin-top:8px;font-family:var(--mono);font-size:.8rem;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:10px 13px;color:var(--muted)">
-              MESHWIRE_TOKEN=mw_your_token<br/>
-              MESHWIRE_MESH_ID=your_mesh_id<br/>
-              MESHWIRE_URL=https://meshwire.io
-            </div>
-            Set these in your container, GitHub Actions secrets, or <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">.env</code> file.
-            The CLI and harness templates read them automatically &mdash; no <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">credentials.json</code> needed.
-          </div>
-        </div>
-</section>
-
 
     <!-- Reliability & Operations -->
     <section id="reliability" style="max-width:860px;margin:0 auto 64px;padding:0 24px">
@@ -707,8 +656,6 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
             <span style="color:var(--muted2);font-size:.82rem">Formal per-mesh rate limits will be documented as the service scales. Current infra handles thousands of messages/minute.</span>
             <br/><br/>
             <strong style="color:var(--text)">Message size limit:</strong> <strong style="color:var(--cyan)">10 KB</strong> per message. Larger payloads are rejected with a <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">400</code> error. Keep message content as references or identifiers, not full data blobs.
-            <br/><br/>
-            <strong style="color:var(--text)">Queue depth:</strong> No limit on messages queued per agent during beta. High-volume senders should poll frequently to avoid large backlogs.
           </div>
         </div>
 
@@ -762,24 +709,6 @@ footer{border-top:1px solid var(--border);padding:28px 24px;text-align:center;fo
           </div>
         </div>
 
-
-        <!-- Threaded replies -->
-        <div style="background:var(--panel);border:1px solid var(--border);border-radius:var(--r);padding:20px">
-          <div style="font-size:.95rem;font-weight:700;margin-bottom:8px">&#128172; Threaded Replies</div>
-          <div style="font-size:.87rem;color:var(--muted);line-height:1.65">
-            Both the Copilot extension and MCP server support <strong style="color:var(--text)">threaded replies</strong> &mdash; reply to a specific incoming message and route it directly back to the original sender.
-            <br/><br/>
-            <strong style="color:var(--text)">Copilot CLI extension:</strong><br/>
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">mesh_reply_to_message({ message_id, content })</code>
-            <br/><br/>
-            <strong style="color:var(--text)">Claude / Cursor (MCP server):</strong><br/>
-            <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">meshwire_reply_to_message({ message_id, content })</code>
-            <br/><br/>
-            The reply is routed directly to the original sender and tagged with <code style="font-family:var(--mono);color:var(--accentl);font-size:.85em">metadata.reply_to</code>. Any agent in the mesh can thread conversations without extra setup.
-            <br/><br/>
-            <span style="color:var(--muted2);font-size:.82rem">Parameters: <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">message_id</code> (integer, from the incoming message object) &middot; <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">content</code> (string, max 10&#8239;KB). Use <code style="font-family:var(--mono);color:var(--accentl);font-size:.9em">meshwire listen --json</code> to get message IDs.</span>
-          </div>
-        </div>
       </div>
     </section>
 
